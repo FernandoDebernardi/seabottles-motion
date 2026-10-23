@@ -28,7 +28,16 @@ export const Mensaje: React.FC<Props> = ({texto, mar, pais, banderaCodigo, orige
   });
 
   // El texto aparece por palabras (más rápido de leer que letra a letra) y después queda quieto
-  const palabras = React.useMemo(() => texto.replace(/\s+/g, ' ').trim().split(' '), [texto]);
+  // Los saltos de línea de quien escribió se respetan (muchas botellas son versos); los espacios sobrantes no.
+  const palabras = React.useMemo(() => {
+    const lineas = texto.replace(/\r/g, '').trim().split(/\n+/);
+    const lista: {p: string; salto: boolean}[] = [];
+    lineas.forEach((linea, li) => {
+      const ws = linea.trim().split(/\s+/).filter(Boolean);
+      ws.forEach((w, wi) => lista.push({p: w, salto: wi === ws.length - 1 && li < lineas.length - 1}));
+    });
+    return lista;
+  }, [texto]);
   const inicio = fps * 0.35;
   const visibles = interpolate(local, [inicio, inicio + revelado], [0, palabras.length], {
     extrapolateLeft: 'clamp',
@@ -36,7 +45,10 @@ export const Mensaje: React.FC<Props> = ({texto, mar, pais, banderaCodigo, orige
   });
 
   const base = vertical ? width * 0.05 : width * 0.038;
-  const tam = texto.length > 260 ? base * 0.72 : texto.length > 180 ? base * 0.82 : texto.length > 110 ? base * 0.9 : base;
+  const lineas = palabras.filter((x) => x.salto).length + 1;
+  const porLargo = texto.length > 260 ? 0.72 : texto.length > 180 ? 0.82 : texto.length > 110 ? 0.9 : 1;
+  const porLineas = lineas >= 8 ? 0.74 : lineas >= 6 ? 0.82 : lineas >= 4 ? 0.9 : 1; // versos: muchas líneas cortas
+  const tam = base * Math.min(porLargo, porLineas);
   const anchoTarjeta = width * (vertical ? 0.84 : 0.74);
   const bandera = banderaCodigo ? staticFile(`banderas/${banderaCodigo}.svg`) : null;
 
@@ -121,20 +133,22 @@ export const Mensaje: React.FC<Props> = ({texto, mar, pais, banderaCodigo, orige
             minHeight: tam * 1.55 * 2,
           }}
         >
-          {palabras.map((p, i) => {
+          {palabras.map(({p, salto}, i) => {
             const v = interpolate(visibles, [i, i + 1], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
             return (
-              <span
-                key={i}
-                style={{
-                  display: 'inline-block',
-                  opacity: v,
-                  transform: `translateY(${(1 - v) * 6}px)`,
-                  marginRight: '0.28em',
-                }}
-              >
-                {p}
-              </span>
+              <React.Fragment key={i}>
+                <span
+                  style={{
+                    display: 'inline-block',
+                    opacity: v,
+                    transform: `translateY(${(1 - v) * 6}px)`,
+                    marginRight: '0.28em',
+                  }}
+                >
+                  {p}
+                </span>
+                {salto ? <br /> : null}
+              </React.Fragment>
             );
           })}
         </div>

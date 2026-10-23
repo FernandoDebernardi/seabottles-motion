@@ -70,6 +70,17 @@ piezas/              un JSON por animación con sus props (texto, mar, momento�
 out/                 renders (ignorado por git)
 ```
 
+## Respuesta y clima (23/10/2026)
+
+- `respuesta`: un segundo papel con cómo podría responderle alguien. **El texto lo escribe Claude,
+  nunca es una respuesta real** (las respuestas son privadas entre dos personas; decisión de Fer).
+  El encabezado dice «Así podría responderle alguien desde <país>»: el país sí es real (el de quien
+  respondió de verdad, si hubo). Reglas del texto: 60–140 caracteres, como un desconocido que leyó
+  la botella: cálido, concreto, sin consejos, sin terapia, sin nombres, sin preguntas retóricas
+  vacías, español neutro, sin signos de exclamación.
+- `clima`: `despejado`, `lluvia` o `niebla`, según el clima real del lugar de la botella a la hora
+  de publicar (Open-Meteo, sin clave). Con lluvia el sol se apaga y aparecen nubes grises.
+
 ## Flujo para una pieza nueva de «La botella del día»
 
 Camino corto: `node generar.mjs piezas/<fecha>.json` (JSON con `texto`, `mar_clave` y, si se quiere,

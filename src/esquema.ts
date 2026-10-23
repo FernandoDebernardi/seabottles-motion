@@ -41,7 +41,7 @@ export const esquemaBotellaDelDia = z.object({
       bandera_codigo: z.string().optional(),
     })
     .optional()
-    .describe('Primera parte de la respuesta que recibió la botella, si se quiere mostrar'),
+    .describe('Respuesta ILUSTRATIVA escrita por Claude (nunca una real, que es privada); pais = el de quien respondió de verdad, si hubo'),
   clima: z.enum(['despejado', 'lluvia', 'niebla']).default('despejado'),
   momento: z.enum(['dia', 'amanecer', 'atardecer', 'noche']).optional(),
   cierre: z.string().default('seabottles.org'),

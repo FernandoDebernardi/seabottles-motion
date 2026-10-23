@@ -14,7 +14,8 @@ type Props = {
   hasta: number;
 };
 
-// Un segundo papel, más pequeño, que llega flotando: la respuesta de un desconocido.
+// Un segundo papel, más pequeño, que llega flotando: cómo podría responderle un desconocido
+// (el texto lo escribe Claude; nunca es una respuesta real, que es privada).
 // Arriba, el viaje: bandera de origen, una estela que se dibuja, bandera de destino.
 export const Respuesta: React.FC<Props> = ({texto, paisOrigen, banderaOrigen, paisRespuesta, banderaRespuesta, acento, desde, revelado, hasta}) => {
   const frame = useCurrentFrame();
@@ -106,7 +107,7 @@ export const Respuesta: React.FC<Props> = ({texto, paisOrigen, banderaOrigen, pa
             marginBottom: width * 0.022,
           }}
         >
-          {paisRespuesta ? `Alguien respondió desde ${paisRespuesta}` : 'Alguien respondió'}
+          {paisRespuesta ? `Así podría responderle alguien desde ${paisRespuesta}` : 'Así podría responderle alguien'}
         </div>
         <div style={{fontFamily: fuente.carta, fontSize: tam, lineHeight: 1.55, color: color.tinta}}>
           {palabras.map((p, i) => {
@@ -120,7 +121,7 @@ export const Respuesta: React.FC<Props> = ({texto, paisOrigen, banderaOrigen, pa
         </div>
         {paisOrigen ? (
           <div style={{fontFamily: fuente.cuerpo, fontSize: vertical ? width * 0.022 : width * 0.018, color: color.tintaTenue, marginTop: width * 0.025}}>
-            La botella había salido de {paisOrigen}.
+            La botella salió de {paisOrigen}.
           </div>
         ) : null}
       </div>

@@ -104,6 +104,13 @@ Camino corto: `node generar.mjs piezas/<fecha>.json` (JSON con `texto`, `mar_cla
    «matte clay 3D render», colores de la paleta (`#4EA7BA`, `#f4ecd6`, `#9fbc3e`, `#eda50c`),
    «isolated on a pure white background», y después `remove_background`. Guardar el PNG en
    `public/capas/` con nombre en español.
+   **Nunca quitar el fondo por color con PIL** (regla de Fer, 23/10/2026): al barquito se le
+   fue el interior del casco y al pez la pupila, y se veía el agua a través del objeto. Si el
+   estilo trae una base o loseta, se pide de nuevo con todos los negativos («no tile, no base,
+   no platform, no shadow on the ground, no water, no scenery») hasta que salga suelto, y el
+   fondo lo quita `remove_background`, que entiende el objeto. Y antes de usarlo, mirarlo
+   sobre magenta (`Image.new('RGBA', im.size, (255,0,255,255)).alpha_composite(im)`): si se
+   ve magenta dentro del objeto, le falta una parte y no sirve.
 4. Crear `src/escenas/<Nombre>.tsx` y una composición nueva en `Root.tsx` con su esquema en
    `esquema.ts`. Mantener la estructura: entrada calma → contenido → cierre `seabottles.org`.
 5. Renderizar un still de prueba (`npx remotion still <Id> out/prueba.png --frame=<n>`) antes del

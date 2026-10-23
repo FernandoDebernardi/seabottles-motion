@@ -21,8 +21,8 @@ const FRASES = [
   'Hay alguien, en otro país, esperando leerte.',
 ];
 
-const VARIANTES_DIA: Variante[] = ['faro', 'gaviotas', 'barquito', 'peces'];
-const VARIANTES_NOCHE: Variante[] = ['noche', 'faro', 'peces'];
+const VARIANTES_DIA: Variante[] = ['faro', 'gaviotas', 'barquito', 'peces', 'ballena', 'delfines', 'tortuga', 'velero'];
+const VARIANTES_NOCHE: Variante[] = ['noche', 'faro', 'peces', 'medusas', 'ballena', 'velero'];
 
 // Resuelve todo lo que depende de la pieza (paleta, variante, tiempos) — lo usa también Root para la duración
 export const resolver = (p: PropsBotellaDelDia, fps: number) => {

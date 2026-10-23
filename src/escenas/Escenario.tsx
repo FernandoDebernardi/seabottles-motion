@@ -17,7 +17,7 @@ import {Botella, Deco} from './Botella';
 
 // Cada variante es una escena con sentido propio: lo que vuela va por el cielo,
 // lo que nada sale del agua, lo que flota va sobre las olas.
-export type Variante = 'faro' | 'gaviotas' | 'barquito' | 'peces' | 'noche';
+export type Variante = 'faro' | 'gaviotas' | 'barquito' | 'peces' | 'noche' | 'ballena' | 'delfines' | 'tortuga' | 'velero' | 'medusas';
 
 type Props = {
   paleta: Paleta;
@@ -141,6 +141,8 @@ export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, ban
       desfases: [a.numero(), a.numero(), a.numero(), a.numero()],
       nubes: Array.from({length: 3}, () => ({x: a.numero(), y: a.entre(0.08, 0.3), w: a.entre(0.18, 0.3), v: a.entre(0.006, 0.014)})),
       saltos: Array.from({length: 4}, (_, i) => ({t0: 2.5 + i * a.entre(3.2, 4.4), x: a.entre(0.08, 0.9), dir: a.numero() > 0.5 ? 1 : -1})),
+      delfines: Array.from({length: 3}, (_, i) => ({t0: 3 + i * a.entre(4, 5.5), x: a.entre(0.1, 0.8), dir: a.numero() > 0.5 ? 1 : -1})),
+      medusas: Array.from({length: 3}, (_, i) => ({x: 0.1 + i * 0.3 + a.entre(0, 0.12), y0: a.entre(0, 1), v: a.entre(0.008, 0.016), f: a.entre(0.7, 1.1)})),
     };
   }, [semilla]);
   const {lado} = az;
@@ -171,7 +173,7 @@ export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, ban
   const [c0, c1, c2] = paleta.cielo;
   const lluvia = clima === 'lluvia';
   const nubeTono = paleta.noche ? '#AEB8D6' : lluvia ? '#C9CDD2' : '#F4ECD6';
-  const hayNubes = lluvia || (!paleta.noche && (variante === 'gaviotas' || variante === 'barquito' || variante === 'peces'));
+  const hayNubes = lluvia || (!paleta.noche && ['gaviotas', 'barquito', 'peces', 'tortuga', 'velero', 'delfines'].includes(variante));
 
   return (
     <AbsoluteFill
@@ -300,6 +302,45 @@ export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, ban
           })()
         : null}
 
+      {/* ballena que asoma detrás de la ola de fondo, resopla y vuelve a hundirse */}
+      {variante === 'ballena'
+        ? (() => {
+            const wB = width * 0.34;
+            const hB = wB * (440 / 485);
+            const ciclo = 10;
+            const u = ((t + 1.5) % ciclo) / ciclo; // 0..1
+            const asoma = interpolate(u, [0, 0.16, 0.6, 0.78, 1], [0, 1, 1, 0, 0], {easing: Easing.bezier(...bezierCalmo)});
+            const linea = baseOlas + bobFondo + altoOla * 0.1; // corte escondido dentro de la ola de fondo (la ballena va detrás)
+            const cresta = baseOlas + bobFondo - altoOla * 0.04;
+            const xB = lado > 0 ? width * 0.58 : width * 0.06;
+            const topB = interpolate(asoma, [0, 1], [linea, cresta - hB * 0.55]) + Math.sin(t * 0.9) * 4;
+            const resoplo = interpolate(u, [0.2, 0.3, 0.42], [0, 1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+            return (
+              <div style={{position: 'absolute', left: 0, top: 0, width, height: linea, overflow: 'hidden', opacity: entrada}}>
+                <Img
+                  src={el('ballena')}
+                  style={{position: 'absolute', width: wB, left: xB, top: topB, transform: lado > 0 ? 'scaleX(-1)' : undefined, filter: `drop-shadow(0 ${width * 0.01}px ${width * 0.02}px rgba(15,35,28,0.25))`}}
+                />
+                {[0, 1, 2].map((k) => (
+                  <div
+                    key={k}
+                    style={{
+                      position: 'absolute',
+                      left: xB + (lado > 0 ? wB * 0.72 : wB * 0.22) + (k - 1) * wB * 0.05,
+                      top: topB + hB * 0.28 - resoplo * hB * (0.25 + k * 0.08),
+                      width: wB * (0.05 + k * 0.012),
+                      height: wB * (0.05 + k * 0.012),
+                      borderRadius: '50%',
+                      background: 'rgba(255,255,255,0.8)',
+                      opacity: resoplo * 0.9,
+                    }}
+                  />
+                ))}
+              </div>
+            );
+          })()
+        : null}
+
       {/* ola de fondo */}
       <Img
         src={staticFile('capas/olas.png')}
@@ -329,6 +370,109 @@ export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, ban
           }}
         />
       ) : null}
+
+
+      {/* delfines: saltos más largos y más altos que los peces */}
+      {variante === 'delfines'
+        ? az.delfines.map((s, i) => {
+            const p = (t - s.t0) / 1.8;
+            if (p < 0 || p > 1) return null;
+            const arco = Math.sin(p * Math.PI);
+            const x = s.x * width + s.dir * p * width * 0.2;
+            const y = baseOlas + altoOla * 0.02 - arco * height * 0.14;
+            const ang = s.dir * (-60 + p * 120);
+            const ondas = interpolate(p, [0.8, 1], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+            return (
+              <React.Fragment key={i}>
+                <Img
+                  src={el('delfin')}
+                  style={{
+                    position: 'absolute',
+                    width: width * 0.17,
+                    left: x,
+                    top: y,
+                    transform: `rotate(${ang}deg) ${s.dir > 0 ? 'scaleX(-1)' : ''}`,
+                    opacity: interpolate(p, [0, 0.1, 0.9, 1], [0, 1, 1, 0]),
+                  }}
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: x + s.dir * width * 0.03,
+                    top: baseOlas + altoOla * 0.05,
+                    width: width * 0.16 * (0.5 + ondas),
+                    height: width * 0.04,
+                    borderRadius: '50%',
+                    border: '3px solid rgba(255,255,255,0.75)',
+                    opacity: ondas > 0 ? 1 - ondas : 0,
+                  }}
+                />
+              </React.Fragment>
+            );
+          })
+        : null}
+
+      {/* tortuga que cruza despacio sobre la ola de fondo */}
+      {variante === 'tortuga' ? (
+        <Img
+          src={el('tortuga')}
+          style={{
+            position: 'absolute',
+            width: width * 0.17,
+            left: (lado > 0 ? width * 0.82 : width * 0.02) - lado * t * width * 0.006,
+            top: baseOlas + bobFondo - altoOla * 0.1 - width * 0.03 + Math.sin(t * 0.9 + 0.8) * 6,
+            transform: `rotate(${Math.sin(t * 0.9 + 0.3) * 3}deg) ${lado > 0 ? '' : 'scaleX(-1)'}`,
+            opacity: entrada,
+            filter: `drop-shadow(0 ${width * 0.008}px ${width * 0.016}px rgba(15,35,28,0.25))`,
+          }}
+        />
+      ) : null}
+
+      {/* velero que navega por el fondo */}
+      {variante === 'velero' ? (
+        <Img
+          src={el('velero')}
+          style={{
+            position: 'absolute',
+            width: width * 0.2,
+            left: (lado > 0 ? width * 0.7 : width * 0.1) - lado * t * width * 0.004,
+            top: baseOlas + bobFondo - altoOla * 0.12 - width * 0.2 + Math.sin(t * 0.9 + 0.5) * 7,
+            transform: `rotate(${Math.sin(t * 0.9) * 4}deg) ${lado > 0 ? '' : 'scaleX(-1)'}`,
+            transformOrigin: '50% 90%',
+            opacity: entrada,
+            filter: `drop-shadow(0 ${width * 0.01}px ${width * 0.02}px rgba(15,35,28,0.25))`,
+          }}
+        />
+      ) : null}
+
+      {/* medusas de noche: suben despacio, con su propia luz, bajo el agua */}
+      {variante === 'medusas'
+        ? az.medusas.map((m, i) => {
+            const w = width * (0.1 + i * 0.02);
+            const desde = baseOlas + altoOla * 0.3;
+            const hasta = yHorizonte + height * 0.04;
+            const u = (m.y0 + t * m.v) % 1;
+            const y = desde - u * (desde - hasta);
+            const x = m.x * width + Math.sin(t * m.f + i) * width * 0.02;
+            const pulso = 1 + Math.sin(t * m.f * 2 + i) * 0.05;
+            return (
+              <Img
+                key={i}
+                src={el('medusa')}
+                style={{
+                  position: 'absolute',
+                  width: w,
+                  left: x,
+                  top: y,
+                  transform: `scale(${pulso}) rotate(${Math.sin(t * m.f + i) * 6}deg)`,
+                  transformOrigin: '50% 20%',
+                  opacity: entrada * interpolate(u, [0, 0.1, 0.85, 1], [0, 0.8, 0.8, 0]),
+                  filter: `drop-shadow(0 0 ${w * 0.25}px rgba(225,170,235,0.7))`,
+                }}
+              />
+            );
+          })
+        : null}
 
       {/* peces que saltan entre las olas */}
       {variante === 'peces'

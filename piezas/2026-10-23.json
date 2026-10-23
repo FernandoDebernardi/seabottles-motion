@@ -1,5 +1,15 @@
 {
   "texto": "Buenas buenas, es mi primera botella, así que no sé muy bien qué poner... El día está súper horrible, llovió y hace frío, pero por lo menos pude venir a visitar a mis padres, algo bueno del día tenía que sacar jaja",
   "mar_clave": "actualidad",
-  "origen": "Lanzada desde Uruguay"
+  "pais": "Uruguay",
+  "bandera": "🇺🇾",
+  "deco": {"mata": true, "tapa": "corcho", "paper": "crema", "sello": "none", "tinta": "grafito", "cordel": "none", "etiqueta": "none"},
+  "origen": "Lanzada desde Uruguay",
+  "clima": "despejado",
+  "respuesta": {
+    "texto": "Primera botella y ya le encontraste lo bueno a un día horrible. De este lado también llovió, y también valió la pena.",
+    "pais": "Argentina",
+    "bandera_codigo": "ar"
+  },
+  "semilla": "2026-10-23:jjzfwjsgmf4h"
 }

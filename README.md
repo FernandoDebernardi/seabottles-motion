@@ -55,7 +55,7 @@ los sueños, de noche. Renderizá 9:16 y 1:1».
   `public/deco/`: las etiquetas, cordeles y sellos de la app, que se colocan sobre la botella según
   el campo `deco` de cada botella. `public/capas/olas.png`: olas generadas en Recraft.
 - `public/elementos/`: faro (con isla de arena), gaviota, barquito, pez y las lunas de la app.
-- `public/audio/mar.m4a`: rumor de mar sintetizado (40 s, en bucle). La música va por Instagram.
+- `public/audio/musica.m4a`: música ambiente sutil sintetizada (48 s, en bucle). En Instagram se reemplaza por una canción de la biblioteca de Instagram al programar.
 - `public/fuentes/`: Bricolage Grotesque y Hanken Grotesk, copiadas del Seabottles Design System.
 - Paleta y gradientes del mar: `src/tema.ts` (copiados del design system).
 

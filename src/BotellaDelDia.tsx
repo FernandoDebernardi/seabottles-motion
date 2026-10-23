@@ -54,7 +54,7 @@ export const BotellaDelDia: React.FC<PropsBotellaDelDia> = (p) => {
 
   return (
     <AbsoluteFill>
-      {p.musica ? <Audio src={staticFile('audio/mar.m4a')} loop volume={0.55} /> : null}
+      {p.musica ? <Audio src={staticFile('audio/musica.m4a')} loop volume={0.6} /> : null}
       <Escenario
         paleta={paleta}
         variante={variante}

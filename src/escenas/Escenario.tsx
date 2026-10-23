@@ -220,8 +220,8 @@ export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, ban
             ? 'linear-gradient(180deg, rgba(244,236,214,0.35), rgba(244,236,214,0))'
             : 'linear-gradient(180deg, rgba(255,230,160,0.45), rgba(255,230,160,0))',
           clipPath: 'polygon(40% 0, 60% 0, 100% 100%, 0 100%)',
-          filter: 'blur(14px)',
-          opacity: entrada * 0.5,
+          filter: 'blur(22px)',
+          opacity: entrada * 0.28,
         }}
       />
 
@@ -250,36 +250,62 @@ export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, ban
           })
         : null}
 
-      {/* faro sobre su isla, apoyado en el horizonte, con el haz girando */}
-      {variante === 'faro' ? (
-        <>
-          <Img
-            src={el('faro')}
-            style={{
-              position: 'absolute',
-              width: width * 0.3,
-              left: lado > 0 ? width * 0.04 : width * 0.66,
-              top: yHorizonte + height * 0.015 - width * 0.3 * (683 / 512) + interpolate(entrada, [0, 1], [60, 0]),
-              opacity: entrada,
-              filter: `drop-shadow(0 ${width * 0.015}px ${width * 0.03}px rgba(15,35,28,0.25))`,
-            }}
-          />
-          <div
-            style={{
-              position: 'absolute',
-              left: (lado > 0 ? width * 0.04 : width * 0.66) + width * 0.15,
-              top: yHorizonte + height * 0.015 - width * 0.3 * (683 / 512) + width * 0.035,
-              width: width * 0.8,
-              height: width * 0.06,
-              transformOrigin: '0 50%',
-              transform: `rotate(${(lado > 0 ? -6 : 186) + Math.sin(t * 0.6) * 12}deg)`,
-              background: 'linear-gradient(90deg, rgba(255,230,150,0.5), rgba(255,230,150,0))',
-              opacity: entrada * (paleta.noche ? 0.9 : 0.4),
-              borderRadius: 999,
-            }}
-          />
-        </>
-      ) : null}
+      {/* faro sobre su isla, hundida en el agua, con el haz girando */}
+      {variante === 'faro'
+        ? (() => {
+            const wF = width * 0.3;
+            const hF = wF * (683 / 512);
+            const xF = lado > 0 ? width * 0.04 : width * 0.66;
+            const topF = yHorizonte + height * 0.075 - hF + interpolate(entrada, [0, 1], [60, 0]);
+            return (
+              <>
+                <Img
+                  src={el('faro')}
+                  style={{position: 'absolute', width: wF, left: xF, top: topF, opacity: entrada, filter: `drop-shadow(0 ${width * 0.015}px ${width * 0.03}px rgba(15,35,28,0.25))`}}
+                />
+                {/* agua que rodea la isla */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: xF - wF * 0.08,
+                    top: topF + hF * 0.86,
+                    width: wF * 1.16,
+                    height: hF * 0.16,
+                    background: `linear-gradient(180deg, ${paleta.agua[0]}00 0%, ${paleta.agua[0]}ee 45%, ${paleta.agua[0]} 100%)`,
+                    opacity: entrada,
+                  }}
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: xF - wF * 0.05,
+                    top: topF + hF * 0.86 + Math.sin(t * 1.3) * 3,
+                    width: wF * 1.1,
+                    height: hF * 0.04,
+                    borderRadius: '50%',
+                    background: 'rgba(255,255,255,0.35)',
+                    filter: 'blur(3px)',
+                    opacity: entrada,
+                  }}
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: xF + wF * 0.5,
+                    top: topF + wF * 0.035,
+                    width: width * 0.8,
+                    height: width * 0.06,
+                    transformOrigin: '0 50%',
+                    transform: `rotate(${(lado > 0 ? -6 : 186) + Math.sin(t * 0.6) * 12}deg)`,
+                    background: 'linear-gradient(90deg, rgba(255,230,150,0.5), rgba(255,230,150,0))',
+                    opacity: entrada * (paleta.noche ? 0.9 : 0.4),
+                    borderRadius: 999,
+                  }}
+                />
+              </>
+            );
+          })()
+        : null}
 
       {/* ola de fondo */}
       <Img
@@ -330,7 +356,7 @@ export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, ban
                     width: width * 0.11,
                     left: x,
                     top: y,
-                    transform: `rotate(${ang}deg) ${s.dir < 0 ? 'scaleX(-1)' : ''}`,
+                    transform: `rotate(${ang}deg) ${s.dir > 0 ? 'scaleX(-1)' : ''}`,
                     opacity: interpolate(p, [0, 0.12, 0.88, 1], [0, 1, 1, 0]),
                   }}
                 />

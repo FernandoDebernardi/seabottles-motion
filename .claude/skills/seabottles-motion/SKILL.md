@@ -36,9 +36,12 @@ estáticas.
   viste con la decoración real que eligió la persona (campo `deco` de la base: etiqueta, cordel,
   sello; `sello: "pais"` muestra la bandera). Las piezas están en `public/deco/` y se colocan en las
   mismas posiciones que usa la app (`src/escenas/Botella.tsx`). Sin gotas ni salpicaduras pegadas.
-- **Música**: el MP4 lleva un rumor de mar suave (`public/audio/mar.m4a`, sintetizado) y la música
-  se agrega al programar en Metricool con `audioConfiguration` (biblioteca de música de Instagram
-  para cuentas de empresa; la canción se elige por id numérico).
+- **Música**: nada de ruido de fondo (regla de Fer, 23/10/2026): el MP4 lleva una música ambiente
+  sutil (`public/audio/musica.m4a`, sintetizada, en bucle) y en Instagram se reemplaza al programar
+  con `audioConfiguration` (biblioteca de música de Instagram para cuentas de empresa; la canción se
+  elige por id numérico, con `videoVolume: 0` para que no se mezclen).
+- **Formato**: 1080×1920, 30 fps, H.264 + AAC. Es la medida de Reels; el texto va centrado para que
+  sobreviva al recorte 4:5 del feed.
 - Duración por defecto 12 s a 30 fps. Formatos: 1080×1920 (`BotellaDelDia`) y 1080×1080
   (`BotellaDelDiaCuadrado`). Ambos comparten las mismas escenas.
 

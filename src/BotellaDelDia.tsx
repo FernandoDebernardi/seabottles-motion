@@ -126,7 +126,7 @@ export const BotellaDelDia: React.FC<PropsBotellaDelDia> = (p) => {
                 style={{width: width * 0.05, height: width * 0.0375, borderRadius: width * 0.007, objectFit: 'cover', boxShadow: '0 1px 4px rgba(0,0,0,0.3)'}}
               />
             ) : null}
-            <span>desde {p.pais}</span>
+            <span>{p.etiqueta_desde} {p.pais}</span>
           </div>
         ) : null}
       </div>
@@ -150,6 +150,8 @@ export const BotellaDelDia: React.FC<PropsBotellaDelDia> = (p) => {
           banderaOrigen={p.bandera_codigo}
           paisRespuesta={p.respuesta.pais}
           banderaRespuesta={p.respuesta.bandera_codigo}
+          encabezado={p.respuesta.encabezado}
+          pie={p.respuesta.pie}
           acento={paleta.noche ? '#6d7a68' : paleta.acento}
           desde={T.respuestaIn}
           revelado={T.respuestaRevelado}

@@ -8,6 +8,8 @@ type Props = {
   banderaOrigen?: string;
   paisRespuesta?: string;
   banderaRespuesta?: string;
+  encabezado?: string;
+  pie?: string;
   acento: string;
   desde: number;
   revelado: number;
@@ -17,7 +19,7 @@ type Props = {
 // Un segundo papel, más pequeño, que llega flotando: cómo podría responderle un desconocido
 // (el texto lo escribe Claude; nunca es una respuesta real, que es privada).
 // Arriba, el viaje: bandera de origen, una estela que se dibuja, bandera de destino.
-export const Respuesta: React.FC<Props> = ({texto, paisOrigen, banderaOrigen, paisRespuesta, banderaRespuesta, acento, desde, revelado, hasta}) => {
+export const Respuesta: React.FC<Props> = ({texto, paisOrigen, banderaOrigen, paisRespuesta, banderaRespuesta, encabezado, pie, acento, desde, revelado, hasta}) => {
   const frame = useCurrentFrame();
   const {width, height, fps} = useVideoConfig();
   const vertical = height > width;
@@ -107,7 +109,7 @@ export const Respuesta: React.FC<Props> = ({texto, paisOrigen, banderaOrigen, pa
             marginBottom: width * 0.022,
           }}
         >
-          {paisRespuesta ? `Así podría responderle alguien desde ${paisRespuesta}` : 'Así podría responderle alguien'}
+          {encabezado || (paisRespuesta ? `Así podría responderle alguien desde ${paisRespuesta}` : 'Así podría responderle alguien')}
         </div>
         <div style={{fontFamily: fuente.carta, fontSize: tam, lineHeight: 1.55, color: color.tinta}}>
           {palabras.map((p, i) => {
@@ -119,9 +121,9 @@ export const Respuesta: React.FC<Props> = ({texto, paisOrigen, banderaOrigen, pa
             );
           })}
         </div>
-        {paisOrigen ? (
+        {pie || paisOrigen ? (
           <div style={{fontFamily: fuente.cuerpo, fontSize: vertical ? width * 0.022 : width * 0.018, color: color.tintaTenue, marginTop: width * 0.025}}>
-            La botella salió de {paisOrigen}.
+            {pie || `La botella salió de ${paisOrigen}.`}
           </div>
         ) : null}
       </div>

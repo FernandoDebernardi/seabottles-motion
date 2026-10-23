@@ -32,6 +32,18 @@ export const Root: React.FC = () => {
         width={1080}
         height={1920}
       />
+      {/* Postal 4:5 para el carrusel semanal (se usa como still) */}
+      <Composition
+        id="BotellaDelDiaPostal"
+        component={BotellaDelDia}
+        schema={esquemaBotellaDelDia}
+        defaultProps={porDefecto}
+        calculateMetadata={metadata}
+        durationInFrames={DURACION_SEG * FPS}
+        fps={FPS}
+        width={1080}
+        height={1350}
+      />
       {/* Feed — 1:1 */}
       <Composition
         id="BotellaDelDiaCuadrado"

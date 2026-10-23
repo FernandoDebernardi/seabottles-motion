@@ -16,10 +16,11 @@
     "@remotion/google-fonts": "4.0.538",
     "@remotion/noise": "4.0.538",
     "@remotion/transitions": "4.0.538",
+    "flag-icons": "^7.3.2",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "remotion": "4.0.538",
-    "zod": "3.22.3"
+    "zod": "^4.5.4"
   },
   "devDependencies": {
     "@types/react": "19.0.0",

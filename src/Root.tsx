@@ -1,14 +1,19 @@
 import React from 'react';
 import {Composition} from 'remotion';
-import {BotellaDelDia} from './BotellaDelDia';
-import {DURACION_SEG, esquemaBotellaDelDia, FPS} from './esquema';
+import {BotellaDelDia, resolver} from './BotellaDelDia';
+import {DURACION_SEG, esquemaBotellaDelDia, FPS, PropsBotellaDelDia} from './esquema';
 
 const porDefecto = esquemaBotellaDelDia.parse({
   texto:
     'Hoy aprendí que extrañar no siempre es tristeza. A veces es solo una forma de seguir queriendo.',
-  mar: 'Mar de los recuerdos',
-  origen: 'Lanzada desde algún lugar del mundo',
-  momento: 'atardecer',
+  mar_clave: 'recuerdos',
+  pais: 'Argentina',
+  bandera_codigo: 'ar',
+});
+
+// La duración depende del largo del texto: tiempo de lectura real, no un número fijo
+const metadata = ({props}: {props: PropsBotellaDelDia}) => ({
+  durationInFrames: resolver(props, FPS).T.total,
 });
 
 export const Root: React.FC = () => {
@@ -20,6 +25,7 @@ export const Root: React.FC = () => {
         component={BotellaDelDia}
         schema={esquemaBotellaDelDia}
         defaultProps={porDefecto}
+        calculateMetadata={metadata}
         durationInFrames={DURACION_SEG * FPS}
         fps={FPS}
         width={1080}
@@ -31,6 +37,7 @@ export const Root: React.FC = () => {
         component={BotellaDelDia}
         schema={esquemaBotellaDelDia}
         defaultProps={porDefecto}
+        calculateMetadata={metadata}
         durationInFrames={DURACION_SEG * FPS}
         fps={FPS}
         width={1080}

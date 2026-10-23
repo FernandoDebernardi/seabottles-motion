@@ -18,20 +18,18 @@ if (!pieza.texto || !pieza.texto.trim()) {
   process.exit(1);
 }
 
-// Mar → nombre visible y momento del día (si la pieza no lo fija)
-const MARES = {
-  pensamientos: {nombre: 'Mar de los pensamientos', momento: 'dia'},
-  vida: {nombre: 'Mar de la vida', momento: 'dia'},
-  amor: {nombre: 'Mar del amor', momento: 'amanecer'},
-  actualidad: {nombre: 'Mar de la actualidad', momento: 'dia'},
-  suenos: {nombre: 'Mar de los sueños', momento: 'noche'},
-  sueños: {nombre: 'Mar de los sueños', momento: 'noche'},
-  recuerdos: {nombre: 'Mar de los recuerdos', momento: 'atardecer'},
-  secretos: {nombre: 'Mar de los secretos', momento: 'noche'},
+// Bandera: del emoji (🇦🇷) o del campo bandera_codigo se saca el código ISO en minúscula
+const codigoDesdeEmoji = (emoji = '') => {
+  const cps = [...emoji].map((c) => c.codePointAt(0)).filter((cp) => cp >= 0x1f1e6 && cp <= 0x1f1ff);
+  if (cps.length < 2) return undefined;
+  return String.fromCharCode(cps[0] - 0x1f1e6 + 97, cps[1] - 0x1f1e6 + 97);
 };
-const clave = (pieza.mar_clave || '').toLowerCase();
-if (!pieza.mar && MARES[clave]) pieza.mar = MARES[clave].nombre;
-if (!pieza.momento) pieza.momento = MARES[clave]?.momento || 'atardecer';
+if (!pieza.bandera_codigo && pieza.bandera) pieza.bandera_codigo = codigoDesdeEmoji(pieza.bandera);
+if (pieza.bandera_codigo && !existsSync(`public/banderas/${pieza.bandera_codigo}.svg`)) {
+  console.warn(`No hay bandera para "${pieza.bandera_codigo}"; sigue sin bandera.`);
+  delete pieza.bandera_codigo;
+}
+if (!pieza.semilla) pieza.semilla = `${basename(entrada)}:${pieza.texto.slice(0, 40)}`;
 
 const salida = process.argv[3] || `out/${basename(entrada).replace(/\.json$/, '')}.mp4`;
 mkdirSync('out', {recursive: true});

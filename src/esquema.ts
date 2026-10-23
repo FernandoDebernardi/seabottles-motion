@@ -34,6 +34,15 @@ export const esquemaBotellaDelDia = z.object({
     .string()
     .optional()
     .describe('Ruta en public/ de la música de esta pieza (la genera musica.mjs); si falta, audio/musica.m4a'),
+  respuesta: z
+    .object({
+      texto: z.string(),
+      pais: z.string().optional(),
+      bandera_codigo: z.string().optional(),
+    })
+    .optional()
+    .describe('Primera parte de la respuesta que recibió la botella, si se quiere mostrar'),
+  clima: z.enum(['despejado', 'lluvia', 'niebla']).default('despejado'),
   momento: z.enum(['dia', 'amanecer', 'atardecer', 'noche']).optional(),
   cierre: z.string().default('seabottles.org'),
   frase_cierre: z

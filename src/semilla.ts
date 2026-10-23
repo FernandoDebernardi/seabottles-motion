@@ -31,20 +31,30 @@ export const crearAzar = (semilla: string) => {
 
 // Tiempos de lectura (segundos): ~11 caracteres por segundo es cómodo en redes,
 // más un margen para encontrar la tarjeta y volver a leer la última frase.
-export const tiempos = (texto: string, fps: number) => {
+export const tiempos = (texto: string, fps: number, respuesta?: string) => {
   const chars = texto.replace(/\s+/g, ' ').trim().length;
   const apertura = 2.4;
   const revelado = Math.min(6, Math.max(1.6, chars / 28)); // el texto aparece por palabras
   const lectura = Math.max(3.5, chars / 11 + 1.2); // tiempo quieto para leer
+  const rChars = respuesta ? respuesta.replace(/\s+/g, ' ').trim().length : 0;
+  const rRevelado = rChars ? Math.min(4, Math.max(1.2, rChars / 28)) : 0;
+  const rLectura = rChars ? Math.max(2.5, rChars / 11 + 1.0) + 1.2 : 0; // + el viaje que se dibuja
   const cierre = 3.4;
-  const total = apertura + revelado + lectura + 0.6 + cierre;
   const s = (x: number) => Math.round(x * fps);
+  const tarjetaOut = apertura + revelado + lectura;
+  const respuestaIn = tarjetaOut + 0.5;
+  const respuestaOut = rChars ? respuestaIn + rRevelado + rLectura : tarjetaOut;
+  const cierreIn = respuestaOut + 0.6;
+  const total = cierreIn + cierre;
   return {
     apertura: s(apertura),
     tarjetaIn: s(apertura),
     revelado: s(revelado),
-    tarjetaOut: s(apertura + revelado + lectura),
-    cierreIn: s(apertura + revelado + lectura + 0.6),
+    tarjetaOut: s(tarjetaOut),
+    respuestaIn: s(respuestaIn),
+    respuestaRevelado: s(rRevelado),
+    respuestaOut: s(respuestaOut),
+    cierreIn: s(cierreIn),
     total: s(total),
     segundos: total,
   };

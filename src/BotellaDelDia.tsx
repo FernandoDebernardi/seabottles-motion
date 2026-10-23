@@ -3,6 +3,8 @@ import {AbsoluteFill, Audio, Easing, Img, interpolate, spring, staticFile, useCu
 import {Escenario, Variante} from './escenas/Escenario';
 import {Mensaje} from './escenas/Mensaje';
 import {Cierre} from './escenas/Cierre';
+import {Respuesta} from './escenas/Respuesta';
+import {Clima} from './escenas/Clima';
 import {PropsBotellaDelDia} from './esquema';
 import {asegurarFuentes} from './fuentes';
 import {normalizarMar, PALETAS} from './paletas';
@@ -30,7 +32,7 @@ export const resolver = (p: PropsBotellaDelDia, fps: number) => {
   const az = crearAzar(semilla + ':variante');
   const variante: Variante =
     p.variante && p.variante !== 'auto' ? p.variante : az.elegir(paleta.noche ? VARIANTES_NOCHE : VARIANTES_DIA);
-  const T = tiempos(p.texto, fps);
+  const T = tiempos(p.texto, fps, p.respuesta?.texto);
   const frase = p.frase_cierre || crearAzar(semilla + ':frase').elegir(FRASES);
   return {paleta, variante, semilla, T, mar: p.mar || paleta.nombre, frase};
 };
@@ -74,7 +76,9 @@ export const BotellaDelDia: React.FC<PropsBotellaDelDia> = (p) => {
         banderaCodigo={p.bandera_codigo}
         haciaAbajo={haciaAbajo}
         cierreIn={T.cierreIn}
+        clima={p.clima}
       />
+      <Clima tipo={p.clima} semilla={semilla} noche={paleta.noche} />
 
       {/* título superior */}
       <div
@@ -138,6 +142,20 @@ export const BotellaDelDia: React.FC<PropsBotellaDelDia> = (p) => {
         revelado={T.revelado}
         hasta={T.tarjetaOut}
       />
+
+      {p.respuesta ? (
+        <Respuesta
+          texto={p.respuesta.texto}
+          paisOrigen={p.pais}
+          banderaOrigen={p.bandera_codigo}
+          paisRespuesta={p.respuesta.pais}
+          banderaRespuesta={p.respuesta.bandera_codigo}
+          acento={paleta.noche ? '#6d7a68' : paleta.acento}
+          desde={T.respuestaIn}
+          revelado={T.respuestaRevelado}
+          hasta={T.respuestaOut}
+        />
+      ) : null}
 
       <Cierre frase={frase} cierre={p.cierre} desde={T.cierreIn} oscuro={paleta.noche} acento={paleta.acento} />
     </AbsoluteFill>

@@ -27,6 +27,7 @@ type Props = {
   banderaCodigo?: string;
   haciaAbajo: number; // 0 = botella grande y centrada; 1 = abajo, dejando lugar a la tarjeta
   cierreIn: number;
+  clima?: 'despejado' | 'lluvia' | 'niebla';
 };
 
 const el = (n: string) => staticFile(`elementos/${n}.png`);
@@ -127,7 +128,7 @@ const Nube: React.FC<{x: number; y: number; w: number; alpha: number; tono: stri
 
 // ---------- escena ----------
 
-export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, banderaCodigo, haciaAbajo, cierreIn}) => {
+export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, banderaCodigo, haciaAbajo, cierreIn, clima = 'despejado'}) => {
   const frame = useCurrentFrame();
   const {width, height, fps} = useVideoConfig();
   const vertical = height > width;
@@ -168,8 +169,9 @@ export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, ban
   const entradaBotellaY = interpolate(entrada, [0, 1], [height * 0.25, 0]);
 
   const [c0, c1, c2] = paleta.cielo;
-  const nubeTono = paleta.noche ? '#AEB8D6' : '#F4ECD6';
-  const hayNubes = !paleta.noche && (variante === 'gaviotas' || variante === 'barquito' || variante === 'peces');
+  const lluvia = clima === 'lluvia';
+  const nubeTono = paleta.noche ? '#AEB8D6' : lluvia ? '#C9CDD2' : '#F4ECD6';
+  const hayNubes = lluvia || (!paleta.noche && (variante === 'gaviotas' || variante === 'barquito' || variante === 'peces'));
 
   return (
     <AbsoluteFill
@@ -205,7 +207,7 @@ export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, ban
           }}
         />
       ) : (
-        <Sol x={lado > 0 ? width * 0.8 : width * 0.2} y={interpolate(entrada, [0, 1], [height * 0.24, height * 0.17])} r={width * 0.075} alpha={entrada} />
+        <Sol x={lado > 0 ? width * 0.8 : width * 0.2} y={interpolate(entrada, [0, 1], [height * 0.24, height * 0.17])} r={width * 0.075} alpha={entrada * (lluvia ? 0.3 : 1)} />
       )}
 
       {/* camino de luz del astro sobre el agua */}

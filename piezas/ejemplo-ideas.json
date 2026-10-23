@@ -1,0 +1,11 @@
+{
+  "texto": "Hoy aprendí que extrañar no siempre es tristeza. A veces es solo una forma de seguir queriendo.",
+  "mar_clave": "recuerdos",
+  "pais": "Argentina",
+  "bandera": "🇦🇷",
+  "deco": {"etiqueta": "faro", "cordel": "yute", "sello": "concha"},
+  "respuesta": {"texto": "Leí tu botella en un tren, de vuelta a casa. Yo también extraño así. Gracias por decirlo.", "pais": "México", "bandera_codigo": "mx"},
+  "clima": "lluvia",
+  "variante": "faro",
+  "semilla": "ideas-2026-10-23"
+}

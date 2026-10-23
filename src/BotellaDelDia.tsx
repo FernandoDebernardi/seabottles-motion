@@ -9,6 +9,16 @@ import {normalizarMar, PALETAS} from './paletas';
 import {crearAzar, tiempos} from './semilla';
 import {bezierCalmo, fuente} from './tema';
 
+// Frases del cierre: rotan por semilla para que no todas las publicaciones terminen igual
+const FRASES = [
+  '¿Y si no supieras a quién le escribes?',
+  'Lo que no le dices a nadie, díselo al mar.',
+  'Una botella siempre llega a alguien.',
+  'Escribe sin nombre. Alguien, lejos, lo leerá.',
+  '¿Qué dirías si nadie supiera que fuiste tú?',
+  'Hay alguien, en otro país, esperando leerte.',
+];
+
 const VARIANTES_DIA: Variante[] = ['faro', 'gaviotas', 'barquito', 'peces'];
 const VARIANTES_NOCHE: Variante[] = ['noche', 'faro', 'peces'];
 
@@ -21,7 +31,8 @@ export const resolver = (p: PropsBotellaDelDia, fps: number) => {
   const variante: Variante =
     p.variante && p.variante !== 'auto' ? p.variante : az.elegir(paleta.noche ? VARIANTES_NOCHE : VARIANTES_DIA);
   const T = tiempos(p.texto, fps);
-  return {paleta, variante, semilla, T, mar: p.mar || paleta.nombre};
+  const frase = p.frase_cierre || crearAzar(semilla + ':frase').elegir(FRASES);
+  return {paleta, variante, semilla, T, mar: p.mar || paleta.nombre, frase};
 };
 
 export const BotellaDelDia: React.FC<PropsBotellaDelDia> = (p) => {
@@ -29,7 +40,7 @@ export const BotellaDelDia: React.FC<PropsBotellaDelDia> = (p) => {
   const frame = useCurrentFrame();
   const {fps, width, height} = useVideoConfig();
   const vertical = height > width;
-  const {paleta, variante, semilla, T, mar} = React.useMemo(() => resolver(p, fps), [p, fps]);
+  const {paleta, variante, semilla, T, mar, frase} = React.useMemo(() => resolver(p, fps), [p, fps]);
 
   const haciaAbajo = interpolate(
     frame,
@@ -54,7 +65,7 @@ export const BotellaDelDia: React.FC<PropsBotellaDelDia> = (p) => {
 
   return (
     <AbsoluteFill>
-      {p.musica ? <Audio src={staticFile('audio/musica.m4a')} loop volume={0.6} /> : null}
+      {p.musica ? <Audio src={staticFile(p.musica_archivo || 'audio/musica.m4a')} loop volume={0.6} /> : null}
       <Escenario
         paleta={paleta}
         variante={variante}
@@ -128,7 +139,7 @@ export const BotellaDelDia: React.FC<PropsBotellaDelDia> = (p) => {
         hasta={T.tarjetaOut}
       />
 
-      <Cierre cierre={p.cierre} subcierre={p.subcierre} desde={T.cierreIn} oscuro={paleta.noche} acento={paleta.acento} />
+      <Cierre frase={frase} cierre={p.cierre} desde={T.cierreIn} oscuro={paleta.noche} acento={paleta.acento} />
     </AbsoluteFill>
   );
 };

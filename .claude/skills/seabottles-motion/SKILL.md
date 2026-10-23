@@ -36,8 +36,9 @@ estáticas.
   viste con la decoración real que eligió la persona (campo `deco` de la base: etiqueta, cordel,
   sello; `sello: "pais"` muestra la bandera). Las piezas están en `public/deco/` y se colocan en las
   mismas posiciones que usa la app (`src/escenas/Botella.tsx`). Sin gotas ni salpicaduras pegadas.
-- **Música**: nada de ruido de fondo (regla de Fer, 23/10/2026): el MP4 lleva una música ambiente
-  sutil (`public/audio/musica.m4a`, sintetizada, en bucle) y en Instagram se reemplaza al programar
+- **Música**: nada de ruido de fondo y nunca la misma en dos videos (regla de Fer, 23/10/2026):
+  `musica.mjs` sintetiza para cada pieza una música ambiente sutil distinta a partir de la semilla
+  (`generar.mjs` lo llama solo) y en Instagram se reemplaza al programar
   con `audioConfiguration` (biblioteca de música de Instagram para cuentas de empresa; la canción se
   elige por id numérico, con `videoVolume: 0` para que no se mezclen).
 - **Formato**: 1080×1920, 30 fps, H.264 + AAC. Es la medida de Reels; el texto va centrado para que
@@ -58,7 +59,7 @@ src/
                      (faro con isla, gaviotas, barquito, peces que saltan, noche con estrella fugaz)
   escenas/Botella.tsx la botella de la app vestida con etiqueta, cordel y sello
   escenas/Mensaje.tsx tarjeta de papel con el texto escribiéndose letra a letra
-  escenas/Cierre.tsx seabottles.org "respirando"
+  escenas/Cierre.tsx frase de la casa (rota por semilla, lista FRASES en BotellaDelDia.tsx) + botella + seabottles.org
   BotellaDelDia.tsx  línea de tiempo: junta las escenas (T = tiempos en segundos)
   Root.tsx           composiciones registradas (9:16 y 1:1)
 public/

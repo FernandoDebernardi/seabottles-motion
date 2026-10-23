@@ -250,41 +250,32 @@ export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, ban
           })
         : null}
 
-      {/* faro sobre su isla, hundida en el agua, con el haz girando */}
+      {/* faro sobre su isla: la isla se corta en la línea del agua, con una espuma suave alrededor */}
       {variante === 'faro'
         ? (() => {
             const wF = width * 0.3;
             const hF = wF * (683 / 512);
             const xF = lado > 0 ? width * 0.04 : width * 0.66;
-            const topF = yHorizonte + height * 0.075 - hF + interpolate(entrada, [0, 1], [60, 0]);
+            const corte = 0.9; // parte de la imagen que queda sobre el agua
+            const topF = yHorizonte + height * 0.03 - hF * corte + interpolate(entrada, [0, 1], [60, 0]);
             return (
               <>
-                <Img
-                  src={el('faro')}
-                  style={{position: 'absolute', width: wF, left: xF, top: topF, opacity: entrada, filter: `drop-shadow(0 ${width * 0.015}px ${width * 0.03}px rgba(15,35,28,0.25))`}}
-                />
-                {/* agua que rodea la isla */}
+                <div style={{position: 'absolute', left: xF, top: topF, width: wF, height: hF * corte, overflow: 'hidden', opacity: entrada}}>
+                  <Img
+                    src={el('faro')}
+                    style={{position: 'absolute', left: 0, top: 0, width: wF, height: hF, filter: `drop-shadow(0 ${width * 0.012}px ${width * 0.025}px rgba(15,35,28,0.25))`}}
+                  />
+                </div>
                 <div
                   style={{
                     position: 'absolute',
-                    left: xF - wF * 0.08,
-                    top: topF + hF * 0.86,
-                    width: wF * 1.16,
-                    height: hF * 0.16,
-                    background: `linear-gradient(180deg, ${paleta.agua[0]}00 0%, ${paleta.agua[0]}ee 45%, ${paleta.agua[0]} 100%)`,
-                    opacity: entrada,
-                  }}
-                />
-                <div
-                  style={{
-                    position: 'absolute',
-                    left: xF - wF * 0.05,
-                    top: topF + hF * 0.86 + Math.sin(t * 1.3) * 3,
-                    width: wF * 1.1,
+                    left: xF + wF * 0.02,
+                    top: topF + hF * corte - hF * 0.02 + Math.sin(t * 1.3) * 2,
+                    width: wF * 0.96,
                     height: hF * 0.04,
                     borderRadius: '50%',
-                    background: 'rgba(255,255,255,0.35)',
-                    filter: 'blur(3px)',
+                    background: 'rgba(255,255,255,0.4)',
+                    filter: 'blur(4px)',
                     opacity: entrada,
                   }}
                 />

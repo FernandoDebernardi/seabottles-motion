@@ -29,10 +29,17 @@ export const esquemaBotellaDelDia = z.object({
     })
     .optional()
     .describe('Decoración elegida por quien lanzó la botella (campo deco de la base)'),
-  musica: z.boolean().default(true).describe('Incluir el rumor del mar de fondo en el MP4'),
+  musica: z.boolean().default(true).describe('Incluir música ambiente en el MP4'),
+  musica_archivo: z
+    .string()
+    .optional()
+    .describe('Ruta en public/ de la música de esta pieza (la genera musica.mjs); si falta, audio/musica.m4a'),
   momento: z.enum(['dia', 'amanecer', 'atardecer', 'noche']).optional(),
   cierre: z.string().default('seabottles.org'),
-  subcierre: z.string().default('Escribe lo que sientes. Alguien, en otro país, lo leerá.'),
+  frase_cierre: z
+    .string()
+    .optional()
+    .describe('Frase del cierre; si falta, rota entre las de la casa según la semilla'),
 });
 
 export type PropsBotellaDelDia = z.infer<typeof esquemaBotellaDelDia>;

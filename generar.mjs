@@ -31,6 +31,13 @@ if (pieza.bandera_codigo && !existsSync(`public/banderas/${pieza.bandera_codigo}
 }
 if (!pieza.semilla) pieza.semilla = `${basename(entrada)}:${pieza.texto.slice(0, 40)}`;
 
+// Música propia de la pieza (distinta por semilla)
+import {execFileSync as ejecutar} from 'node:child_process';
+mkdirSync('public/audio', {recursive: true});
+const nombreMusica = `audio/generada-${basename(entrada).replace(/\.json$/, '')}.wav`;
+ejecutar('node', ['musica.mjs', pieza.semilla, `public/${nombreMusica}`, '60'], {stdio: 'inherit'});
+pieza.musica_archivo = nombreMusica;
+
 const salida = process.argv[3] || `out/${basename(entrada).replace(/\.json$/, '')}.mp4`;
 mkdirSync('out', {recursive: true});
 const props = resolve('out', `${basename(entrada).replace(/\.json$/, '')}.props.json`);

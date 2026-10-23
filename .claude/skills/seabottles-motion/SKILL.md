@@ -26,7 +26,19 @@ estáticas.
   de Reels/TikTok, a la derecha la columna de íconos). Nada de texto pegado a los bordes.
 - Todo elemento visual nuevo (objeto, personaje, escenario) se genera en Recraft con el estilo
   `c900ae71-8adc-4ef2-8b8c-e4608c140ead` (modelo `recraftv3`), **no se dibuja como SVG**. Los fondos,
-  gradientes, estrellas y tipografía sí van en código.
+  gradientes, sol, nubes, estrellas y tipografía sí van en código.
+- **Cada elemento tiene que tener sentido en la escena** (regla de Fer, 23/10/2026): lo que vuela va
+  por el cielo, lo que nada sale del agua, lo que flota va sobre las olas. Nada de íconos de la app,
+  sellos sueltos ni emblemas flotando en el aire. Los objetos que van en el agua se generan SIN base
+  (el mar ya es la base; si Recraft agrega una loseta celeste, se recorta por color con PIL, como en
+  `pez.png` y `barquito.png`). Solo el faro lleva isla, y la isla es color arena/roca, no celeste.
+- **La botella es la de la app** (`public/capas/botella-app.png`, el `deco-preview-s` en alta) y se
+  viste con la decoración real que eligió la persona (campo `deco` de la base: etiqueta, cordel,
+  sello; `sello: "pais"` muestra la bandera). Las piezas están en `public/deco/` y se colocan en las
+  mismas posiciones que usa la app (`src/escenas/Botella.tsx`). Sin gotas ni salpicaduras pegadas.
+- **Música**: el MP4 lleva un rumor de mar suave (`public/audio/mar.m4a`, sintetizado) y la música
+  se agrega al programar en Metricool con `audioConfiguration` (biblioteca de música de Instagram
+  para cuentas de empresa; la canción se elige por id numérico).
 - Duración por defecto 12 s a 30 fps. Formatos: 1080×1920 (`BotellaDelDia`) y 1080×1080
   (`BotellaDelDiaCuadrado`). Ambos comparten las mismas escenas.
 
@@ -37,7 +49,11 @@ src/
   tema.ts            paleta, gradientes del mar por momento del día, fuentes, easing
   esquema.ts         esquema zod de props (lo que cambia por pieza) + FPS y duración
   fuentes.ts         carga de las fuentes del design system desde public/fuentes
-  escenas/Mar.tsx    fondo (gradiente + sol/luna + estrellas) + olas en capas + botella flotando
+  paletas.ts         paleta, cielo y agua por mar; normalizarMar()
+  semilla.ts         azar determinista (crearAzar) y tiempos de lectura (tiempos)
+  escenas/Escenario.tsx fondo, astro, nubes, olas, botella y los elementos de cada variante
+                     (faro con isla, gaviotas, barquito, peces que saltan, noche con estrella fugaz)
+  escenas/Botella.tsx la botella de la app vestida con etiqueta, cordel y sello
   escenas/Mensaje.tsx tarjeta de papel con el texto escribiéndose letra a letra
   escenas/Cierre.tsx seabottles.org "respirando"
   BotellaDelDia.tsx  línea de tiempo: junta las escenas (T = tiempos en segundos)

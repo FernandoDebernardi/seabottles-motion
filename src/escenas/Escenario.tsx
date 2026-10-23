@@ -13,124 +13,136 @@ import {noise2D} from '@remotion/noise';
 import {Paleta} from '../paletas';
 import {crearAzar} from '../semilla';
 import {bezierCalmo} from '../tema';
+import {Botella, Deco} from './Botella';
 
-export type Variante = 'faro' | 'gaviotas' | 'barquito' | 'cartero' | 'luna';
+// Cada variante es una escena con sentido propio: lo que vuela va por el cielo,
+// lo que nada sale del agua, lo que flota va sobre las olas.
+export type Variante = 'faro' | 'gaviotas' | 'barquito' | 'peces' | 'noche';
 
 type Props = {
   paleta: Paleta;
   variante: Variante;
   semilla: string;
-  capas: {botella: string; olas: string};
-  /** 0 = botella grande y centrada; 1 = botella abajo para dejar lugar a la tarjeta */
-  haciaAbajo: number;
-  /** frame en que empieza el cierre (para despejar la escena) */
+  deco?: Deco;
+  banderaCodigo?: string;
+  haciaAbajo: number; // 0 = botella grande y centrada; 1 = abajo, dejando lugar a la tarjeta
   cierreIn: number;
 };
 
 const el = (n: string) => staticFile(`elementos/${n}.png`);
 
-// Sellos de cera flotando de fondo, como burbujas lentas
-const Sellos: React.FC<{paleta: Paleta; semilla: string; alpha: number}> = ({paleta, semilla, alpha}) => {
-  const frame = useCurrentFrame();
-  const {width, height, fps} = useVideoConfig();
-  const t = frame / fps;
-  const items = React.useMemo(() => {
-    const az = crearAzar(semilla + ':sellos');
-    const pool = az.mezclar(paleta.sellos);
-    return pool.slice(0, 4).map((nombre, i) => ({
-      nombre,
-      x: az.entre(0.06, 0.82),
-      y: az.entre(0.3, 0.62) + i * 0.02,
-      tam: az.entre(0.09, 0.14),
-      vel: az.entre(0.12, 0.25),
-      fase: az.entre(0, 6),
-      rot: az.entre(-12, 12),
-      op: az.entre(0.5, 0.85),
-    }));
-  }, [paleta, semilla]);
-  return (
-    <>
-      {items.map((s, i) => {
-        const dx = noise2D('sx' + i, t * s.vel, 0) * width * 0.03;
-        const dy = Math.sin(t * s.vel * 2 + s.fase) * height * 0.012;
-        return (
-          <Img
-            key={i}
-            src={el(s.nombre)}
-            style={{
-              position: 'absolute',
-              left: s.x * width + dx,
-              top: s.y * height + dy,
-              width: s.tam * width,
-              transform: `rotate(${s.rot + Math.sin(t * 0.5 + s.fase) * 4}deg)`,
-              opacity: s.op * alpha,
-              filter: `drop-shadow(0 ${width * 0.01}px ${width * 0.02}px rgba(15,35,28,0.18))`,
-            }}
-          />
-        );
-      })}
-    </>
-  );
-};
+// ---------- cielo ----------
 
-const Estrellas: React.FC<{cantidad: number; alpha: number; semilla: string}> = ({cantidad, alpha, semilla}) => {
+const Estrellas: React.FC<{alpha: number; semilla: string}> = ({alpha, semilla}) => {
   const frame = useCurrentFrame();
   const {width, height} = useVideoConfig();
   const puntos = React.useMemo(() => {
     const az = crearAzar(semilla + ':estrellas');
-    return Array.from({length: cantidad}, () => ({
+    return Array.from({length: 70}, () => ({
       x: az.numero() * width,
       y: az.numero() * height * 0.5,
-      r: 2 + az.numero() * 3,
+      r: 1.5 + az.numero() * 3,
       f: az.numero() * 60,
     }));
-  }, [cantidad, width, height, semilla]);
+  }, [width, height, semilla]);
   return (
     <svg width={width} height={height} style={{position: 'absolute', inset: 0}}>
       {puntos.map((p, i) => (
-        <circle
-          key={i}
-          cx={p.x}
-          cy={p.y}
-          r={p.r}
-          fill="#F4ECD6"
-          opacity={alpha * (0.5 + 0.5 * Math.sin((frame + p.f) / 18))}
-        />
+        <circle key={i} cx={p.x} cy={p.y} r={p.r} fill="#F4ECD6" opacity={alpha * (0.45 + 0.55 * Math.sin((frame + p.f) / 18))} />
       ))}
     </svg>
   );
 };
 
-// Sol de arcilla con rayos suaves (de día) — de noche se usa la luna de la biblioteca
-const Sol: React.FC<{x: number; y: number; r: number; color: string; alpha: number}> = ({x, y, r, color, alpha}) => {
+// Estrella fugaz: una por pieza, en un momento al azar de la lectura
+const Fugaz: React.FC<{semilla: string}> = ({semilla}) => {
   const frame = useCurrentFrame();
+  const {width, height, fps} = useVideoConfig();
+  const {inicio, x0, y0} = React.useMemo(() => {
+    const az = crearAzar(semilla + ':fugaz');
+    return {inicio: Math.round(fps * az.entre(4, 9)), x0: width * az.entre(0.3, 0.9), y0: height * az.entre(0.06, 0.2)};
+  }, [semilla, fps, width, height]);
+  const p = interpolate(frame, [inicio, inicio + fps * 0.9], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+  if (p <= 0 || p >= 1) return null;
+  const x = x0 - p * width * 0.35;
+  const y = y0 + p * height * 0.12;
   return (
     <div
       style={{
         position: 'absolute',
-        left: x - r,
-        top: y - r,
-        width: r * 2,
-        height: r * 2,
-        borderRadius: '50%',
-        background: color,
-        boxShadow: `0 0 ${r * 1.6}px ${color}66, 0 0 ${r * 4}px ${color}33, inset -${r * 0.18}px -${r * 0.14}px 0 rgba(0,0,0,0.06)`,
-        opacity: alpha,
-        transform: `scale(${1 + Math.sin(frame / 40) * 0.02})`,
+        left: x,
+        top: y,
+        width: width * 0.18,
+        height: 3,
+        transform: 'rotate(19deg)',
+        transformOrigin: '0 50%',
+        background: 'linear-gradient(90deg, rgba(244,236,214,1), rgba(244,236,214,0))',
+        opacity: Math.sin(p * Math.PI),
+        borderRadius: 3,
       }}
     />
   );
 };
 
-export const Escenario: React.FC<Props> = ({paleta, variante, semilla, capas, haciaAbajo, cierreIn}) => {
+const Sol: React.FC<{x: number; y: number; r: number; alpha: number}> = ({x, y, r, alpha}) => (
+  <div
+    style={{
+      position: 'absolute',
+      left: x - r,
+      top: y - r,
+      width: r * 2,
+      height: r * 2,
+      borderRadius: '50%',
+      background: 'radial-gradient(circle at 38% 34%, #FFF1B8, #FFD36A 60%, #F5B93C)',
+      boxShadow: `0 0 ${r * 1.5}px rgba(255,211,106,0.45), 0 0 ${r * 4}px rgba(255,211,106,0.25)`,
+      opacity: alpha,
+    }}
+  />
+);
+
+// Nube de arcilla dibujada con tres lóbulos redondos
+const Nube: React.FC<{x: number; y: number; w: number; alpha: number; tono: string}> = ({x, y, w, alpha, tono}) => {
+  const lob = (lx: number, ly: number, d: number) => (
+    <div
+      style={{
+        position: 'absolute',
+        left: lx,
+        top: ly,
+        width: d,
+        height: d,
+        borderRadius: '50%',
+        background: `radial-gradient(circle at 40% 32%, #FFFDF7, ${tono} 70%)`,
+      }}
+    />
+  );
+  return (
+    <div style={{position: 'absolute', left: x, top: y, width: w, height: w * 0.5, opacity: alpha, filter: `drop-shadow(0 ${w * 0.03}px ${w * 0.05}px rgba(15,35,28,0.14))`}}>
+      {lob(0, w * 0.18, w * 0.34)}
+      {lob(w * 0.22, 0, w * 0.46)}
+      {lob(w * 0.55, w * 0.14, w * 0.38)}
+      <div style={{position: 'absolute', left: w * 0.05, top: w * 0.3, width: w * 0.86, height: w * 0.2, borderRadius: w * 0.1, background: tono}} />
+    </div>
+  );
+};
+
+// ---------- escena ----------
+
+export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, banderaCodigo, haciaAbajo, cierreIn}) => {
   const frame = useCurrentFrame();
   const {width, height, fps} = useVideoConfig();
   const vertical = height > width;
   const t = frame / fps;
-  const {lado, desfases} = React.useMemo(() => {
-    const az = crearAzar(semilla + ':escena');
-    return {lado: az.numero() > 0.5 ? 1 : -1, desfases: [az.numero(), az.numero(), az.numero()]};
+
+  const az = React.useMemo(() => {
+    const a = crearAzar(semilla + ':escena');
+    return {
+      lado: a.numero() > 0.5 ? 1 : -1,
+      desfases: [a.numero(), a.numero(), a.numero(), a.numero()],
+      nubes: Array.from({length: 3}, () => ({x: a.numero(), y: a.entre(0.08, 0.3), w: a.entre(0.18, 0.3), v: a.entre(0.006, 0.014)})),
+      saltos: Array.from({length: 4}, (_, i) => ({t0: 2.5 + i * a.entre(3.2, 4.4), x: a.entre(0.08, 0.9), dir: a.numero() > 0.5 ? 1 : -1})),
+    };
   }, [semilla]);
+  const {lado} = az;
 
   const entrada = spring({frame, fps, config: {damping: 200, stiffness: 40, mass: 1.2}});
   const despeje = interpolate(frame, [cierreIn - fps * 0.4, cierreIn + fps * 0.6], [0, 1], {
@@ -139,206 +151,232 @@ export const Escenario: React.FC<Props> = ({paleta, variante, semilla, capas, ha
     easing: Easing.bezier(...bezierCalmo),
   });
 
-  // olas y botella
+  // horizonte y olas
+  const yHorizonte = height * (vertical ? 0.6 : 0.58);
   const anchoOla = width * 1.18;
   const altoOla = anchoOla / 2;
   const baseOlas = height - altoOla * (vertical ? 0.78 : 0.6);
-  const bobOlaFondo = Math.sin(t * 0.9) * 10;
-  const bobOlaFrente = Math.sin(t * 0.9 + 1.4) * 14;
+  const bobFondo = Math.sin(t * 0.9) * 10;
+  const bobFrente = Math.sin(t * 0.9 + 1.4) * 14;
 
-  const anchoBotella = vertical ? width * 0.42 : width * 0.3;
-  const altoBotella = (anchoBotella * 683) / 512;
-  const yBotella =
-    interpolate(haciaAbajo, [0, 1], [height * 0.52, height * (vertical ? 0.745 : 0.74)]) +
-    noise2D('bot', t * 0.35, 0) * 18;
-  const rotBotella = noise2D('rot', t * 0.3, 7) * 4;
-  const escalaBotella = interpolate(haciaAbajo, [0, 1], [1, vertical ? 0.8 : 0.78]);
-  const entradaBotellaY = interpolate(entrada, [0, 1], [height * 0.35, 0]);
+  // botella (proporción de la app 85:240)
+  const anchoBotella = vertical ? width * 0.2 : width * 0.14;
+  const altoBotella = (anchoBotella * 240) / 85;
+  const yBotella = interpolate(haciaAbajo, [0, 1], [height * (vertical ? 0.66 : 0.68), height * (vertical ? 0.75 : 0.74)]) + noise2D('bot', t * 0.35, 0) * 16;
+  const rotBotella = -8 + noise2D('rot', t * 0.3, 7) * 5;
+  const escalaBotella = interpolate(haciaAbajo, [0, 1], [1.15, 0.92]);
+  const entradaBotellaY = interpolate(entrada, [0, 1], [height * 0.25, 0]);
 
   const [c0, c1, c2] = paleta.cielo;
-  const yHorizonte = vertical ? 0.62 : 0.6;
+  const nubeTono = paleta.noche ? '#AEB8D6' : '#F4ECD6';
+  const hayNubes = !paleta.noche && (variante === 'gaviotas' || variante === 'barquito' || variante === 'peces');
 
   return (
     <AbsoluteFill
       style={{
-        background: `linear-gradient(180deg, ${c0} 0%, ${c1} ${yHorizonte * 55}%, ${c2} ${yHorizonte * 100}%, ${paleta.agua[0]} ${yHorizonte * 100 + 1}%, ${paleta.agua[1]} 100%)`,
+        background: `linear-gradient(180deg, ${c0} 0%, ${c1} ${(yHorizonte / height) * 60}%, ${c2} ${(yHorizonte / height) * 100}%, ${paleta.agua[0]} ${(yHorizonte / height) * 100 + 0.2}%, ${paleta.agua[1]} 100%)`,
       }}
     >
-      {paleta.noche ? <Estrellas cantidad={60} alpha={entrada} semilla={semilla} /> : null}
+      {/* brillo del cielo sobre el agua (reflejo) */}
+      <div
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          top: yHorizonte,
+          height: height * 0.08,
+          background: `linear-gradient(180deg, ${c2}99, rgba(255,255,255,0))`,
+        }}
+      />
 
-      {/* astro */}
+      {paleta.noche ? <Estrellas alpha={entrada} semilla={semilla} /> : null}
+      {paleta.noche && variante === 'noche' ? <Fugaz semilla={semilla} /> : null}
+
       {paleta.noche ? (
         <Img
-          src={el(variante === 'luna' ? 'sblunallena' : 'sblunacreciente')}
+          src={el(variante === 'noche' ? 'sblunallena' : 'sblunacreciente')}
           style={{
             position: 'absolute',
-            width: width * (variante === 'luna' ? 0.3 : 0.2),
-            left: lado > 0 ? width * 0.62 : width * 0.1,
+            width: width * (variante === 'noche' ? 0.26 : 0.18),
+            left: lado > 0 ? width * 0.64 : width * 0.1,
             top: interpolate(entrada, [0, 1], [height * 0.2, height * 0.1]),
             opacity: entrada,
             filter: `drop-shadow(0 0 ${width * 0.06}px rgba(244,236,214,0.45))`,
           }}
         />
       ) : (
-        <Sol
-          x={lado > 0 ? width * 0.78 : width * 0.22}
-          y={interpolate(entrada, [0, 1], [height * 0.22, height * 0.15])}
-          r={width * 0.085}
-          color={paleta.acento2 === '#EDA50C' ? '#FFD36A' : '#FFE08A'}
-          alpha={entrada}
-        />
+        <Sol x={lado > 0 ? width * 0.8 : width * 0.2} y={interpolate(entrada, [0, 1], [height * 0.24, height * 0.17])} r={width * 0.075} alpha={entrada} />
       )}
 
-      {/* emblema del mar, grande y suave, detrás de todo */}
-      <Img
-        src={el(paleta.emblema)}
+      {/* camino de luz del astro sobre el agua */}
+      <div
         style={{
           position: 'absolute',
-          width: width * 0.34,
-          left: lado > 0 ? width * 0.08 : width * 0.58,
-          top: height * (vertical ? 0.42 : 0.3) + Math.sin(t * 0.6) * 8,
-          opacity: 0.55 * entrada * (1 - despeje * 0.5),
-          transform: `rotate(${lado * -6}deg)`,
-          filter: `drop-shadow(0 ${width * 0.015}px ${width * 0.03}px rgba(15,35,28,0.2))`,
+          left: (lado > 0 ? width * 0.8 : width * 0.2) - width * 0.09,
+          top: yHorizonte,
+          width: width * 0.18,
+          height: height * 0.16,
+          background: paleta.noche
+            ? 'linear-gradient(180deg, rgba(244,236,214,0.35), rgba(244,236,214,0))'
+            : 'linear-gradient(180deg, rgba(255,230,160,0.45), rgba(255,230,160,0))',
+          clipPath: 'polygon(40% 0, 60% 0, 100% 100%, 0 100%)',
+          filter: 'blur(14px)',
+          opacity: entrada * 0.5,
         }}
       />
 
-      <Sellos paleta={paleta} semilla={semilla} alpha={entrada * (1 - despeje * 0.6)} />
+      {/* nubes que derivan despacio */}
+      {hayNubes
+        ? az.nubes.map((n, i) => {
+            const x = (((n.x + t * n.v) % 1.3) - 0.15) * width;
+            return <Nube key={i} x={x} y={n.y * height} w={n.w * width} alpha={entrada * 0.95} tono={nubeTono} />;
+          })
+        : null}
 
-      {/* elementos de la variante, al fondo (antes de las olas) */}
-      {variante === 'faro' ? (
-        <Img
-          src={el('faro')}
-          style={{
-            position: 'absolute',
-            width: width * 0.3,
-            left: lado > 0 ? width * 0.02 : width * 0.68,
-            top: height * yHorizonte - width * 0.3 * (683 / 512) * 0.72 + interpolate(entrada, [0, 1], [80, 0]),
-            opacity: entrada,
-            filter: `drop-shadow(0 ${width * 0.02}px ${width * 0.03}px rgba(15,35,28,0.25))`,
-          }}
-        />
-      ) : null}
-      {variante === 'faro' ? (
-        // haz de luz del faro, girando lento
-        <div
-          style={{
-            position: 'absolute',
-            left: (lado > 0 ? width * 0.02 : width * 0.68) + width * 0.15,
-            top: height * yHorizonte - width * 0.3 * (683 / 512) * 0.72 + width * 0.035,
-            width: width * 0.9,
-            height: width * 0.07,
-            transformOrigin: '0 50%',
-            transform: `rotate(${lado > 0 ? -8 + Math.sin(t * 0.7) * 14 : 188 + Math.sin(t * 0.7) * 14}deg)`,
-            background: 'linear-gradient(90deg, rgba(255,230,150,0.55), rgba(255,230,150,0))',
-            opacity: entrada * (paleta.noche ? 0.9 : 0.45),
-            borderRadius: 999,
-          }}
-        />
-      ) : null}
-
+      {/* gaviotas cruzando el cielo */}
       {variante === 'gaviotas'
         ? [0, 1, 2].map((i) => {
-            const fase = i * 1.7;
-            const x = ((t * 0.045 + i * 0.3 + desfases[i] * 0.2) % 1.3) * width * 1.2 - width * 0.2;
-            const y = height * (0.16 + i * 0.07) + Math.sin(t * 1.2 + fase) * height * 0.01;
-            const aleteo = 1 + Math.sin(t * 6 + fase) * 0.08;
+            const vel = 0.05 - i * 0.008;
+            const x = (((t * vel + az.desfases[i]) % 1.4) - 0.2) * width;
+            const y = height * (0.12 + i * 0.08) + Math.sin(t * 1.1 + i * 2) * height * 0.012;
+            const aleteo = 1 + Math.sin(t * 7 + i * 1.3) * 0.1;
             return (
               <Img
                 key={i}
                 src={el('gaviota')}
-                style={{
-                  position: 'absolute',
-                  width: width * (0.16 - i * 0.03),
-                  left: x,
-                  top: y,
-                  transform: `scaleX(-1) scaleY(${aleteo})`,
-                  opacity: entrada,
-                }}
+                style={{position: 'absolute', width: width * (0.15 - i * 0.03), left: x, top: y, transform: `scaleX(-1) scaleY(${aleteo})`, opacity: entrada}}
               />
             );
           })
         : null}
 
-      {variante === 'luna' && !paleta.noche ? (
-        <Img
-          src={el('sblunacreciente')}
-          style={{position: 'absolute', width: width * 0.18, left: width * 0.12, top: height * 0.12, opacity: 0.8 * entrada}}
-        />
+      {/* faro sobre su isla, apoyado en el horizonte, con el haz girando */}
+      {variante === 'faro' ? (
+        <>
+          <Img
+            src={el('faro')}
+            style={{
+              position: 'absolute',
+              width: width * 0.3,
+              left: lado > 0 ? width * 0.04 : width * 0.66,
+              top: yHorizonte + height * 0.015 - width * 0.3 * (683 / 512) + interpolate(entrada, [0, 1], [60, 0]),
+              opacity: entrada,
+              filter: `drop-shadow(0 ${width * 0.015}px ${width * 0.03}px rgba(15,35,28,0.25))`,
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              left: (lado > 0 ? width * 0.04 : width * 0.66) + width * 0.15,
+              top: yHorizonte + height * 0.015 - width * 0.3 * (683 / 512) + width * 0.035,
+              width: width * 0.8,
+              height: width * 0.06,
+              transformOrigin: '0 50%',
+              transform: `rotate(${(lado > 0 ? -6 : 186) + Math.sin(t * 0.6) * 12}deg)`,
+              background: 'linear-gradient(90deg, rgba(255,230,150,0.5), rgba(255,230,150,0))',
+              opacity: entrada * (paleta.noche ? 0.9 : 0.4),
+              borderRadius: 999,
+            }}
+          />
+        </>
       ) : null}
 
       {/* ola de fondo */}
       <Img
-        src={staticFile(capas.olas)}
+        src={staticFile('capas/olas.png')}
         style={{
           position: 'absolute',
           width: anchoOla * 0.92,
           left: -width * 0.22,
-          top: baseOlas + interpolate(entrada, [0, 1], [altoOla * 0.6, 0]) + bobOlaFondo - altoOla * 0.12,
+          top: baseOlas + interpolate(entrada, [0, 1], [altoOla * 0.6, 0]) + bobFondo - altoOla * 0.12,
           transform: 'scaleX(-1)',
           filter: 'brightness(0.9) saturate(0.95)',
           opacity: 0.95,
         }}
       />
 
-      {/* elementos de la variante, sobre el agua */}
+      {/* barquito de papel navegando sobre la ola de fondo */}
       {variante === 'barquito' ? (
         <Img
           src={el('barquito')}
           style={{
             position: 'absolute',
-            width: width * 0.26,
-            left: (lado > 0 ? width * 0.68 : width * 0.06) + noise2D('bq', t * 0.3, 3) * 20,
-            top: baseOlas - width * 0.05 + Math.sin(t * 0.9 + 0.7) * 10,
-            transform: `rotate(${Math.sin(t * 0.8) * 4}deg) ${lado > 0 ? '' : 'scaleX(-1)'}`,
-            opacity: entrada,
-            filter: `drop-shadow(0 ${width * 0.015}px ${width * 0.03}px rgba(15,35,28,0.25))`,
-          }}
-        />
-      ) : null}
-
-      {variante === 'cartero' ? (
-        <Img
-          src={el('cartero3d')}
-          style={{
-            position: 'absolute',
             width: width * 0.2,
-            left: lado > 0 ? width * 0.74 : width * 0.06,
-            top: baseOlas - width * 0.26 + Math.sin(t * 0.9 + 0.7) * 8,
-            transform: lado > 0 ? '' : 'scaleX(-1)',
+            left: (lado > 0 ? width * 0.7 : width * 0.08) + Math.sin(t * 0.25) * width * 0.03,
+            top: baseOlas - width * 0.02 + bobFondo - altoOla * 0.12 + Math.sin(t * 0.9 + 0.5) * 8,
+            transform: `rotate(${Math.sin(t * 0.9) * 5}deg) ${lado > 0 ? '' : 'scaleX(-1)'}`,
             opacity: entrada,
-            filter: `drop-shadow(0 ${width * 0.015}px ${width * 0.03}px rgba(15,35,28,0.25))`,
+            filter: `drop-shadow(0 ${width * 0.01}px ${width * 0.02}px rgba(15,35,28,0.25))`,
           }}
         />
       ) : null}
 
-      {/* botella */}
-      <Img
-        src={staticFile(capas.botella)}
+      {/* peces que saltan entre las olas */}
+      {variante === 'peces'
+        ? az.saltos.map((s, i) => {
+            const p = (t - s.t0) / 1.3; // 1,3 s por salto
+            if (p < 0 || p > 1) return null;
+            const arco = Math.sin(p * Math.PI);
+            const x = s.x * width + s.dir * p * width * 0.14;
+            const y = baseOlas + altoOla * 0.05 - arco * height * 0.13;
+            const ang = s.dir * (-55 + p * 110);
+            const ondas = interpolate(p, [0.75, 1], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+            return (
+              <React.Fragment key={i}>
+                <Img
+                  src={el('pez')}
+                  style={{
+                    position: 'absolute',
+                    width: width * 0.11,
+                    left: x,
+                    top: y,
+                    transform: `rotate(${ang}deg) ${s.dir < 0 ? 'scaleX(-1)' : ''}`,
+                    opacity: interpolate(p, [0, 0.12, 0.88, 1], [0, 1, 1, 0]),
+                  }}
+                />
+                {/* salpicadura al entrar */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: x + s.dir * width * 0.02,
+                    top: baseOlas + altoOla * 0.06,
+                    width: width * 0.11 * (0.5 + ondas),
+                    height: width * 0.03,
+                    borderRadius: '50%',
+                    border: '3px solid rgba(255,255,255,0.75)',
+                    opacity: ondas > 0 ? 1 - ondas : 0,
+                  }}
+                />
+              </React.Fragment>
+            );
+          })
+        : null}
+
+      {/* la botella, decorada como la lanzó la persona */}
+      <Botella
+        deco={deco}
+        banderaCodigo={banderaCodigo}
+        ancho={anchoBotella}
         style={{
-          position: 'absolute',
-          width: anchoBotella,
-          height: altoBotella,
           left: width / 2 - anchoBotella / 2,
           top: yBotella - altoBotella / 2 + entradaBotellaY,
           transform: `rotate(${rotBotella}deg) scale(${escalaBotella})`,
-          transformOrigin: '50% 80%',
-          filter: `drop-shadow(0 ${width * 0.02}px ${width * 0.03}px rgba(15,35,28,0.25))`,
+          transformOrigin: '50% 85%',
+          filter: `drop-shadow(0 ${width * 0.02}px ${width * 0.03}px rgba(15,35,28,0.28))`,
         }}
       />
 
       {/* ola de frente */}
       <Img
-        src={staticFile(capas.olas)}
+        src={staticFile('capas/olas.png')}
         style={{
           position: 'absolute',
           width: anchoOla,
           left: width * 0.04,
-          top: baseOlas + interpolate(entrada, [0, 1], [altoOla * 0.8, 0]) + bobOlaFrente,
+          top: baseOlas + interpolate(entrada, [0, 1], [altoOla * 0.8, 0]) + bobFrente,
         }}
       />
 
-      {/* cierre del borde inferior */}
       <div
         style={{
           position: 'absolute',
@@ -347,6 +385,7 @@ export const Escenario: React.FC<Props> = ({paleta, variante, semilla, capas, ha
           bottom: 0,
           height: height * 0.07,
           background: `linear-gradient(180deg, rgba(0,0,0,0) 0%, ${paleta.agua[1]} 100%)`,
+          opacity: 1 - despeje * 0,
         }}
       />
     </AbsoluteFill>

@@ -17,18 +17,22 @@ export const esquemaBotellaDelDia = z.object({
   origen: z.string().optional().describe('Línea de origen; si no, se arma con el país'),
   semilla: z.string().optional().describe('Semilla de variación (fecha + id). Si no, el texto'),
   variante: z
-    .enum(['auto', 'faro', 'gaviotas', 'barquito', 'cartero', 'luna'])
+    .enum(['auto', 'faro', 'gaviotas', 'barquito', 'peces', 'noche'])
     .default('auto')
     .describe('Composición de la escena; auto = la elige la semilla'),
+  deco: z
+    .object({
+      etiqueta: z.string().optional(),
+      cordel: z.string().optional(),
+      sello: z.string().optional(),
+      tapa: z.string().optional(),
+    })
+    .optional()
+    .describe('Decoración elegida por quien lanzó la botella (campo deco de la base)'),
+  musica: z.boolean().default(true).describe('Incluir el rumor del mar de fondo en el MP4'),
   momento: z.enum(['dia', 'amanecer', 'atardecer', 'noche']).optional(),
   cierre: z.string().default('seabottles.org'),
   subcierre: z.string().default('Escribe lo que sientes. Alguien, en otro país, lo leerá.'),
-  capas: z
-    .object({
-      botella: z.string().default('capas/botella.png'),
-      olas: z.string().default('capas/olas.png'),
-    })
-    .default({botella: 'capas/botella.png', olas: 'capas/olas.png'}),
 });
 
 export type PropsBotellaDelDia = z.infer<typeof esquemaBotellaDelDia>;

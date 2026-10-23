@@ -1,5 +1,5 @@
 import React from 'react';
-import {AbsoluteFill, Easing, Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, Audio, Easing, Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
 import {Escenario, Variante} from './escenas/Escenario';
 import {Mensaje} from './escenas/Mensaje';
 import {Cierre} from './escenas/Cierre';
@@ -9,7 +9,8 @@ import {normalizarMar, PALETAS} from './paletas';
 import {crearAzar, tiempos} from './semilla';
 import {bezierCalmo, fuente} from './tema';
 
-const VARIANTES: Variante[] = ['faro', 'gaviotas', 'barquito', 'cartero', 'luna'];
+const VARIANTES_DIA: Variante[] = ['faro', 'gaviotas', 'barquito', 'peces'];
+const VARIANTES_NOCHE: Variante[] = ['noche', 'faro', 'peces'];
 
 // Resuelve todo lo que depende de la pieza (paleta, variante, tiempos) — lo usa también Root para la duración
 export const resolver = (p: PropsBotellaDelDia, fps: number) => {
@@ -17,7 +18,8 @@ export const resolver = (p: PropsBotellaDelDia, fps: number) => {
   const paleta = PALETAS[clave];
   const semilla = p.semilla || p.texto;
   const az = crearAzar(semilla + ':variante');
-  const variante: Variante = p.variante && p.variante !== 'auto' ? p.variante : az.elegir(VARIANTES);
+  const variante: Variante =
+    p.variante && p.variante !== 'auto' ? p.variante : az.elegir(paleta.noche ? VARIANTES_NOCHE : VARIANTES_DIA);
   const T = tiempos(p.texto, fps);
   return {paleta, variante, semilla, T, mar: p.mar || paleta.nombre};
 };
@@ -52,11 +54,13 @@ export const BotellaDelDia: React.FC<PropsBotellaDelDia> = (p) => {
 
   return (
     <AbsoluteFill>
+      {p.musica ? <Audio src={staticFile('audio/mar.m4a')} loop volume={0.55} /> : null}
       <Escenario
         paleta={paleta}
         variante={variante}
         semilla={semilla}
-        capas={p.capas}
+        deco={p.deco}
+        banderaCodigo={p.bandera_codigo}
         haciaAbajo={haciaAbajo}
         cierreIn={T.cierreIn}
       />

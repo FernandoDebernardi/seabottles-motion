@@ -9,6 +9,7 @@ const porDefecto = esquemaBotellaDelDia.parse({
   mar_clave: 'recuerdos',
   pais: 'Argentina',
   bandera_codigo: 'ar',
+  deco: {etiqueta: 'faro', cordel: 'yute', sello: 'concha'},
 });
 
 // La duración depende del largo del texto: tiempo de lectura real, no un número fijo

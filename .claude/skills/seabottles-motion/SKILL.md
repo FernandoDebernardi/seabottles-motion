@@ -1,0 +1,87 @@
+---
+name: seabottles-motion
+description: Crear o modificar animaciones de motion graphics de Seabottles para redes (Reels, TikTok, Historias, feed) con Remotion en este proyecto. Usar cuando Fer pide una animación nueva, una pieza de «La botella del día», una variante para un juego de «La arena», un cambio de escena, o renderizar/exportar un MP4.
+---
+
+# Seabottles Motion — cómo trabajar en este proyecto
+
+Este proyecto es una fábrica de animaciones cortas para difundir Seabottles. Todo se hace con Remotion
+(React → MP4). Los assets ilustrados se generan en Recraft con el estilo de Seabottles y se guardan
+como PNG en `public/capas/`. **No se anima en Recraft** (consume créditos); Recraft solo produce capas
+estáticas.
+
+## Reglas de la casa (no negociables)
+
+- Tono: neutro, poético, calmo. Español neutro, sin voseo. Sin hashtags, sin "comunidad", sin cifras,
+  sin urgencia ("ahora", "no te lo pierdas"), sin llamados a la acción agresivos. El cierre es siempre
+  `seabottles.org` y nada más.
+- Nunca se inventa el texto de una botella. Las botellas las escribe la gente. Si Fer no pasó el texto,
+  pedirlo o usar el de `piezas/botella-del-dia.json` solo como prueba.
+- Seabottles no vende nada: no mencionar precios, planes ni "gratis" como gancho.
+- Ritmo lento: entradas con `spring` suaves (damping alto) o `Easing.bezier(0.22, 0.61, 0.36, 1)`
+  (`bezierCalmo` en `src/tema.ts`). Nada de cortes bruscos ni rebotes exagerados.
+- Paleta y tipografías solo desde `src/tema.ts` (copiadas del Seabottles Design System). Si hace falta
+  un color nuevo, agregarlo ahí con nombre, no inline.
+- Zonas seguras: texto importante entre el 12 % y el 78 % de la altura en 9:16 (abajo van los botones
+  de Reels/TikTok, a la derecha la columna de íconos). Nada de texto pegado a los bordes.
+- Todo elemento visual nuevo (objeto, personaje, escenario) se genera en Recraft con el estilo
+  `c900ae71-8adc-4ef2-8b8c-e4608c140ead` (modelo `recraftv3`), **no se dibuja como SVG**. Los fondos,
+  gradientes, estrellas y tipografía sí van en código.
+- Duración por defecto 12 s a 30 fps. Formatos: 1080×1920 (`BotellaDelDia`) y 1080×1080
+  (`BotellaDelDiaCuadrado`). Ambos comparten las mismas escenas.
+
+## Estructura
+
+```
+src/
+  tema.ts            paleta, gradientes del mar por momento del día, fuentes, easing
+  esquema.ts         esquema zod de props (lo que cambia por pieza) + FPS y duración
+  fuentes.ts         carga de las fuentes del design system desde public/fuentes
+  escenas/Mar.tsx    fondo (gradiente + sol/luna + estrellas) + olas en capas + botella flotando
+  escenas/Mensaje.tsx tarjeta de papel con el texto escribiéndose letra a letra
+  escenas/Cierre.tsx seabottles.org "respirando"
+  BotellaDelDia.tsx  línea de tiempo: junta las escenas (T = tiempos en segundos)
+  Root.tsx           composiciones registradas (9:16 y 1:1)
+public/
+  capas/             PNG con transparencia generados en Recraft (botella.png, olas.png)
+  fuentes/           woff2 de Bricolage Grotesque y Hanken Grotesk
+piezas/              un JSON por animación con sus props (texto, mar, momento…)
+out/                 renders (ignorado por git)
+```
+
+## Flujo para una pieza nueva de «La botella del día»
+
+Camino corto: `node generar.mjs piezas/<fecha>.json` (JSON con `texto`, `mar_clave` y, si se quiere,
+`origen`/`momento`). Es lo que usa la tarea programada diaria. El flujo largo:
+
+1. Copiar `piezas/botella-del-dia.json` a `piezas/<fecha>-botella.json` y poner el texto real de la
+   botella, el mar y el momento del día (`dia`, `amanecer`, `atardecer`, `noche`).
+2. Previsualizar: `npm run dev` abre Remotion Studio en el navegador; ahí se pueden editar los props.
+3. Renderizar:
+   `npx remotion render BotellaDelDia out/<fecha>-botella.mp4 --props=piezas/<fecha>-botella.json --codec=h264 --crf=18`
+   y lo mismo con `BotellaDelDiaCuadrado` para el feed.
+4. Mandar el MP4 al celular (Drive/WhatsApp) y publicar a mano. La música se agrega desde la
+   biblioteca de Instagram/TikTok al publicar.
+
+## Flujo para una animación de otro tipo (juego de «La arena», lanzamiento, etc.)
+
+1. Definir en una frase qué cuenta la pieza y cuál es el único movimiento que lleva el significado.
+2. Reutilizar `Mar` como fondo salvo que la pieza pida otro escenario.
+3. Si hace falta un objeto nuevo (muelle, letras, mapa, luna llena), generarlo en Recraft:
+   `generate_image` con `input_style_id = c900ae71-…`, prompt en inglés describiendo
+   «matte clay 3D render», colores de la paleta (`#4EA7BA`, `#f4ecd6`, `#9fbc3e`, `#eda50c`),
+   «isolated on a pure white background», y después `remove_background`. Guardar el PNG en
+   `public/capas/` con nombre en español.
+4. Crear `src/escenas/<Nombre>.tsx` y una composición nueva en `Root.tsx` con su esquema en
+   `esquema.ts`. Mantener la estructura: entrada calma → contenido → cierre `seabottles.org`.
+5. Renderizar un still de prueba (`npx remotion still <Id> out/prueba.png --frame=<n>`) antes del
+   render completo.
+
+## Detalles técnicos
+
+- Las imágenes se cargan con `<Img src={staticFile('capas/x.png')} />`; nunca `<img>`.
+- Movimiento orgánico: `noise2D` de `@remotion/noise` con el tiempo en segundos (`frame / fps`).
+- Transiciones entre escenas, si hacen falta: `@remotion/transitions`.
+- El render usa Chrome. Si no descarga el navegador, fijar uno instalado en `remotion.config.ts`
+  con `Config.setBrowserExecutable('<ruta>')` o pasar `--browser-executable`.
+- Si el texto es largo, `Mensaje` baja el tamaño de letra solo (umbrales 140 y 220 caracteres).

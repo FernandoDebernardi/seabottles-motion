@@ -1,0 +1,29 @@
+{
+  "name": "seabottles-motion",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Animaciones de motion graphics para difundir Seabottles en redes (Remotion)",
+  "scripts": {
+    "dev": "remotion studio",
+    "render": "remotion render",
+    "render:botella": "remotion render BotellaDelDia out/botella-del-dia.mp4 --props=piezas/botella-del-dia.json --codec=h264 --crf=18",
+    "render:botella:cuadrado": "remotion render BotellaDelDiaCuadrado out/botella-del-dia-1x1.mp4 --props=piezas/botella-del-dia.json --codec=h264 --crf=18",
+    "still": "remotion still BotellaDelDia out/botella-del-dia.png --props=piezas/botella-del-dia.json --frame=200",
+    "upgrade": "remotion upgrade"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.538",
+    "@remotion/google-fonts": "4.0.538",
+    "@remotion/noise": "4.0.538",
+    "@remotion/transitions": "4.0.538",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "remotion": "4.0.538",
+    "zod": "3.22.3"
+  },
+  "devDependencies": {
+    "@types/react": "19.0.0",
+    "@types/react-dom": "19.0.0",
+    "typescript": "5.8.2"
+  }
+}

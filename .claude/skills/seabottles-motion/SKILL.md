@@ -37,8 +37,9 @@ estáticas.
   sello; `sello: "pais"` muestra la bandera). Las piezas están en `public/deco/` y se colocan en las
   mismas posiciones que usa la app (`src/escenas/Botella.tsx`). Sin gotas ni salpicaduras pegadas.
 - **Música**: nada de ruido de fondo y nunca la misma en dos videos (regla de Fer, 23/10/2026):
-  `musica.mjs` sintetiza para cada pieza una música ambiente sutil distinta a partir de la semilla
-  (`generar.mjs` lo llama solo) y en Instagram se reemplaza al programar
+  `musica.mjs` compone para cada pieza una melodía sutil de PIANO ACÚSTICO (muestras de piano de cola
+  grabado en `public/piano/`), distinta a partir de la semilla; nada de sintetizadores ni ambientes
+  (`generar.mjs` lo llama solo). En Instagram se reemplaza al programar
   con `audioConfiguration` (biblioteca de música de Instagram para cuentas de empresa; la canción se
   elige por id numérico, con `videoVolume: 0` para que no se mezclen).
 - **Formato**: 1080×1920, 30 fps, H.264 + AAC. Es la medida de Reels; el texto va centrado para que

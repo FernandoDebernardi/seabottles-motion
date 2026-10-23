@@ -1,5 +1,5 @@
 import React from 'react';
-import {Easing, Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
+import {Easing, interpolate, spring, useCurrentFrame, useVideoConfig} from 'remotion';
 import {color, fuente, bezierCalmo} from '../tema';
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
   acento: string;
 };
 
-// Cierre: una frase que invita, una botella pequeña que flota al lado, y la dirección.
+// Cierre: una frase que invita y la dirección, arriba, lejos de la escena.
 export const Cierre: React.FC<Props> = ({frase, cierre, desde, oscuro, acento}) => {
   const frame = useCurrentFrame();
   const {width, height, fps} = useVideoConfig();
@@ -22,9 +22,7 @@ export const Cierre: React.FC<Props> = ({frase, cierre, desde, oscuro, acento}) 
     extrapolateRight: 'clamp',
     easing: Easing.bezier(...bezierCalmo),
   });
-  const bot = spring({frame: local - fps * 0.3, fps, config: {damping: 16, stiffness: 90}});
   const tinta = oscuro ? color.verdeBlanco : color.verdeOscuro;
-  const t = local / fps;
 
   return (
     <div
@@ -32,25 +30,12 @@ export const Cierre: React.FC<Props> = ({frase, cierre, desde, oscuro, acento}) 
         position: 'absolute',
         left: 0,
         right: 0,
-        top: vertical ? height * 0.21 : height * 0.18,
+        top: vertical ? height * 0.235 : height * 0.2,
         textAlign: 'center',
         opacity: entrada,
         transform: `translateY(${interpolate(entrada, [0, 1], [30, 0])}px)`,
       }}
     >
-      {/* botella pequeña, sin decorar, flotando sobre la frase */}
-      <Img
-        src={staticFile('capas/botella-app.png')}
-        style={{
-          width: width * 0.11,
-          height: (width * 0.11 * 240) / 85,
-          objectFit: 'contain',
-          opacity: bot,
-          transform: `rotate(${-14 + Math.sin(t * 1.1) * 5}deg) translateY(${(1 - bot) * 30 + Math.sin(t * 0.9) * 6}px)`,
-          filter: `drop-shadow(0 ${width * 0.015}px ${width * 0.025}px rgba(15,35,28,0.25))`,
-          marginBottom: width * 0.03,
-        }}
-      />
       <div
         style={{
           fontFamily: fuente.display,

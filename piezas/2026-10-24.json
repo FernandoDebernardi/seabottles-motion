@@ -1,24 +1,24 @@
 {
-  "texto": "Molesto.\nZumbo.\nPico.\nSoy como el mosquito\nCuando me enamoro.\nSerá por eso\nQue me cierran las ventanas.",
-  "mar_clave": "amor",
+  "texto": "Sueñas en las noches? Puedes recordar tus sueños? Tienes algún sueño recurrente?",
+  "mar_clave": "suenos",
   "pais": "Chile",
   "bandera": "🇨🇱",
   "deco": {
     "mata": true,
     "tapa": "corcho",
     "paper": "cuadros",
-    "sello": "corazonola",
-    "tinta": "mar",
-    "cordel": "yute",
-    "etiqueta": "barquito"
+    "sello": "faro",
+    "tinta": "lima",
+    "cordel": "nudo",
+    "etiqueta": "nube"
   },
   "origen": "Lanzada desde Chile",
-  "clima": "viento",
+  "clima": "despejado",
+  "momento": "atardecer",
   "respuesta": {
-    "texto": "Yo también zumbo cuando quiero a alguien. Y una vez me dejaron la ventana abierta, así que no todas se cierran.",
-    "pais": "Colombia",
-    "bandera_codigo": "co"
+    "texto": "Casi nunca los recuerdo, pero hay uno que vuelve: una casa junto al mar que no existe y que igual siento mía.",
+    "pais": "Argentina",
+    "bandera_codigo": "ar"
   },
-  "semilla": "2026-10-24:r3kjf3rgwz6x",
-  "momento": "atardecer"
+  "semilla": "2026-10-24:8ss9pfnspqvh"
 }

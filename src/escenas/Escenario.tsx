@@ -27,7 +27,7 @@ type Props = {
   banderaCodigo?: string;
   haciaAbajo: number; // 0 = botella grande y centrada; 1 = abajo, dejando lugar a la tarjeta
   cierreIn: number;
-  clima?: 'despejado' | 'lluvia' | 'niebla';
+  clima?: 'despejado' | 'nublado' | 'viento' | 'lluvia' | 'niebla';
 };
 
 const el = (n: string) => staticFile(`elementos/${n}.png`);
@@ -140,6 +140,7 @@ export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, ban
       lado: a.numero() > 0.5 ? 1 : -1,
       desfases: [a.numero(), a.numero(), a.numero(), a.numero()],
       nubes: Array.from({length: 3}, () => ({x: a.numero(), y: a.entre(0.08, 0.3), w: a.entre(0.18, 0.3), v: a.entre(0.006, 0.014)})),
+      nubesExtra: Array.from({length: 3}, () => ({x: a.numero(), y: a.entre(0.04, 0.34), w: a.entre(0.24, 0.38), v: a.entre(0.004, 0.01)})),
       saltos: Array.from({length: 4}, (_, i) => ({t0: 2.5 + i * a.entre(3.2, 4.4), x: a.entre(0.08, 0.9), dir: a.numero() > 0.5 ? 1 : -1})),
       delfines: Array.from({length: 3}, (_, i) => ({t0: 3 + i * a.entre(4, 5.5), x: a.entre(0.1, 0.8), dir: a.numero() > 0.5 ? 1 : -1})),
       medusas: Array.from({length: 3}, (_, i) => ({x: 0.1 + i * 0.3 + a.entre(0, 0.12), y0: a.entre(0, 1), v: a.entre(0.008, 0.016), f: a.entre(0.7, 1.1)})),
@@ -159,8 +160,9 @@ export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, ban
   const anchoOla = width * 1.18;
   const altoOla = anchoOla / 2;
   const baseOlas = height - altoOla * (vertical ? 0.78 : 0.6);
-  const bobFondo = Math.sin(t * 0.9) * 10;
-  const bobFrente = Math.sin(t * 0.9 + 1.4) * 14;
+  const ventoso = clima === 'viento';
+  const bobFondo = Math.sin(t * (ventoso ? 1.3 : 0.9)) * (ventoso ? 16 : 10);
+  const bobFrente = Math.sin(t * (ventoso ? 1.3 : 0.9) + 1.4) * (ventoso ? 22 : 14);
 
   // botella (proporción de la app 85:240)
   const anchoBotella = vertical ? width * 0.2 : width * 0.14;
@@ -172,8 +174,12 @@ export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, ban
 
   const [c0, c1, c2] = paleta.cielo;
   const lluvia = clima === 'lluvia';
-  const nubeTono = paleta.noche ? '#AEB8D6' : lluvia ? '#C9CDD2' : '#F4ECD6';
-  const hayNubes = lluvia || (!paleta.noche && ['gaviotas', 'barquito', 'peces', 'tortuga', 'velero', 'delfines'].includes(variante));
+  const nublado = clima === 'nublado';
+  const viento = clima === 'viento';
+  const nubeTono = paleta.noche ? '#AEB8D6' : lluvia ? '#C9CDD2' : nublado ? '#D9DCDF' : '#F4ECD6';
+  const hayNubes = lluvia || nublado || viento || (!paleta.noche && ['gaviotas', 'barquito', 'peces', 'tortuga', 'velero', 'delfines'].includes(variante));
+  const nubesDeMas = lluvia || nublado ? az.nubesExtra : []; // cielo cubierto: más nubes
+  const vientoF = viento ? 3 : 1; // las nubes corren, las olas y lo que flota se mueven más
 
   return (
     <AbsoluteFill
@@ -209,7 +215,7 @@ export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, ban
           }}
         />
       ) : (
-        <Sol x={lado > 0 ? width * 0.8 : width * 0.2} y={interpolate(entrada, [0, 1], [height * 0.24, height * 0.17])} r={width * 0.075} alpha={entrada * (lluvia ? 0.3 : 1)} />
+        <Sol x={lado > 0 ? width * 0.8 : width * 0.2} y={interpolate(entrada, [0, 1], [height * 0.24, height * 0.17])} r={width * 0.075} alpha={entrada * (lluvia ? 0.3 : nublado ? 0.4 : 1)} />
       )}
 
       {/* camino de luz del astro sobre el agua */}
@@ -231,8 +237,8 @@ export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, ban
 
       {/* nubes que derivan despacio */}
       {hayNubes
-        ? az.nubes.map((n, i) => {
-            const x = (((n.x + t * n.v) % 1.3) - 0.15) * width;
+        ? [...az.nubes, ...nubesDeMas].map((n, i) => {
+            const x = (((n.x + t * n.v * vientoF) % 1.3) - 0.15) * width;
             return <Nube key={i} x={x} y={n.y * height} w={n.w * width} alpha={entrada * 0.95} tono={nubeTono} />;
           })
         : null}
@@ -240,7 +246,7 @@ export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, ban
       {/* gaviotas cruzando el cielo */}
       {variante === 'gaviotas'
         ? [0, 1, 2].map((i) => {
-            const vel = 0.05 - i * 0.008;
+            const vel = (0.05 - i * 0.008) * (viento ? 1.8 : 1);
             const x = (((t * vel + az.desfases[i]) % 1.4) - 0.2) * width;
             const y = height * (0.12 + i * 0.08) + Math.sin(t * 1.1 + i * 2) * height * 0.012;
             const aleteo = 1 + Math.sin(t * 7 + i * 1.3) * 0.1;
@@ -248,7 +254,7 @@ export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, ban
               <Img
                 key={i}
                 src={el('gaviota')}
-                style={{position: 'absolute', width: width * (0.15 - i * 0.03), left: x, top: y, transform: `scaleX(-1) scaleY(${aleteo})`, opacity: entrada}}
+                style={{position: 'absolute', width: width * (0.15 - i * 0.03), left: x, top: y, transform: `scaleX(-1) scaleY(${aleteo}) rotate(${viento ? -8 : 0}deg)`, opacity: entrada}}
               />
             );
           })
@@ -364,7 +370,7 @@ export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, ban
             width: width * 0.2,
             left: (lado > 0 ? width * 0.7 : width * 0.08) + Math.sin(t * 0.25) * width * 0.03,
             top: baseOlas - width * 0.02 + bobFondo - altoOla * 0.12 + Math.sin(t * 0.9 + 0.5) * 8,
-            transform: `rotate(${Math.sin(t * 0.9) * 5}deg) ${lado > 0 ? '' : 'scaleX(-1)'}`,
+            transform: `rotate(${Math.sin(t * 0.9) * 5 * vientoF}deg) ${lado > 0 ? '' : 'scaleX(-1)'}`,
             opacity: entrada,
             filter: `drop-shadow(0 ${width * 0.01}px ${width * 0.02}px rgba(15,35,28,0.25))`,
           }}
@@ -437,7 +443,7 @@ export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, ban
             width: width * 0.2,
             left: (lado > 0 ? width * 0.7 : width * 0.1) - lado * t * width * 0.004,
             top: baseOlas + bobFondo - altoOla * 0.12 - width * 0.2 + Math.sin(t * 0.9 + 0.5) * 7,
-            transform: `rotate(${Math.sin(t * 0.9) * 4}deg) ${lado > 0 ? '' : 'scaleX(-1)'}`,
+            transform: `rotate(${Math.sin(t * 0.9) * 4 * Math.min(vientoF, 2)}deg) ${lado > 0 ? '' : 'scaleX(-1)'}`,
             transformOrigin: '50% 90%',
             opacity: entrada,
             filter: `drop-shadow(0 ${width * 0.01}px ${width * 0.02}px rgba(15,35,28,0.25))`,

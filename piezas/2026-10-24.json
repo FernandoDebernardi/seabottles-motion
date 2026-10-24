@@ -3,13 +3,22 @@
   "mar_clave": "amor",
   "pais": "Chile",
   "bandera": "🇨🇱",
-  "deco": {"mata": true, "tapa": "corcho", "paper": "cuadros", "sello": "corazonola", "tinta": "mar", "cordel": "yute", "etiqueta": "barquito"},
+  "deco": {
+    "mata": true,
+    "tapa": "corcho",
+    "paper": "cuadros",
+    "sello": "corazonola",
+    "tinta": "mar",
+    "cordel": "yute",
+    "etiqueta": "barquito"
+  },
   "origen": "Lanzada desde Chile",
-  "clima": "despejado",
+  "clima": "viento",
   "respuesta": {
     "texto": "Yo también zumbo cuando quiero a alguien. Y una vez me dejaron la ventana abierta, así que no todas se cierran.",
     "pais": "Colombia",
     "bandera_codigo": "co"
   },
-  "semilla": "2026-10-24:r3kjf3rgwz6x"
+  "semilla": "2026-10-24:r3kjf3rgwz6x",
+  "momento": "atardecer"
 }

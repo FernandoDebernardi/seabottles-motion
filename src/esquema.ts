@@ -45,8 +45,8 @@ export const esquemaBotellaDelDia = z.object({
     })
     .optional()
     .describe('Respuesta ILUSTRATIVA escrita por Claude (nunca una real, que es privada); pais = el de quien respondió de verdad, si hubo'),
-  clima: z.enum(['despejado', 'lluvia', 'niebla']).default('despejado'),
-  momento: z.enum(['dia', 'amanecer', 'atardecer', 'noche']).optional(),
+  clima: z.enum(['despejado', 'nublado', 'viento', 'lluvia', 'niebla']).default('despejado'),
+  momento: z.enum(['dia', 'amanecer', 'atardecer', 'noche']).optional().describe('Hora local del lugar de la botella al publicar: cambia el cielo (noche = escena nocturna)'),
   cierre: z.string().default('seabottles.org'),
   frase_cierre: z
     .string()

@@ -7,7 +7,7 @@ import {Respuesta} from './escenas/Respuesta';
 import {Clima} from './escenas/Clima';
 import {PropsBotellaDelDia} from './esquema';
 import {asegurarFuentes} from './fuentes';
-import {normalizarMar, PALETAS} from './paletas';
+import {conClima, conMomento, normalizarMar, PALETAS} from './paletas';
 import {crearAzar, tiempos} from './semilla';
 import {bezierCalmo, fuente} from './tema';
 
@@ -27,7 +27,7 @@ const VARIANTES_NOCHE: Variante[] = ['noche', 'faro', 'peces', 'medusas', 'balle
 // Resuelve todo lo que depende de la pieza (paleta, variante, tiempos) — lo usa también Root para la duración
 export const resolver = (p: PropsBotellaDelDia, fps: number) => {
   const clave = normalizarMar(p.mar_clave);
-  const paleta = PALETAS[clave];
+  const paleta = conClima(conMomento(PALETAS[clave], p.momento), p.clima);
   const semilla = p.semilla || p.texto;
   const az = crearAzar(semilla + ':variante');
   const variante: Variante =

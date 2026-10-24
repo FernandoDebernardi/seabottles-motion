@@ -106,3 +106,32 @@ export const normalizarMar = (clave?: string): MarClave => {
   const c = (clave || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
   return (c in PALETAS ? c : 'pensamientos') as MarClave;
 };
+
+export type Momento = 'dia' | 'amanecer' | 'atardecer' | 'noche';
+
+// La hora local del lugar de la botella cambia el cielo (Fer, 24/10/2026): de noche la escena
+// es nocturna aunque el mar sea de los claros; al amanecer y al atardecer el cielo se tiñe.
+// El agua y el acento siguen siendo los del mar, para que cada mar se reconozca.
+export const conMomento = (p: Paleta, momento?: Momento): Paleta => {
+  if (!momento || momento === 'dia') return p;
+  if (momento === 'noche') {
+    if (p.noche) return p;
+    return {...p, cielo: ['#0E1A33', '#1E2F58', '#3C5280'], agua: [oscurecer(p.agua[0], 0.45), oscurecer(p.agua[1], 0.4)], tinta: '#FBFDF7', acento: p.noche ? p.acento : '#F4ECD6', noche: true};
+  }
+  if (momento === 'atardecer') return {...p, cielo: [mezclar(p.cielo[0], '#4A2C5A', 0.55), '#E08A6A', '#F6D5A3'], tinta: p.noche ? p.tinta : '#3A2703'};
+  // amanecer
+  return {...p, cielo: [mezclar(p.cielo[0], '#6F7FB3', 0.5), '#F0B0A6', '#FBE4C2'], tinta: p.noche ? p.tinta : '#3A2703'};
+};
+
+const hex = (c: string) => [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16));
+const aHex = (v: number[]) => '#' + v.map((x) => Math.max(0, Math.min(255, Math.round(x))).toString(16).padStart(2, '0')).join('');
+const oscurecer = (c: string, f: number) => aHex(hex(c).map((x) => x * f));
+const mezclar = (a: string, b: string, t: number) => { const A = hex(a), B = hex(b); return aHex(A.map((x, i) => x + (B[i] - x) * t)); };
+
+// Con el cielo cubierto, el color del mar se apaga hacia el gris (sin perder cuál mar es).
+export const conClima = (p: Paleta, clima?: string): Paleta => {
+  if (clima !== 'nublado' && clima !== 'lluvia') return p;
+  const gris = p.noche ? '#2A3240' : '#C9CFD6';
+  const f = clima === 'lluvia' ? 0.5 : 0.4;
+  return {...p, cielo: [mezclar(p.cielo[0], gris, f), mezclar(p.cielo[1], gris, f), mezclar(p.cielo[2], gris, f * 0.7)]};
+};

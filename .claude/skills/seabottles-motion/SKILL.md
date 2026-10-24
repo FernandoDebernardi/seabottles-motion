@@ -82,8 +82,15 @@ out/                 renders (ignorado por git)
   respondió de verdad, si hubo). Reglas del texto: 60–140 caracteres, como un desconocido que leyó
   la botella: cálido, concreto, sin consejos, sin terapia, sin nombres, sin preguntas retóricas
   vacías, español neutro, sin signos de exclamación.
-- `clima`: `despejado`, `lluvia` o `niebla`, según el clima real del lugar de la botella a la hora
-  de publicar (Open-Meteo, sin clave). Con lluvia el sol se apaga y aparecen nubes grises.
+- `clima`: `despejado`, `nublado`, `viento`, `lluvia` o `niebla`, según el clima real del lugar de
+  la botella a la hora de publicar (Open-Meteo o met.no, sin clave; nunca inventado). Nublado y
+  lluvia apagan el sol, agrisan el cielo y suman nubes; el viento hace correr las nubes y mueve más
+  las olas, el barquito, el velero y las gaviotas; la niebla vela el horizonte.
+- `momento`: `dia`, `amanecer`, `atardecer` o `noche`, por la hora LOCAL del lugar de la botella al
+  publicar (Fer, 24/10/2026). De noche la escena es nocturna (luna, estrellas, escenas de noche)
+  aunque el mar sea claro; al amanecer y al atardecer el cielo se tiñe. El agua y el acento siguen
+  siendo los del mar. Regla: antes de las 6 o desde las 20 → noche; 6–7 → amanecer; 18–19 →
+  atardecer; el resto → dia.
 
 ## Flujo para una pieza nueva de «La botella del día»
 

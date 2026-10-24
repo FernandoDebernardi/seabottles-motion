@@ -18,7 +18,7 @@ export const esquemaBotellaDelDia = z.object({
   origen: z.string().optional().describe('Línea de origen; si no, se arma con el país'),
   semilla: z.string().optional().describe('Semilla de variación (fecha + id). Si no, el texto'),
   variante: z
-    .enum(['auto', 'faro', 'gaviotas', 'barquito', 'peces', 'noche', 'ballena', 'delfines', 'tortuga', 'velero', 'medusas'])
+    .enum(['auto', 'faro', 'gaviotas', 'barquito', 'peces', 'noche', 'ballena', 'delfines', 'tortuga', 'velero', 'medusas', 'tiburon', 'globo', 'pulpo'])
     .default('auto')
     .describe('Composición de la escena; auto = la elige la semilla'),
   deco: z

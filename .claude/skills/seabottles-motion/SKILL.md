@@ -57,9 +57,11 @@ src/
   paletas.ts         paleta, cielo y agua por mar; normalizarMar()
   semilla.ts         azar determinista (crearAzar) y tiempos de lectura (tiempos)
   escenas/Escenario.tsx fondo, astro, nubes, olas, botella y los elementos de cada variante
-                     (diez escenas, la elige la semilla: faro con isla, gaviotas, barquito, peces que
-                     saltan, ballena que asoma detrás de la ola y resopla, delfines, tortuga, velero,
-                     y de noche: luna llena con estrella fugaz, medusas con luz propia. Fer pidió
+                     (trece escenas, la elige la semilla: faro con isla —a veces con un cangrejo o un
+                     pelícano—, gaviotas, barquito, peces que saltan, ballena que asoma detrás de la
+                     ola y resopla, delfines, tortuga, velero, tiburón que cruza detrás de la ola,
+                     globo aerostático, pulpo que asoma y saluda; y de noche: luna llena con estrella
+                     fugaz, medusas con luz propia. El haz del faro es un cono suave desenfocado. Fer pidió
                      variedad el 23/10/2026: cada elemento nuevo va en public/elementos/, entero y
                      sin fondo, y se suma a VARIANTES_DIA o VARIANTES_NOCHE en BotellaDelDia.tsx)
   escenas/Botella.tsx la botella de la app vestida con etiqueta, cordel y sello

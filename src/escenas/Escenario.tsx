@@ -17,7 +17,7 @@ import {Botella, Deco} from './Botella';
 
 // Cada variante es una escena con sentido propio: lo que vuela va por el cielo,
 // lo que nada sale del agua, lo que flota va sobre las olas.
-export type Variante = 'faro' | 'gaviotas' | 'barquito' | 'peces' | 'noche' | 'ballena' | 'delfines' | 'tortuga' | 'velero' | 'medusas';
+export type Variante = 'faro' | 'gaviotas' | 'barquito' | 'peces' | 'noche' | 'ballena' | 'delfines' | 'tortuga' | 'velero' | 'medusas' | 'tiburon' | 'globo' | 'pulpo';
 
 type Props = {
   paleta: Paleta;
@@ -144,6 +144,8 @@ export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, ban
       saltos: Array.from({length: 4}, (_, i) => ({t0: 2.5 + i * a.entre(3.2, 4.4), x: a.entre(0.08, 0.9), dir: a.numero() > 0.5 ? 1 : -1})),
       delfines: Array.from({length: 3}, (_, i) => ({t0: 3 + i * a.entre(4, 5.5), x: a.entre(0.1, 0.8), dir: a.numero() > 0.5 ? 1 : -1})),
       medusas: Array.from({length: 3}, (_, i) => ({x: 0.1 + i * 0.3 + a.entre(0, 0.12), y0: a.entre(0, 1), v: a.entre(0.008, 0.016), f: a.entre(0.7, 1.1)})),
+      isla: a.elegir(['nada', 'cangrejo', 'pelicano', 'nada'] as const), // quién acompaña al faro en su isla
+      tiburonDir: a.numero() > 0.5 ? 1 : -1,
     };
   }, [semilla]);
   const {lado} = az;
@@ -177,7 +179,7 @@ export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, ban
   const nublado = clima === 'nublado';
   const viento = clima === 'viento';
   const nubeTono = paleta.noche ? '#AEB8D6' : lluvia ? '#C9CDD2' : nublado ? '#D9DCDF' : '#F4ECD6';
-  const hayNubes = lluvia || nublado || viento || (!paleta.noche && ['gaviotas', 'barquito', 'peces', 'tortuga', 'velero', 'delfines'].includes(variante));
+  const hayNubes = lluvia || nublado || viento || (!paleta.noche && ['gaviotas', 'barquito', 'peces', 'tortuga', 'velero', 'delfines', 'globo', 'tiburon'].includes(variante));
   const nubesDeMas = lluvia || nublado ? az.nubesExtra : []; // cielo cubierto: más nubes
   const vientoF = viento ? 3 : 1; // las nubes corren, las olas y lo que flota se mueven más
 
@@ -243,6 +245,22 @@ export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, ban
           })
         : null}
 
+
+      {/* globo aerostático que cruza el cielo despacio */}
+      {variante === 'globo' ? (
+        <Img
+          src={el('globo')}
+          style={{
+            position: 'absolute',
+            width: width * 0.15,
+            left: (lado > 0 ? width * 0.78 : width * 0.06) - lado * t * width * 0.006,
+            top: height * 0.1 + Math.sin(t * 0.5) * height * 0.012 + interpolate(entrada, [0, 1], [40, 0]),
+            transform: `rotate(${Math.sin(t * 0.5) * 2}deg)`,
+            opacity: entrada,
+            filter: `drop-shadow(0 ${width * 0.01}px ${width * 0.02}px rgba(15,35,28,0.2))`,
+          }}
+        />
+      ) : null}
       {/* gaviotas cruzando el cielo */}
       {variante === 'gaviotas'
         ? [0, 1, 2].map((i) => {
@@ -275,6 +293,19 @@ export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, ban
                     src={el('faro')}
                     style={{position: 'absolute', left: 0, top: 0, width: wF, height: hF, filter: `drop-shadow(0 ${width * 0.012}px ${width * 0.025}px rgba(15,35,28,0.25))`}}
                   />
+                  {/* a veces alguien acompaña al faro en su isla (Fer, 24/10/2026: más variedad) */}
+                  {az.isla === 'cangrejo' ? (
+                    <Img
+                      src={el('cangrejo')}
+                      style={{position: 'absolute', width: wF * 0.2, left: wF * 0.62 + Math.sin(t * 0.7) * wF * 0.04, top: hF * corte - wF * 0.2, transform: `scaleX(${Math.cos(t * 0.7) > 0 ? 1 : -1})`}}
+                    />
+                  ) : null}
+                  {az.isla === 'pelicano' ? (
+                    <Img
+                      src={el('pelicano')}
+                      style={{position: 'absolute', width: wF * 0.22, left: wF * 0.66, top: hF * corte - wF * 0.27 + Math.sin(t * 1.6) * 1.5, transform: 'scaleX(-1)'}}
+                    />
+                  ) : null}
                 </div>
                 <div
                   style={{
@@ -289,20 +320,34 @@ export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, ban
                     opacity: entrada,
                   }}
                 />
-                <div
-                  style={{
-                    position: 'absolute',
-                    left: xF + wF * 0.5,
-                    top: topF + wF * 0.035,
-                    width: width * 0.8,
-                    height: width * 0.06,
-                    transformOrigin: '0 50%',
-                    transform: `rotate(${(lado > 0 ? -6 : 186) + Math.sin(t * 0.6) * 12}deg)`,
-                    background: 'linear-gradient(90deg, rgba(255,230,150,0.5), rgba(255,230,150,0))',
-                    opacity: entrada * (paleta.noche ? 0.9 : 0.4),
-                    borderRadius: 999,
-                  }}
-                />
+                {/* el haz: un cono suave que barre el mar, como una linterna lejana (Fer, 24/10/2026: la barra anterior no gustó) */}
+                {(() => {
+                  const largo = width * 0.75;
+                  const alto = width * 0.22;
+                  const ang = (lado > 0 ? -10 : 190) + Math.sin(t * 0.45) * 14;
+                  const lampX = xF + wF * 0.5, lampY = topF + wF * 0.035;
+                  const c = paleta.noche ? '255,236,170' : '255,240,190';
+                  return (
+                    <svg
+                      width={largo}
+                      height={alto}
+                      viewBox={`0 0 ${largo} ${alto}`}
+                      style={{position: 'absolute', left: lampX, top: lampY - alto / 2, transformOrigin: '0 50%', transform: `rotate(${ang}deg)`, opacity: entrada * (paleta.noche ? 0.95 : 0.5), overflow: 'visible', mixBlendMode: 'screen'}}
+                    >
+                      <defs>
+                        <linearGradient id="hazGrad" x1="0" x2="1" y1="0" y2="0">
+                          <stop offset="0" stopColor={`rgba(${c},0.6)`} />
+                          <stop offset="0.45" stopColor={`rgba(${c},0.22)`} />
+                          <stop offset="1" stopColor={`rgba(${c},0)`} />
+                        </linearGradient>
+                        <filter id="hazBlur" x="-10%" y="-30%" width="120%" height="160%">
+                          <feGaussianBlur stdDeviation="7" />
+                        </filter>
+                      </defs>
+                      <polygon points={`0,${alto * 0.47} ${largo},0 ${largo},${alto} 0,${alto * 0.53}`} fill="url(#hazGrad)" filter="url(#hazBlur)" />
+                    </svg>
+                  );
+                })()}
               </>
             );
           })()
@@ -342,6 +387,51 @@ export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, ban
                     }}
                   />
                 ))}
+              </div>
+            );
+          })()
+        : null}
+
+
+      {/* tiburón: la aleta y el lomo cruzan detrás de la ola de fondo */}
+      {variante === 'tiburon'
+        ? (() => {
+            const wT = width * 0.3;
+            const hT = wT * (469 / 494);
+            const linea = baseOlas + bobFondo + altoOla * 0.1;
+            const dir = az.tiburonDir;
+            const u = ((t * 0.07) % 1.4) - 0.2; // de un lado al otro en unos 20 s, y vuelve a empezar
+            const xT = (dir > 0 ? u : 1 - u) * width - wT / 2;
+            const topT = linea - hT * 0.82 + Math.sin(t * 1.1) * 5;
+            return (
+              <div style={{position: 'absolute', left: 0, top: 0, width, height: linea, overflow: 'hidden', opacity: entrada}}>
+                <Img
+                  src={el('tiburon')}
+                  style={{position: 'absolute', width: wT, left: xT, top: topT, transform: `rotate(${Math.sin(t * 1.1) * 3}deg) ${dir > 0 ? '' : 'scaleX(-1)'}`, filter: `drop-shadow(0 ${width * 0.008}px ${width * 0.016}px rgba(15,35,28,0.25))`}}
+                />
+              </div>
+            );
+          })()
+        : null}
+
+      {/* pulpo: asoma detrás de la ola, saluda con los tentáculos y vuelve a hundirse */}
+      {variante === 'pulpo'
+        ? (() => {
+            const wP = width * 0.22;
+            const hP = wP * (434 / 408);
+            const ciclo = 9;
+            const u = ((t + 2) % ciclo) / ciclo;
+            const asoma = interpolate(u, [0, 0.18, 0.62, 0.8, 1], [0, 1, 1, 0, 0], {easing: Easing.bezier(...bezierCalmo)});
+            const linea = baseOlas + bobFondo + altoOla * 0.1;
+            const cresta = baseOlas + bobFondo - altoOla * 0.04;
+            const xP = lado > 0 ? width * 0.1 : width * 0.68;
+            const topP = interpolate(asoma, [0, 1], [linea, cresta - hP * 0.7]) + Math.sin(t * 0.9) * 4;
+            return (
+              <div style={{position: 'absolute', left: 0, top: 0, width, height: linea, overflow: 'hidden', opacity: entrada}}>
+                <Img
+                  src={el('pulpo')}
+                  style={{position: 'absolute', width: wP, left: xP, top: topP, transformOrigin: '50% 30%', transform: `rotate(${Math.sin(t * 1.4) * 6 * asoma}deg) ${lado > 0 ? '' : 'scaleX(-1)'}`, filter: `drop-shadow(0 ${width * 0.008}px ${width * 0.016}px rgba(15,35,28,0.25))`}}
+                />
               </div>
             );
           })()

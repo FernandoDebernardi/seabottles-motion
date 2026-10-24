@@ -165,6 +165,9 @@ export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, ban
   const ventoso = clima === 'viento';
   const bobFondo = Math.sin(t * (ventoso ? 1.3 : 0.9)) * (ventoso ? 16 : 10);
   const bobFrente = Math.sin(t * (ventoso ? 1.3 : 0.9) + 1.4) * (ventoso ? 22 : 14);
+  // Techo de los saltos (Fer, 24/10/2026: «no puede haber peces en el cielo»): el borde de arriba de
+  // un pez o un delfín en lo más alto del salto queda siempre por debajo del horizonte.
+  const techoSalto = (despegue: number, altoImg: number) => Math.max(0, Math.min(height * 0.14, despegue - altoImg * 0.2 - (yHorizonte + height * 0.012)));
 
   // botella (proporción de la app 85:240)
   const anchoBotella = vertical ? width * 0.2 : width * 0.14;
@@ -475,7 +478,8 @@ export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, ban
             if (p < 0 || p > 1) return null;
             const arco = Math.sin(p * Math.PI);
             const x = s.x * width + s.dir * p * width * 0.2;
-            const y = baseOlas + altoOla * 0.02 - arco * height * 0.14;
+            const despegue = baseOlas + altoOla * 0.02;
+            const y = despegue - arco * techoSalto(despegue, width * 0.17 * (428 / 454));
             const ang = s.dir * (-60 + p * 120);
             const ondas = interpolate(p, [0.8, 1], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
             return (
@@ -577,7 +581,8 @@ export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, ban
             if (p < 0 || p > 1) return null;
             const arco = Math.sin(p * Math.PI);
             const x = s.x * width + s.dir * p * width * 0.14;
-            const y = baseOlas + altoOla * 0.05 - arco * height * 0.13;
+            const despegue = baseOlas + altoOla * 0.05;
+            const y = despegue - arco * techoSalto(despegue, width * 0.11 * (431 / 491));
             const ang = s.dir * (-55 + p * 110);
             const ondas = interpolate(p, [0.75, 1], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
             return (

@@ -108,6 +108,24 @@ Camino corto: `node generar.mjs piezas/<fecha>.json` (JSON con `texto`, `mar_cla
 4. Mandar el MP4 al celular (Drive/WhatsApp) y publicar a mano. La música se agrega desde la
    biblioteca de Instagram/TikTok al publicar.
 
+## Cada elemento en su lugar (regla de Fer, 24/10/2026)
+
+«No puede haber peces en el cielo.» Antes de sumar o mover un elemento, contestar las cuatro
+preguntas, y volver a contestarlas al revisar un fotograma de prueba:
+
+1. **¿Dónde vive?** Cielo (gaviotas, globo, sol, luna, nubes, estrellas, estrella fugaz): siempre
+   por encima del horizonte (`yHorizonte`). Agua (peces, delfines, ballena, tiburón, pulpo, tortuga,
+   barquito, velero, medusas): siempre por debajo. Isla (faro, cangrejo, pelícano posado): sobre la
+   arena, dentro del recorte de la isla. Un salto tiene techo: `techoSalto()` deja el borde de
+   arriba del animal por debajo del horizonte.
+2. **¿Qué parte se ve?** Lo que asoma del agua (ballena, tiburón, pulpo) va DETRÁS de la ola de
+   fondo y dentro de un contenedor recortado en la línea del agua; nunca flota entero sobre las olas.
+3. **¿Hacia dónde mira?** Lo que se mueve mira hacia donde va: si el dibujo mira a la izquierda y el
+   movimiento es hacia la derecha, `scaleX(-1)`. Un pez que salta de espaldas se nota enseguida.
+4. **¿Cómo se mueve?** Como lo haría de verdad: las aves aletean y cruzan, lo que flota se mece con
+   la ola, lo que nada sale y vuelve a entrar, el globo deriva despacio. Nada aparece de la nada en
+   medio del cuadro ni se queda quieto en el aire.
+
 ## Flujo para una animación de otro tipo (juego de «La arena», lanzamiento, etc.)
 
 1. Definir en una frase qué cuenta la pieza y cuál es el único movimiento que lleva el significado.

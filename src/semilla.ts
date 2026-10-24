@@ -29,16 +29,17 @@ export const crearAzar = (semilla: string) => {
   };
 };
 
-// Tiempos de lectura (segundos): ~11 caracteres por segundo es cómodo en redes,
-// más un margen para encontrar la tarjeta y volver a leer la última frase.
+// Tiempos de lectura (segundos). Fer, 23/10/2026: a 11 letras por segundo la tarjeta
+// se quedaba quieta 20 s antes de la respuesta; ahora ~17 letras por segundo (lectura
+// normal en pantalla) y la lectura quieta nunca pasa de 11 s: quien quiere releer, pausa.
 export const tiempos = (texto: string, fps: number, respuesta?: string) => {
   const chars = texto.replace(/\s+/g, ' ').trim().length;
   const apertura = 2.4;
-  const revelado = Math.min(6, Math.max(1.6, chars / 28)); // el texto aparece por palabras
-  const lectura = Math.max(3.5, chars / 11 + 1.2); // tiempo quieto para leer
+  const revelado = Math.min(4, Math.max(1.4, chars / 40)); // el texto aparece por palabras
+  const lectura = Math.min(11, Math.max(3, chars / 17 + 1)); // tiempo quieto para leer
   const rChars = respuesta ? respuesta.replace(/\s+/g, ' ').trim().length : 0;
-  const rRevelado = rChars ? Math.min(4, Math.max(1.2, rChars / 28)) : 0;
-  const rLectura = rChars ? Math.max(2.5, rChars / 11 + 1.0) + 1.2 : 0; // + el viaje que se dibuja
+  const rRevelado = rChars ? Math.min(3, Math.max(1, rChars / 40)) : 0;
+  const rLectura = rChars ? Math.max(2.2, rChars / 17 + 0.8) + 1.2 : 0; // + el viaje que se dibuja
   const cierre = 3.4;
   const s = (x: number) => Math.round(x * fps);
   const tarjetaOut = apertura + revelado + lectura;

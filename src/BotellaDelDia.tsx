@@ -51,17 +51,19 @@ export const BotellaDelDia: React.FC<PropsBotellaDelDia> = (p) => {
     {extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.bezier(...bezierCalmo)},
   );
 
-  // Título de apertura (texto en pantalla desde el primer segundo: tema + país)
-  const tituloIn = spring({frame: frame - fps * 0.5, fps, config: {damping: 200, stiffness: 70}});
+  // Título de apertura: ya está en pantalla en el PRIMER cuadro (es lo que ve quien desliza y lo
+  // que TikTok usa de portada); solo termina de asentarse en el primer medio segundo.
+  const tituloIn = 0.8 + 0.2 * spring({frame, fps, config: {damping: 200, stiffness: 90}});
   const tituloOut = interpolate(frame, [T.cierreIn - fps * 0.3, T.cierreIn + fps * 0.3], [1, 0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  // la línea «desde <país>» del título se retira cuando aparece la tarjeta (ahí ya va la bandera)
-  const paisArriba = interpolate(frame, [T.tarjetaIn, T.tarjetaIn + fps * 0.5], [1, 0], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
+  // la línea «lanzada desde <país>» se queda: con la tarjeta entrando al medio segundo, retirarla
+  // la hacía parpadear. Dice en una línea de qué se trata antes de leer la botella.
+  // En la postal (4:5) no hay lugar: ahí se retira cuando entra la tarjeta, que ya lleva la bandera.
+  const paisArriba = height / width > 1.5
+    ? 1
+    : interpolate(frame, [T.tarjetaIn, T.tarjetaIn + fps * 0.5], [1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
   const bandera = p.bandera_codigo ? staticFile(`banderas/${p.bandera_codigo}.svg`) : null;
   const origen = p.origen || (p.pais ? `Lanzada desde ${p.pais}` : 'Lanzada desde algún lugar del mundo');
 
@@ -84,7 +86,7 @@ export const BotellaDelDia: React.FC<PropsBotellaDelDia> = (p) => {
       <div
         style={{
           position: 'absolute',
-          top: vertical ? height * 0.075 : height * 0.06,
+          top: vertical ? height * 0.07 : height * 0.05,
           left: 0,
           right: 0,
           display: 'flex',
@@ -99,7 +101,7 @@ export const BotellaDelDia: React.FC<PropsBotellaDelDia> = (p) => {
           style={{
             fontFamily: fuente.display,
             fontWeight: 800,
-            fontSize: vertical ? width * 0.05 : width * 0.04,
+            fontSize: vertical ? width * 0.06 : width * 0.044,
             letterSpacing: '-0.005em',
             color: paleta.tinta,
             textShadow: paleta.noche ? '0 2px 18px rgba(0,0,0,0.35)' : '0 2px 18px rgba(255,255,255,0.5)',
@@ -115,7 +117,7 @@ export const BotellaDelDia: React.FC<PropsBotellaDelDia> = (p) => {
               gap: width * 0.014,
               fontFamily: fuente.cuerpo,
               fontWeight: 600,
-              fontSize: vertical ? width * 0.03 : width * 0.024,
+              fontSize: vertical ? width * 0.034 : width * 0.026,
               color: paleta.tinta,
               opacity: 0.9 * paisArriba,
             }}

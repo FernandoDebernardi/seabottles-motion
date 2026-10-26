@@ -34,13 +34,16 @@ export const crearAzar = (semilla: string) => {
 // normal en pantalla) y la lectura quieta nunca pasa de 11 s: quien quiere releer, pausa.
 export const tiempos = (texto: string, fps: number, respuesta?: string) => {
   const chars = texto.replace(/\s+/g, ' ').trim().length;
-  const apertura = 2.4;
+  // Fer, 26/10/2026: con 2,4 s de botella sola, 8 de cada 10 personas pasaban de largo antes
+  // de los 3 segundos. Ahora la tarjeta entra casi enseguida y la primera palabra se lee antes
+  // del primer segundo; el título ya está en pantalla desde el primer cuadro.
+  const apertura = 0.5;
   const revelado = Math.min(4, Math.max(1.4, chars / 40)); // el texto aparece por palabras
   const lectura = Math.min(11, Math.max(3, chars / 17 + 1)); // tiempo quieto para leer
   const rChars = respuesta ? respuesta.replace(/\s+/g, ' ').trim().length : 0;
   const rRevelado = rChars ? Math.min(3, Math.max(1, rChars / 40)) : 0;
   const rLectura = rChars ? Math.max(2.2, rChars / 17 + 0.8) + 1.2 : 0; // + el viaje que se dibuja
-  const cierre = 3.4;
+  const cierre = 3.0;
   const s = (x: number) => Math.round(x * fps);
   const tarjetaOut = apertura + revelado + lectura;
   const respuestaIn = tarjetaOut + 0.5;

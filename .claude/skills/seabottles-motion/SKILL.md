@@ -47,6 +47,15 @@ estáticas.
 - Duración por defecto 12 s a 30 fps. Formatos: 1080×1920 (`BotellaDelDia`) y 1080×1080
   (`BotellaDelDiaCuadrado`). Ambos comparten las mismas escenas.
 
+## El arranque (regla de Fer, 26/10/2026)
+
+En los primeros Reels, 8 de cada 10 personas pasaban de largo antes de los 3 segundos: había
+2,4 s de botella sola antes de la tarjeta. Desde el 26/10 el primer cuadro ya muestra el mar armado
+y el título «Un mensaje en una botella · lanzada desde <país>»; la tarjeta entra a los 0,5 s y la
+primera palabra se lee antes del primer segundo. No volver a poner una apertura sin texto: el primer
+cuadro es lo que ve quien desliza y lo que TikTok usa de portada. El fotograma de control (tarjeta
+completa) es round((0,75 + min(4, max(1,4, caracteres/40)) + 1) × 30).
+
 ## Estructura
 
 ```

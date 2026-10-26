@@ -2,8 +2,8 @@ import {z} from 'zod';
 
 // Props de una pieza. Cada animación nueva es un JSON en piezas/ con esta forma.
 export const esquemaBotellaDelDia = z.object({
-  titulo: z.string().default('La botella del día'),
-  etiqueta_desde: z.string().default('desde').describe('Palabra antes del país en la apertura (en inglés: "from")'),
+  titulo: z.string().default('Un mensaje en una botella'),
+  etiqueta_desde: z.string().default('lanzada desde').describe('Palabras antes del país en la apertura (en inglés: "sent from")'),
   texto: z.string().describe('El texto de la botella, tal cual lo escribió la persona'),
   mar_clave: z
     .string()

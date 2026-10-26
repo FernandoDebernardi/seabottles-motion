@@ -150,7 +150,9 @@ export const Escenario: React.FC<Props> = ({paleta, variante, semilla, deco, ban
   }, [semilla]);
   const {lado} = az;
 
-  const entrada = spring({frame, fps, config: {damping: 200, stiffness: 40, mass: 1.2}});
+  // Fer, 26/10/2026: el primer cuadro ya muestra el mar armado (es el que ve quien desliza);
+  // la escena arranca con la entrada casi hecha y solo termina de asentarse.
+  const entrada = spring({frame: frame + fps * 0.9, fps, config: {damping: 200, stiffness: 40, mass: 1.2}});
   const despeje = interpolate(frame, [cierreIn - fps * 0.4, cierreIn + fps * 0.6], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',

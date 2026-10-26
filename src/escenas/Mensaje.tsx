@@ -38,7 +38,7 @@ export const Mensaje: React.FC<Props> = ({texto, mar, pais, banderaCodigo, orige
     });
     return lista;
   }, [texto]);
-  const inicio = fps * 0.35;
+  const inicio = fps * 0.25;
   const visibles = interpolate(local, [inicio, inicio + revelado], [0, palabras.length], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',

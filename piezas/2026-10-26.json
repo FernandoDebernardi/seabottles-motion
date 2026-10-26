@@ -1,0 +1,24 @@
+{
+  "texto": "Hoy muy feliz porque logré un primer comic que tenía pensado hace tiempo, espero poder organizarme para que no quede en eso nada más, cuéntame ¿qué proyecto tienes en mente?",
+  "mar_clave": "vida",
+  "pais": "Perú",
+  "bandera": "🇵🇪",
+  "deco": {
+    "mata": true,
+    "tapa": "corcho",
+    "paper": "crema",
+    "sello": "none",
+    "tinta": "grafito",
+    "cordel": "none",
+    "etiqueta": "none"
+  },
+  "origen": "Lanzada desde Perú",
+  "clima": "nublado",
+  "momento": "dia",
+  "respuesta": {
+    "texto": "Qué lindo terminar algo que tenías pensado hace tanto. Yo quiero armar una huerta en el balcón, y tu cómic me dio ganas de empezar.",
+    "pais": "Argentina",
+    "bandera_codigo": "ar"
+  },
+  "semilla": "2026-10-26:bjnpzxxv4jhk"
+}

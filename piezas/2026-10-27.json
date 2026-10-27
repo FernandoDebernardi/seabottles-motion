@@ -1,0 +1,24 @@
+{
+  "texto": "hola...es mi primera botella asi que no se mucho, pero si la encontraste tienes derecho a hacer una pregunta:)",
+  "mar_clave": "pensamientos",
+  "pais": "Colombia",
+  "bandera": "🇨🇴",
+  "deco": {
+    "mata": true,
+    "tapa": "corcho",
+    "paper": "crema",
+    "sello": "none",
+    "tinta": "grafito",
+    "cordel": "none",
+    "etiqueta": "nube"
+  },
+  "origen": "Lanzada desde Colombia",
+  "clima": "lluvia",
+  "momento": "dia",
+  "respuesta": {
+    "texto": "Ahí va mi pregunta: ¿qué se ve desde tu ventana? Desde la mía, un jacarandá lleno de flores violetas.",
+    "pais": "Argentina",
+    "bandera_codigo": "ar"
+  },
+  "semilla": "2026-10-27:kb3w5hwcgc3j"
+}

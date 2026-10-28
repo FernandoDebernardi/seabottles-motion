@@ -1,0 +1,24 @@
+{
+  "texto": "¿Cuál es el último tema del que leíste u oíste algo y te dio curiosidad investigar?",
+  "mar_clave": "actualidad",
+  "pais": "Ecuador",
+  "bandera": "🇪🇨",
+  "deco": {
+    "mata": false,
+    "tapa": "corcho",
+    "paper": "crema",
+    "sello": "none",
+    "tinta": "grafito",
+    "cordel": "none",
+    "etiqueta": "none"
+  },
+  "origen": "Lanzada desde Ecuador",
+  "clima": "lluvia",
+  "momento": "atardecer",
+  "respuesta": {
+    "texto": "Hace poco oí que los pulpos tienen tres corazones y terminé la tarde leyendo sobre ellos.",
+    "pais": "Venezuela",
+    "bandera_codigo": "ve"
+  },
+  "semilla": "2026-10-28:vz6w4sxrxqqs"
+}

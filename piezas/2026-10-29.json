@@ -1,0 +1,22 @@
+{
+  "titulo": "A message in a bottle",
+  "etiqueta_desde": "sent from",
+  "texto": "Could you tell me about any unusual foods from your country? \nIn mine, we have Karashi Renkon, which is lotus root stuffed with a mix of mustard and miso paste.",
+  "mar_clave": "vida",
+  "mar": "Sea of Life",
+  "pais": "Japan",
+  "bandera": "🇯🇵",
+  "deco": {"mata": true, "tapa": "corcho", "paper": "crema", "sello": "none", "tinta": "grafito", "cordel": "none", "etiqueta": "mundo"},
+  "origen": "Cast from Japan",
+  "frase_cierre": "Write without a name. Someone, far away, will read it.",
+  "clima": "despejado",
+  "momento": "noche",
+  "respuesta": {
+    "texto": "In India we fry bitter gourd until it is crispy, and I still can't decide if I love it or not.",
+    "pais": "India",
+    "bandera_codigo": "in",
+    "encabezado": "This is how someone from India might reply",
+    "pie": "The bottle set sail from Japan."
+  },
+  "semilla": "2026-10-29:fdxjfg36dc46"
+}

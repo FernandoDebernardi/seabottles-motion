@@ -1,0 +1,16 @@
+{
+  "texto": "Qué regla que nunca ibas a romper, la rompiste por amor?",
+  "mar_clave": "amor",
+  "pais": "Argentina",
+  "bandera": "🇦🇷",
+  "deco": {"mata": true, "tapa": "corcho", "paper": "arena", "sello": "botella", "tinta": "sepia", "cordel": "nudo", "etiqueta": "corazon"},
+  "origen": "Lanzada desde Argentina",
+  "clima": "lluvia",
+  "momento": "dia",
+  "respuesta": {
+    "texto": "Yo juraba que nunca iba a mudarme de ciudad. Hoy tomo mate mirando otro río y no me arrepiento.",
+    "pais": "Argentina",
+    "bandera_codigo": "ar"
+  },
+  "semilla": "2026-10-30:7sqgjtsqq3wp"
+}

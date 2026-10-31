@@ -1,0 +1,16 @@
+{
+  "texto": "Tú yo de 5 años ¿Estaría feliz de tu vida actual?",
+  "mar_clave": "suenos",
+  "pais": "Chile",
+  "bandera": "🇨🇱",
+  "deco": {"mata": true, "tapa": "corcho", "paper": "crema", "sello": "none", "tinta": "grafito", "cordel": "none", "etiqueta": "pez"},
+  "origen": "Lanzada desde Chile",
+  "clima": "despejado",
+  "momento": "noche",
+  "respuesta": {
+    "texto": "Creo que sí. A los cinco años quería vivir cerca del mar y tener un perro, y hoy tengo las dos cosas.",
+    "pais": "Venezuela",
+    "bandera_codigo": "ve"
+  },
+  "semilla": "2026-10-31:rw66dmfb4xx9"
+}

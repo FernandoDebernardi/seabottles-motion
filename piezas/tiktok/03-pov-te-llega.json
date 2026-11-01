@@ -1,0 +1,7 @@
+{"escenas": [
+  {"tipo": "gancho", "dur": 2.1, "etiqueta": "POV", "lineas": [{"t": "Abres la app"}, {"t": "y te llegó esto", "c": "lima"}, {"t": "desde España:"}]},
+  {"tipo": "botella", "dur": 3.4, "fondo": "vidrio", "texto": "¿A alguien más le pasa que los domingos duran el doble?", "mar": "Mar de los pensamientos", "pais": "España", "bandera": "es"},
+  {"tipo": "opciones", "dur": 3.6, "fondo": "papel", "pregunta": "¿Qué haces?", "opciones": [{"t": "Resonar", "d": "«Esta me llegó». Le avisa, sin nombres."}, {"t": "Responder", "d": "Una charla solo entre ustedes dos."}, {"t": "Pasar la botella", "d": "Que siga su viaje a otra persona."}], "correcta": -1},
+  {"tipo": "gancho", "dur": 2.4, "fondo": "hondo", "lineas": [{"t": "No sabes"}, {"t": "quién es.", "c": "lima"}, {"t": "Ni lo sabrás.", "c": "dorado"}]},
+  {"tipo": "cta", "dur": 2.8, "fondo": "lima", "lineas": [{"t": "¿Tú qué"}, {"t": "harías?"}], "pregunta": "¿Resonar, responder o pasar?"}
+]}

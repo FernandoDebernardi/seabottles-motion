@@ -34,7 +34,7 @@ const el = (n: string) => staticFile(`elementos/${n}.png`);
 
 // ---------- cielo ----------
 
-const Estrellas: React.FC<{alpha: number; semilla: string}> = ({alpha, semilla}) => {
+export const Estrellas: React.FC<{alpha: number; semilla: string}> = ({alpha, semilla}) => {
   const frame = useCurrentFrame();
   const {width, height} = useVideoConfig();
   const puntos = React.useMemo(() => {
@@ -85,7 +85,7 @@ const Fugaz: React.FC<{semilla: string}> = ({semilla}) => {
   );
 };
 
-const Sol: React.FC<{x: number; y: number; r: number; alpha: number}> = ({x, y, r, alpha}) => (
+export const Sol: React.FC<{x: number; y: number; r: number; alpha: number}> = ({x, y, r, alpha}) => (
   <div
     style={{
       position: 'absolute',
@@ -102,7 +102,7 @@ const Sol: React.FC<{x: number; y: number; r: number; alpha: number}> = ({x, y, 
 );
 
 // Nube de arcilla dibujada con tres lóbulos redondos
-const Nube: React.FC<{x: number; y: number; w: number; alpha: number; tono: string}> = ({x, y, w, alpha, tono}) => {
+export const Nube: React.FC<{x: number; y: number; w: number; alpha: number; tono: string}> = ({x, y, w, alpha, tono}) => {
   const lob = (lx: number, ly: number, d: number) => (
     <div
       style={{

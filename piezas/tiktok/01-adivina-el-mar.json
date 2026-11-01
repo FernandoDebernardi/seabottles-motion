@@ -1,0 +1,7 @@
+{"escenas": [
+  {"tipo": "gancho", "dur": 2.0, "etiqueta": "JUEGO", "lineas": [{"t": "¿A qué mar"}, {"t": "tirarías esta", "c": "lima"}, {"t": "botella?"}]},
+  {"tipo": "botella", "dur": 3.4, "fondo": "papel", "texto": "Todavía guardo el boleto del primer viaje que hice solo.", "pais": "Chile", "bandera": "cl"},
+  {"tipo": "opciones", "dur": 5.6, "fondo": "lima", "pregunta": "¿A cuál la tirarías?", "opciones": [{"t": "Recuerdos"}, {"t": "Secretos"}, {"t": "Vida"}, {"t": "Sueños"}], "correcta": 0, "revelar": 4.0, "pie": "Comenta antes de que se revele…"},
+  {"tipo": "gancho", "dur": 2.4, "fondo": "hondo", "lineas": [{"t": "En Seabottles"}, {"t": "hay 7 mares.", "c": "dorado"}, {"t": "Tú eliges.", "c": "lima"}]},
+  {"tipo": "cta", "dur": 2.8, "fondo": "lima", "lineas": [{"t": "¿Y a qué mar"}, {"t": "iría la tuya?"}], "pregunta": "Comenta tu mar"}
+]}

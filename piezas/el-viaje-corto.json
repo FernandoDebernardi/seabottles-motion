@@ -1,0 +1,13 @@
+{
+  "version": "corta",
+  "texto": "Alguna vez has escrito una carta a mano? Cuánto tiempo ha pasado? Recuerdas a quien se la escribiste?\nMe da curiosidad...",
+  "mar_clave": "pensamientos",
+  "pais": "Chile",
+  "bandera_codigo": "cl",
+  "pais_destino": "México",
+  "bandera_destino": "mx",
+  "deco": {"etiqueta": "none", "cordel": "none", "sello": "none", "tapa": "corcho"},
+  "respuesta": "La última se la escribí a mi abuela, en un papel con flores. Me contestó, y todavía guardo su letra.",
+  "frase_cierre": "Escribe sin nombre. Alguien, lejos, lo leerá.",
+  "musica_archivo": "audio/generada-el-viaje.wav"
+}

@@ -12,15 +12,20 @@ type Props = {
   desde: number; // frame de entrada
   revelado: number; // frames que tarda en aparecer todo el texto
   hasta: number; // frame en que empieza a irse
+  escala?: number; // TikTok: letra más grande
+  anchoRel?: number;
+  topRel?: number;
+  sinEntrada?: boolean; // TikTok: la tarjeta ya está en el cuadro 0
+  inicialVisibles?: number; // palabras ya visibles al empezar
 };
 
-export const Mensaje: React.FC<Props> = ({texto, mar, pais, banderaCodigo, origen, acento, desde, revelado, hasta}) => {
+export const Mensaje: React.FC<Props> = ({texto, mar, pais, banderaCodigo, origen, acento, desde, revelado, hasta, escala = 1, anchoRel, topRel, sinEntrada, inicialVisibles = 0}) => {
   const frame = useCurrentFrame();
   const {width, height, fps} = useVideoConfig();
   const vertical = height > width;
 
   const local = frame - desde;
-  const entrada = spring({frame: local, fps, config: {damping: 18, stiffness: 90, mass: 0.9}});
+  const entrada = sinEntrada ? 1 : spring({frame: local, fps, config: {damping: 18, stiffness: 90, mass: 0.9}});
   const salida = interpolate(frame, [hasta, hasta + fps * 0.6], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
@@ -39,7 +44,7 @@ export const Mensaje: React.FC<Props> = ({texto, mar, pais, banderaCodigo, orige
     return lista;
   }, [texto]);
   const inicio = fps * 0.25;
-  const visibles = interpolate(local, [inicio, inicio + revelado], [0, palabras.length], {
+  const visibles = interpolate(local, [inicio, inicio + revelado], [inicialVisibles, palabras.length], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
@@ -48,8 +53,8 @@ export const Mensaje: React.FC<Props> = ({texto, mar, pais, banderaCodigo, orige
   const lineas = palabras.filter((x) => x.salto).length + 1;
   const porLargo = texto.length > 260 ? 0.72 : texto.length > 180 ? 0.82 : texto.length > 110 ? 0.9 : 1;
   const porLineas = lineas >= 8 ? 0.74 : lineas >= 6 ? 0.82 : lineas >= 4 ? 0.9 : 1; // versos: muchas líneas cortas
-  const tam = base * Math.min(porLargo, porLineas);
-  const anchoTarjeta = width * (vertical ? 0.84 : 0.74);
+  const tam = base * Math.min(porLargo, porLineas) * escala;
+  const anchoTarjeta = width * (anchoRel ?? (vertical ? 0.84 : 0.74));
   const bandera = banderaCodigo ? staticFile(`banderas/${banderaCodigo}.svg`) : null;
 
   return (
@@ -57,7 +62,7 @@ export const Mensaje: React.FC<Props> = ({texto, mar, pais, banderaCodigo, orige
       style={{
         position: 'absolute',
         left: width / 2 - anchoTarjeta / 2,
-        top: vertical ? height * 0.17 : height * 0.13,
+        top: topRel !== undefined ? height * topRel : vertical ? height * 0.17 : height * 0.13,
         width: anchoTarjeta,
         opacity: entrada * (1 - salida),
         transform: `translateY(${interpolate(entrada, [0, 1], [40, 0]) - salida * 60}px) scale(${0.94 + 0.06 * entrada})`,

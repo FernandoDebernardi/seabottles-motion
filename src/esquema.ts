@@ -48,6 +48,7 @@ export const esquemaBotellaDelDia = z.object({
   clima: z.enum(['despejado', 'nublado', 'viento', 'lluvia', 'niebla']).default('despejado'),
   momento: z.enum(['dia', 'amanecer', 'atardecer', 'noche']).optional().describe('Hora local del lugar de la botella al publicar: cambia el cielo (noche = escena nocturna)'),
   cierre: z.string().default('seabottles.org'),
+  formato: z.enum(['reel', 'tiktok']).default('reel').describe('tiktok = adaptación para TikTok: frase visible en el cuadro 0, texto más grande, zona segura de TikTok, loop'),
   frase_cierre: z
     .string()
     .optional()

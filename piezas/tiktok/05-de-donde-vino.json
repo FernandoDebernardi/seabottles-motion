@@ -1,0 +1,7 @@
+{"escenas": [
+  {"tipo": "gancho", "dur": 2.0, "etiqueta": "JUEGO", "lineas": [{"t": "¿De qué país"}, {"t": "vino esta", "c": "lima"}, {"t": "botella?"}]},
+  {"tipo": "botella", "dur": 3.6, "fondo": "papel", "texto": "Aquí ya es primavera y los jacarandás se pusieron violetas.", "mar": "Mar de la vida"},
+  {"tipo": "opciones", "dur": 5.6, "fondo": "vidrio", "pregunta": "¿De dónde vino?", "opciones": [{"t": "Argentina", "bandera": "ar"}, {"t": "España", "bandera": "es"}, {"t": "México", "bandera": "mx"}, {"t": "Japón", "bandera": "jp"}], "correcta": 0, "revelar": 4.0, "pie": "Pista: es noviembre…"},
+  {"tipo": "viaje", "dur": 3.0, "desde": "ar", "hasta": ["es", "mx", "co"], "lineas": [{"t": "La corriente"}, {"t": "la llevó a", "c": "lima"}, {"t": "otro país."}]},
+  {"tipo": "cta", "dur": 2.8, "fondo": "lima", "lineas": [{"t": "Solo ves el país."}, {"t": "Nunca el nombre."}], "pregunta": "¿Acertaste?"}
+]}

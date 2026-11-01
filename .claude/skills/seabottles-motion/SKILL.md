@@ -164,3 +164,83 @@ preguntas, y volver a contestarlas al revisar un fotograma de prueba:
 - El render usa Chrome. Si no descarga el navegador, fijar uno instalado en `remotion.config.ts`
   con `Config.setBrowserExecutable('<ruta>')` o pasar `--browser-executable`.
 - Si el texto es largo, `Mensaje` baja el tamaño de letra solo (umbrales 140 y 220 caracteres).
+
+## «El viaje» — la vida de una botella (1/11/2026)
+
+Pieza «viral» que cuenta una botella real de punta a punta: la escriben, la sueltan, cruza el mar
+del día a la noche y llega a otra orilla. Composiciones `ElViaje` (26 s, con respuesta ilustrativa)
+y `ElViajeCorto` (13 s, sin respuesta, para Trial Reel y TikTok) en `src/ElViaje.tsx`; piezas en
+`piezas/el-viaje.json` y `piezas/el-viaje-corto.json`.
+
+- **Misma estética que los Reels diarios**: olas de arcilla, botella de la app con su `deco`,
+  tarjeta `Mensaje`, `Respuesta`, `Cierre`, banderas y línea de puntos. Lo que cambia es la cámara:
+  acompaña a la botella (las capas se desplazan con paralaje: nubes 0,15 · gaviotas 0,3 · olas de
+  fondo, faro, ballena y barquito 0,6 · playa 0,85 · olas de adelante 1).
+- **Datos reales, nunca inventados**: texto de la botella tal cual, país de salida y país de quien
+  la abrió (deliveries.opened_at + profiles.country). La respuesta la escribe Claude y se presenta
+  como «Así podría responderle alguien desde <país>».
+- **Cielo del recorrido**: día → atardecer → noche (luna, estrellas, haz del faro) → amanecer → día.
+  El color del texto pasa a blanco cuando el cielo oscurece (`noche > 0,42`), con sombra marcada.
+- **Loop**: al final la cámara vuelve a arrancar y la playa sale por la izquierda; el último cuadro
+  es mar abierto con la botella, igual que el primero sin textos.
+- **La playa** (`public/elementos/playa.png`, Recraft c900ae71 + remove_background) se recorta en
+  la línea del agua como el faro: la base celeste queda escondida detrás de la ola de adelante.
+
+## Reels y TikTok a la vez (zonas seguras, 1/11/2026)
+
+- Un solo MP4 1080×1920 a 30 fps sirve para las dos redes.
+- Textos entre el 8,5 % y el 70 % de la altura (TikTok tapa más abajo que Instagram) y una franja
+  libre de ~140 px a la derecha (íconos de TikTok): las tarjetas van corridas 3,5 % a la izquierda
+  y al 92–95 % de tamaño.
+- El primer cuadro ya tiene texto (TikTok lo usa de portada) y el final empalma con el principio.
+- Audio: piano de `musica.mjs`, normalizado a −14 LUFS con
+  `ffmpeg -i in.mp4 -c:v copy -af loudnorm=I=-14:TP=-1.5:LRA=11 -c:a aac -b:a 192k out.mp4`.
+
+## Revisión antes del render final (de la investigación de animaciones virales, 1/11/2026)
+
+1. Borrador rápido: `npx remotion render <Id> out/borrador.mp4 --scale=0.5 --crf=26`.
+2. Hoja de contacto: 10–14 cuadros con ffmpeg pegados en una imagen; mirarla entera.
+3. Tres rondas y parar: (a) crítica como motion designer senior (legibilidad, choques, elementos
+   fuera de lugar, loop); (b) notas de director sobre momentos concretos; (c) pulido (tiempos de
+   lectura, nada lineal en lo espacial, último cuadro).
+4. Recién entonces el render final con `--crf=18`.
+- En este contenedor el Chrome de Remotion no se descarga: usar
+  `--browser-executable=/opt/pw-browsers/chromium-1243/chrome-linux64/chrome` y `--concurrency=2`.
+
+## «Cómo funciona Seabottles» en 3D (1/11/2026)
+
+Explicativo de 60 s para quien nunca abrió la app (composición `ComoFunciona`, `src/Explicativo.tsx`,
+piezas 3D en `src/tres/`). **No lleva el texto de ninguna botella real** (pedido de Fer): el papel
+muestra trazos de escritura ilegibles. Todo lo que dice tiene que ser verdad en la app
+(ver `claude/MARCA-SEABOTTLES.md`): sin cifras, sin prometer respuesta.
+
+- 3D con `@remotion/three` + `three` + `@react-three/fiber`: mar de arcilla con shader propio
+  (`Oceano`, olas = suma de senos que dependen solo del tiempo; `alturaOla()` en JS para que la
+  botella flote), botella torneada (`Botella3D`, con etiqueta y cordel que aparecen con `deco`),
+  globo con la tierra de `world-atlas` dibujada en un canvas (`Globo`) y estelas por arco de gran
+  círculo. Las banderas sobre el globo van en HTML, proyectadas con `aPantalla()`.
+- El cielo es HTML detrás de un canvas transparente; `yHorizonte()` calcula dónde cae el horizonte
+  para que el degradé empalme. Las olas de arcilla de los Reels van adelante de todo (continuidad
+  con el feed).
+- Render: `--gl=swangle` (WebGL por software). Es lento: ~20 min a media resolución y ~1 h a
+  1080×1920 en este contenedor; para revisar, usar `remotion still … --scale=0.4` en 8–12 cuadros.
+- Escenas: gancho → escribir sin nombre → elegir mar y decorar → lanzar → la corriente la ofrece a
+  unas pocas personas (globo) → llega a la playa de alguien (solo ciudad y país) → resonar /
+  responder / pasar la botella → la charla es solo entre dos (globo) → sin nombres, sin me gusta,
+  sin seguidores, sin apuro → «¿Qué le dirías a alguien que no conoces?» + seabottles.org.
+
+## Versión viral (1/11/2026)
+
+Composición `Viral` (`src/Viral.tsx`, 26 s) y su pista `musica-viral.mjs`. Pedido de Fer: ajustarse
+al informe de animaciones virales, **sin la música calma de piano y sin las ilustraciones de
+Recraft; solo la paleta**. Se permiten textos de botellas **simulados** (escritos para la pieza).
+
+- Estilo: tipografía cinética Bricolage 800 enorme, formas vectoriales planas con contorno tinta y
+  sombra dura, fondo de color pleno que cambia en cada corte, barridos en diagonal.
+- Ritmo: 120 bpm (un beat = 0,5 s). Gancho en el cuadro 0 («Nunca le dije esto a nadie.»),
+  subtítulos de 1–3 palabras con la palabra clave en otro color, montaje de 8 botellas a una por
+  beat, sacudida de cámara en los golpes, último medio segundo empalma con el primer cuadro.
+- Audio: `node musica-viral.mjs public/audio/viral.wav` sintetiza beat, bajo, acordes, riser y los
+  efectos (tipeo, sello, corcho, vuelo, salpicadura, campanas) en los mismos tiempos `TV` del
+  componente; si se mueve un tiempo, cambiarlo en los dos archivos. Después, loudnorm a −14 LUFS.
+- Render 2D: ~1,5 min a 1080×1920.

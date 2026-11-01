@@ -8,7 +8,7 @@ import {Clima} from './escenas/Clima';
 import {PropsBotellaDelDia} from './esquema';
 import {asegurarFuentes} from './fuentes';
 import {conClima, conMomento, normalizarMar, PALETAS} from './paletas';
-import {crearAzar, tiempos} from './semilla';
+import {crearAzar, tiempos, tiemposTikTok} from './semilla';
 import {bezierCalmo, fuente} from './tema';
 
 // Frases del cierre: rotan por semilla para que no todas las publicaciones terminen igual
@@ -32,9 +32,10 @@ export const resolver = (p: PropsBotellaDelDia, fps: number) => {
   const az = crearAzar(semilla + ':variante');
   const variante: Variante =
     p.variante && p.variante !== 'auto' ? p.variante : az.elegir(paleta.noche ? VARIANTES_NOCHE : VARIANTES_DIA);
-  const T = tiempos(p.texto, fps, p.respuesta?.texto);
-  const frase = p.frase_cierre || crearAzar(semilla + ':frase').elegir(FRASES);
-  return {paleta, variante, semilla, T, mar: p.mar || paleta.nombre, frase};
+  const tk = p.formato === 'tiktok';
+  const T = tk ? tiemposTikTok(p.texto, fps, p.respuesta?.texto) : {...tiempos(p.texto, fps, p.respuesta?.texto), inicialVisibles: 0};
+  const frase = tk ? 'Escribe la tuya. La corriente la llevará a alguien.' : p.frase_cierre || crearAzar(semilla + ':frase').elegir(FRASES);
+  return {paleta, variante, semilla, T, mar: p.mar || paleta.nombre, frase, tk};
 };
 
 export const BotellaDelDia: React.FC<PropsBotellaDelDia> = (p) => {
@@ -42,14 +43,16 @@ export const BotellaDelDia: React.FC<PropsBotellaDelDia> = (p) => {
   const frame = useCurrentFrame();
   const {fps, width, height} = useVideoConfig();
   const vertical = height > width;
-  const {paleta, variante, semilla, T, mar, frase} = React.useMemo(() => resolver(p, fps), [p, fps]);
+  const {paleta, variante, semilla, T, mar, frase, tk} = React.useMemo(() => resolver(p, fps), [p, fps]);
 
-  const haciaAbajo = interpolate(
+  const haciaAbajoReel = interpolate(
     frame,
     [T.tarjetaIn - fps * 0.4, T.tarjetaIn + fps * 0.8, T.cierreIn, T.cierreIn + fps],
     [0, 1, 1, 0.85],
     {extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.bezier(...bezierCalmo)},
   );
+  // TikTok: la tarjeta ya está en el cuadro 0, así que la botella arranca abajo
+  const haciaAbajo = tk ? interpolate(frame, [T.cierreIn, T.cierreIn + fps], [1, 0.85], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'}) : haciaAbajoReel;
 
   // Título de apertura: ya está en pantalla en el PRIMER cuadro (es lo que ve quien desliza y lo
   // que TikTok usa de portada); solo termina de asentarse en el primer medio segundo.
@@ -86,7 +89,7 @@ export const BotellaDelDia: React.FC<PropsBotellaDelDia> = (p) => {
       <div
         style={{
           position: 'absolute',
-          top: vertical ? height * 0.07 : height * 0.05,
+          top: tk ? height * 0.125 : vertical ? height * 0.07 : height * 0.05,
           left: 0,
           right: 0,
           display: 'flex',
@@ -107,7 +110,7 @@ export const BotellaDelDia: React.FC<PropsBotellaDelDia> = (p) => {
             textShadow: paleta.noche ? '0 2px 18px rgba(0,0,0,0.35)' : '0 2px 18px rgba(255,255,255,0.5)',
           }}
         >
-          {p.titulo}
+          {tk ? 'Botella real · anónima' : p.titulo}
         </div>
         {p.pais ? (
           <div
@@ -128,7 +131,7 @@ export const BotellaDelDia: React.FC<PropsBotellaDelDia> = (p) => {
                 style={{width: width * 0.05, height: width * 0.0375, borderRadius: width * 0.007, objectFit: 'cover', boxShadow: '0 1px 4px rgba(0,0,0,0.3)'}}
               />
             ) : null}
-            <span>{p.etiqueta_desde} {p.pais}</span>
+            <span>{tk ? 'desde' : p.etiqueta_desde} {p.pais}</span>
           </div>
         ) : null}
       </div>
@@ -143,6 +146,7 @@ export const BotellaDelDia: React.FC<PropsBotellaDelDia> = (p) => {
         desde={T.tarjetaIn}
         revelado={T.revelado}
         hasta={T.tarjetaOut}
+        {...(tk ? {escala: 1.35, anchoRel: 0.78, topRel: 0.205, sinEntrada: true, inicialVisibles: T.inicialVisibles} : {})}
       />
 
       {p.respuesta ? (
@@ -158,10 +162,33 @@ export const BotellaDelDia: React.FC<PropsBotellaDelDia> = (p) => {
           desde={T.respuestaIn}
           revelado={T.respuestaRevelado}
           hasta={T.respuestaOut}
+          {...(tk ? {escala: 1.25, anchoRel: 0.78} : {})}
         />
       ) : null}
 
       <Cierre frase={frase} cierre={p.cierre} desde={T.cierreIn} oscuro={paleta.noche} acento={paleta.acento} />
+
+      {/* TikTok: el último tercio de segundo vuelve a la tarjeta del primer cuadro (loop) */}
+      {tk && frame > T.total - fps * 0.4 ? (
+        <AbsoluteFill style={{opacity: interpolate(frame, [T.total - fps * 0.4, T.total - 2], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'})}}>
+          <Mensaje
+            texto={p.texto}
+            mar={mar}
+            pais={p.pais}
+            banderaCodigo={p.bandera_codigo}
+            origen={origen}
+            acento={paleta.noche ? '#6d7a68' : paleta.acento}
+            desde={T.total + fps}
+            revelado={1}
+            hasta={T.total + fps * 10}
+            escala={1.35}
+            anchoRel={0.78}
+            topRel={0.205}
+            sinEntrada
+            inicialVisibles={T.inicialVisibles}
+          />
+        </AbsoluteFill>
+      ) : null}
     </AbsoluteFill>
   );
 };

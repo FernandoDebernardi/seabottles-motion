@@ -83,7 +83,10 @@ const tocar = (midi, t0, dur, vel) => {
 const raiz = az.elegir([57, 58, 60, 62, 63, 65, 67]); // tonalidad (La, Sib, Do, Re, Mib, Fa, Sol)
 const modo = az.elegir(['mayor', 'mayor', 'menor']);
 const escala = modo === 'mayor' ? [0, 2, 4, 5, 7, 9, 11] : [0, 2, 3, 5, 7, 8, 10];
-const bpm = az.entre(52, 68);
+// MUSICA_PULSO=1 (botella del día en TikTok): piano con más pulso, arranque sin fundido y un
+// «clink» de vidrio en el primer cuadro (informe de TikTok, 1/11/2026)
+const pulso = process.env.MUSICA_PULSO === '1';
+const bpm = pulso ? az.entre(84, 96) : az.entre(52, 68);
 const neg = 60 / bpm; // negra
 const compas = neg * 4;
 // progresiones en grados de la escala (0 = I)
@@ -108,7 +111,7 @@ const bases = (() => {
 })();
 
 // mano izquierda: arpegio suave y espaciado
-const patronIzq = az.elegir(['largo', 'arpegio', 'pulso']);
+const patronIzq = pulso ? 'ochos' : az.elegir(['largo', 'arpegio', 'pulso']);
 for (const {t, g} of bases) {
   const f = grado(g, -2);
   const q = grado(g + 4, -2);
@@ -121,9 +124,27 @@ for (const {t, g} of bases) {
     tocar(q, t + neg, compas, 0.3);
     tocar(ter, t + neg * 2, compas, 0.28);
     if (az.num() < 0.6) tocar(q, t + neg * 3, compas, 0.24);
+  } else if (patronIzq === 'ochos') {
+    // corcheas constantes: fundamental, quinta, tercera, quinta… (da el pulso sin batería)
+    const notas = [f, q, ter, q, f + 12, q, ter, q];
+    notas.forEach((m, k) => tocar(m, t + k * (neg / 2), neg * 0.9, k % 4 === 0 ? 0.36 : 0.22));
   } else {
     tocar(f, t, compas, 0.4);
     tocar(ter, t + neg * 2, compas, 0.26);
+  }
+}
+if (pulso) {
+  // latido suave en los tiempos 1 y 3, y el clink de vidrio al empezar
+  for (let tt = 0; tt < DUR - 1; tt += neg * 2) {
+    const i0 = Math.floor(tt * SR);
+    for (let i = 0; i < SR * 0.25 && i0 + i < N; i++) {
+      const x = i / SR;
+      mix[i0 + i] += Math.sin(2 * Math.PI * (55 + 60 * Math.exp(-x * 30)) * x) * Math.exp(-x * 14) * 0.35;
+    }
+  }
+  for (let i = 0; i < SR * 0.9; i++) {
+    const x = i / SR;
+    mix[i] += (Math.sin(2 * Math.PI * 2093 * x) + 0.6 * Math.sin(2 * Math.PI * 3136 * x) + 0.4 * Math.sin(2 * Math.PI * 4699 * x)) * Math.exp(-x * 6) * 0.3;
   }
 }
 
@@ -170,8 +191,9 @@ for (const [dly, gn] of [[0.11, 0.18], [0.23, 0.12]]) {
 
 // fundidos y normalización (volumen contenido)
 const F = Math.floor(SR * 1.5);
+const FI = pulso ? Math.floor(SR * 0.01) : F;
 for (let n = 0; n < F; n++) {
-  mix[n] *= n / F;
+  if (n < FI) mix[n] *= n / FI;
   mix[N - 1 - n] *= n / F;
 }
 let max = 1e-9;

@@ -1,13 +1,17 @@
 #!/usr/bin/env node
 // Genera el Reel de «La botella del día» a partir de un JSON de pieza.
-// Uso: node generar.mjs piezas/2026-10-24.json [out/2026-10-24.mp4]
+// Uso: node generar.mjs piezas/2026-10-24.json [out/2026-10-24.mp4] [--tiktok]
+// --tiktok: versión para TikTok (frase visible en el cuadro 0, texto más grande, zona segura de TikTok,
+// piano con más pulso y clink de vidrio al empezar, loop, volumen a -14 LUFS). Sale como <pieza>-tiktok.mp4.
 // Es el comando que usa la tarea programada; también sirve a mano.
 
 import {execFileSync} from 'node:child_process';
 import {existsSync, mkdirSync, readFileSync} from 'node:fs';
 import {basename, resolve} from 'node:path';
 
-const entrada = process.argv[2];
+const args = process.argv.slice(2);
+const tiktok = args.includes('--tiktok');
+const [entrada, salidaArg] = args.filter((a) => a !== '--tiktok');
 if (!entrada) {
   console.error('Uso: node generar.mjs piezas/<fecha>.json [out/<fecha>.mp4]');
   process.exit(1);
@@ -34,17 +38,17 @@ if (!pieza.semilla) pieza.semilla = `${basename(entrada)}:${pieza.texto.slice(0,
 // Música propia de la pieza (distinta por semilla)
 import {execFileSync as ejecutar} from 'node:child_process';
 mkdirSync('public/audio', {recursive: true});
-const nombreMusica = `audio/generada-${basename(entrada).replace(/\.json$/, '')}.wav`;
-ejecutar('node', ['musica.mjs', pieza.semilla, `public/${nombreMusica}`, '60'], {stdio: 'inherit'});
+const nombreMusica = `audio/generada-${basename(entrada).replace(/\.json$/, '')}${tiktok ? '-tiktok' : ''}.wav`;
+ejecutar('node', ['musica.mjs', pieza.semilla, `public/${nombreMusica}`, '60'], {stdio: 'inherit', env: {...process.env, MUSICA_PULSO: tiktok ? '1' : '0'}});
 pieza.musica_archivo = nombreMusica;
 
-const salida = process.argv[3] || `out/${basename(entrada).replace(/\.json$/, '')}.mp4`;
+const salida = salidaArg || `out/${basename(entrada).replace(/\.json$/, '')}${tiktok ? '-tiktok' : ''}.mp4`;
 mkdirSync('out', {recursive: true});
-const props = resolve('out', `${basename(entrada).replace(/\.json$/, '')}.props.json`);
+const props = resolve('out', `${basename(entrada).replace(/\.json$/, '')}${tiktok ? '-tiktok' : ''}.props.json`);
 import('node:fs').then(({writeFileSync}) => {
   writeFileSync(props, JSON.stringify(pieza));
   const args = [
-    'remotion', 'render', 'BotellaDelDia', salida,
+    'remotion', 'render', tiktok ? 'BotellaTikTok' : 'BotellaDelDia', tiktok ? salida.replace(/\.mp4$/, '.raw.mp4') : salida,
     `--props=${props}`, '--codec=h264', '--crf=18', '--log=error',
   ];
   // Chrome: usa el que Remotion descargó, o uno del sistema si está
@@ -52,5 +56,15 @@ import('node:fs').then(({writeFileSync}) => {
   const chrome = process.env.CHROME || chromes.find((c) => existsSync(c));
   if (chrome) args.push(`--browser-executable=${chrome}`);
   execFileSync('npx', args, {stdio: 'inherit'});
+  if (tiktok) {
+    // volumen estándar de TikTok (-14 LUFS); si no hay ffmpeg, queda el render tal cual
+    const crudo = salida.replace(/\.mp4$/, '.raw.mp4');
+    try {
+      execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-i', crudo, '-c:v', 'copy', '-af', 'loudnorm=I=-14:TP=-1.5:LRA=11', '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', salida], {stdio: 'inherit'});
+      import('node:fs').then(({unlinkSync}) => unlinkSync(crudo));
+    } catch {
+      import('node:fs').then(({renameSync}) => renameSync(crudo, salida));
+    }
+  }
   console.log(`\nListo: ${salida}`);
 });

@@ -14,12 +14,14 @@ type Props = {
   desde: number;
   revelado: number;
   hasta: number;
+  escala?: number;
+  anchoRel?: number;
 };
 
 // Un segundo papel, más pequeño, que llega flotando: cómo podría responderle un desconocido
 // (el texto lo escribe Claude; nunca es una respuesta real, que es privada).
 // Arriba, el viaje: bandera de origen, una estela que se dibuja, bandera de destino.
-export const Respuesta: React.FC<Props> = ({texto, paisOrigen, banderaOrigen, paisRespuesta, banderaRespuesta, encabezado, pie, acento, desde, revelado, hasta}) => {
+export const Respuesta: React.FC<Props> = ({texto, paisOrigen, banderaOrigen, paisRespuesta, banderaRespuesta, encabezado, pie, acento, desde, revelado, hasta, escala = 1, anchoRel}) => {
   const frame = useCurrentFrame();
   const {width, height, fps} = useVideoConfig();
   const vertical = height > width;
@@ -41,8 +43,8 @@ export const Respuesta: React.FC<Props> = ({texto, paisOrigen, banderaOrigen, pa
     extrapolateRight: 'clamp',
   });
 
-  const ancho = width * (vertical ? 0.78 : 0.7);
-  const tam = vertical ? width * 0.042 : width * 0.034;
+  const ancho = width * (anchoRel ?? (vertical ? 0.78 : 0.7));
+  const tam = (vertical ? width * 0.042 : width * 0.034) * escala;
   const flag = (c?: string) =>
     c ? (
       <Img

@@ -1,6 +1,10 @@
 import React from 'react';
 import {Composition} from 'remotion';
 import {BotellaDelDia, resolver} from './BotellaDelDia';
+
+// Botella del día adaptada a TikTok (mismas escenas, formato «tiktok»)
+const BotellaTikTok: React.FC<PropsBotellaDelDia> = (p) => <BotellaDelDia {...p} formato="tiktok" />;
+const metadataTikTok = ({props}: {props: PropsBotellaDelDia}) => ({durationInFrames: resolver({...props, formato: 'tiktok'}, FPS).T.total});
 import {DURACION_SEG, esquemaBotellaDelDia, FPS, PropsBotellaDelDia} from './esquema';
 import {Explicativo, DURACION_EXPLICATIVO} from './Explicativo';
 import {Viral, DURACION_VIRAL} from './Viral';
@@ -44,6 +48,8 @@ export const Root: React.FC = () => {
         width={1080}
         height={1920}
       />
+      {/* TikTok — 9:16, frase en el cuadro 0, texto grande, zona segura, loop */}
+      <Composition id="BotellaTikTok" component={BotellaTikTok} schema={esquemaBotellaDelDia} defaultProps={porDefecto} calculateMetadata={metadataTikTok} durationInFrames={DURACION_SEG * FPS} fps={FPS} width={1080} height={1920} />
       {/* Postal 4:5 para el carrusel semanal (se usa como still) */}
       <Composition
         id="BotellaDelDiaPostal"

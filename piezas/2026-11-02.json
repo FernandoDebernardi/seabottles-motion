@@ -1,0 +1,16 @@
+{
+  "texto": "Hace poco tiempo comencé a enseñar, quiero dedicarme a ser docente. Me lleno de dudas, quiero ser una buena profe",
+  "mar_clave": "suenos",
+  "pais": "Paraguay",
+  "bandera": "🇵🇾",
+  "deco": {"mata": true, "tapa": "corcho", "paper": "crema", "sello": "none", "tinta": "grafito", "cordel": "nudo", "etiqueta": "nube"},
+  "origen": "Lanzada desde Paraguay",
+  "clima": "lluvia",
+  "momento": "noche",
+  "respuesta": {
+    "texto": "Me acuerdo de la profe que nos preguntaba cómo estábamos antes de empezar. Esas dudas ya dicen mucho de ti.",
+    "pais": "Argentina",
+    "bandera_codigo": "ar"
+  },
+  "semilla": "2026-11-02:j99zmdvzqmtr"
+}

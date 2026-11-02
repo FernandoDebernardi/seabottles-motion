@@ -298,3 +298,19 @@ Están en `src/tiktok/Fauna.tsx` (la paleta y la botella plana, en `src/plano.ts
   lleva información: lo tapa la interfaz de TikTok.
 - Al sumar un bicho nuevo: figura plana en `Fauna.tsx`, su lugar en las capas según las cuatro
   preguntas de «Cada elemento en su lugar», y revisarlo en una hoja de contacto.
+- **La botella flota, no está parada** (corrección de Fer, 2/11/2026): en el agua va acostada
+  (giro ≈ 74°, el cuello unos 16° arriba), con un 40 % del cuerpo bajo la línea de la ola del medio,
+  subiendo y bajando con la ola y balanceándose. La dibuja `MarConFauna` (`botella`); cuando la
+  tiran al mar, vuela hasta la línea del agua, salpica y sale a flote (`botellaDesde`). Una botella
+  vertical con la base apenas tapada parece apoyada sobre el agua: no usarla en escenas de mar.
+- **Lo lejano, como en la app** (pedido de Fer, 2/11/2026): barcos en el horizonte, un avioncito y
+  nubes muy sutiles, con los MISMOS SVG de la aplicación (`public/fondo/`, copiados de
+  seabottles-app) y sus reglas (`index.html` BARCOS/AIRE y `tests/navegador/los-barcos-del-horizonte.js`):
+  · el horizonte es una línea recta (mar lejano calmo detrás de las olas); los barcos se apoyan en
+    ella con 4 px de casco hundido, siempre DETRÁS de la botella, uno o dos como máximo, chicos
+    (8–13 % del ancho), muy lentos (≈ 0,65 % del ancho por segundo) y de PROA (se espejan según `mira`);
+  · un solo volador a la vez y nunca junto a la gaviota; bajo, entre el texto y el mar, de nariz
+    hacia donde va, subiendo apenas, sin balanceo; no aparece si el mar está alto (≥ 70 %);
+  · dos nubes muy tenues (30 %), casi quietas, empujadas por el mismo viento que los barcos de vela;
+    no aparecen si el mar está muy alto (≥ 74 %).
+  Todo va detrás del texto: lo principal es el mensaje.

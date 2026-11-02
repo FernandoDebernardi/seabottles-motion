@@ -231,21 +231,22 @@ export const Viral: React.FC<{musica_archivo?: string}> = ({musica_archivo}) => 
             {(() => {
               const v = interpolate(t, [TV.lanza + 0.15, TV.lanza + 1.15], [0, 1], {...clamp, easing: Easing.bezier(0.3, 0, 0.7, 1)});
               const x = interpolate(v, [0, 1], [-W * 0.1, cx]);
-              const y = H * 0.62 - Math.sin(v * Math.PI) * H * 0.42 - (1 - v) * H * 0.05;
+              const y = H * 0.74 - Math.sin(v * Math.PI) * H * 0.48 - (1 - v) * H * 0.05; // cae en la línea del agua
               const rot = v * 540;
               const caida = interpolate(t, [TV.lanza + 1.15, TV.lanza + 1.9], [0, 1], clamp);
               const lineas = v > 0.05 && v < 0.98;
               return (
                 <>
                   {/* el mar con una ballena que asoma a un costado y mira caer la botella */}
-                  <MarConFauna W={W} H={H} t={t} s0={TV.lanza} dur={TV.viaje - TV.lanza} y0={H * 0.64} elenco={['ballena', 'gaviota']} izquierda />
+                  <MarConFauna W={W} H={H} t={t} s0={TV.lanza} dur={TV.viaje - TV.lanza} y0={H * 0.64} elenco={['ballena', 'gaviota']} izquierda botella botellaDesde={1.2} />
                   {lineas
                     ? [0, 1, 2, 3].map((k) => (
                         <div key={k} style={{position: 'absolute', left: x - W * (0.25 + k * 0.05), top: y + W * (0.05 + k * 0.06), width: W * (0.18 + k * 0.03), height: 8, borderRadius: 8, background: C.blanco, opacity: 0.8 - k * 0.15}} />
                       ))
                     : null}
-                  {caida < 1 ? (
-                    <div style={{position: 'absolute', left: x - W * 0.08, top: y - W * 0.19 + caida * H * 0.08, transform: `rotate(${rot}deg) scale(${1 - caida * 0.4})`, opacity: 1 - caida}}>
+                  {/* en el aire hasta tocar el agua; después sale a flote acostada (MarConFauna) */}
+                  {v < 1 ? (
+                    <div style={{position: 'absolute', left: x - W * 0.08, top: y - W * 0.19, transform: `rotate(${rot}deg)`}}>
                       <BotellaPlana w={W * 0.16} rollo={1} corcho={1} />
                     </div>
                   ) : null}
@@ -253,14 +254,14 @@ export const Viral: React.FC<{musica_archivo?: string}> = ({musica_archivo}) => 
                   {caida > 0
                     ? [0, 1, 2].map((k) => {
                         const g = interpolate(caida, [k * 0.12, 1], [0, 1], {...clamp, easing: salir});
-                        return <div key={k} style={{position: 'absolute', left: cx - W * 0.4 * g, top: H * 0.7 - W * 0.08 * g, width: W * 0.8 * g, height: W * 0.16 * g, borderRadius: '50%', border: `${8 - k * 2}px solid ${C.blanco}`, opacity: 1 - g}} />;
+                        return <div key={k} style={{position: 'absolute', left: cx - W * 0.4 * g, top: H * 0.74 - W * 0.08 * g, width: W * 0.8 * g, height: W * 0.16 * g, borderRadius: '50%', border: `${8 - k * 2}px solid ${C.blanco}`, opacity: 1 - g}} />;
                       })
                     : null}
                   {caida > 0 && caida < 0.8
                     ? Array.from({length: 12}, (_, k) => {
                         const a = -Math.PI * (0.1 + (k / 11) * 0.8);
                         const q = caida / 0.8;
-                        return <div key={`d${k}`} style={{position: 'absolute', left: cx + Math.cos(a) * W * 0.3 * q, top: H * 0.69 + Math.sin(a) * W * 0.35 * q + q * q * W * 0.3, width: W * 0.035, height: W * 0.035, borderRadius: '50%', background: C.blanco, border: `3px solid ${C.tinta}`, opacity: 1 - q}} />;
+                        return <div key={`d${k}`} style={{position: 'absolute', left: cx + Math.cos(a) * W * 0.3 * q, top: H * 0.73 + Math.sin(a) * W * 0.35 * q + q * q * W * 0.3, width: W * 0.035, height: W * 0.035, borderRadius: '50%', background: C.blanco, border: `3px solid ${C.tinta}`, opacity: 1 - q}} />;
                       })
                     : null}
                   <div style={{position: 'absolute', left: W * 0.09, width: W * 0.82, top: H * 0.1, textAlign: 'center'}}>
@@ -426,13 +427,8 @@ export const Viral: React.FC<{musica_archivo?: string}> = ({musica_archivo}) => 
                       <span style={{display: 'inline-block', fontFamily: fuente.display, fontWeight: 800, fontSize: W * 0.075, color: C.lima, background: C.tinta, padding: `${W * 0.025}px ${W * 0.06}px`, borderRadius: 999}}>seabottles.org</span>
                     </div>
                   ) : null}
-                  {t >= TV.cta + 1.3 ? (
-                    <div style={{position: 'absolute', left: cx - W * 0.09, top: H * 0.66, transform: `rotate(${Math.sin(t * 3) * 8}deg)`, transformOrigin: '50% 90%'}}>
-                      <BotellaPlana w={W * 0.18} rollo={1} corcho={1} />
-                    </div>
-                  ) : null}
-                  {/* después de la botella: la ola le tapa la base y queda flotando; delfines al costado */}
-                  <MarConFauna W={W} H={H} t={t} s0={TV.cta} dur={TV.fin - TV.cta} y0={H * 0.8} elenco={['delfines']} sube={interpolate(t, [TV.cta, TV.cta + 0.35], [0, 1], {...clamp, easing: salir})} />
+                  {/* la botella sale a flote, acostada y medio hundida; delfines al costado */}
+                  <MarConFauna W={W} H={H} t={t} s0={TV.cta} dur={TV.fin - TV.cta} y0={H * 0.68} elenco={['delfines']} botella botellaDesde={1.3} sube={interpolate(t, [TV.cta, TV.cta + 0.35], [0, 1], {...clamp, easing: salir})} />
                 </>
               );
             })()}

@@ -129,10 +129,10 @@ const Carta: React.FC<{ctx: Ctx; s0: number; texto: string; mar?: string; pais?:
 // dice de entrada de qué se trata. La tapa en parte la interfaz de TikTok: nunca lleva información.
 // `quieto`: el gancho del principio (ya está en su lugar en el cuadro 0); el empalme del loop lo
 // dibuja con s0 = fin, así los bichos quedan exactamente como en el cuadro 0.
-const MarAbajo: React.FC<{ctx: Ctx; s0: number; y?: number; botella?: boolean; quieto?: boolean}> = ({ctx, s0, y = 0.66, botella, quieto}) => {
+const MarAbajo: React.FC<{ctx: Ctx; s0: number; y?: number; botella?: boolean; botellaDesde?: number; quieto?: boolean}> = ({ctx, s0, y = 0.66, botella, botellaDesde, quieto}) => {
   const {W, H, t} = ctx;
   const sube = quieto || s0 < 0 ? 1 : interpolate(t, [s0, s0 + 0.35], [0, 1], {...clamp, easing: salir});
-  return <MarConFauna W={W} H={H} t={t} s0={s0} dur={quieto ? 3 : ctx.dur} y0={H * y} elenco={quieto ? ctx.elenco0 : ctx.elenco} botella={botella} sube={sube} izquierda={quieto ? true : undefined} />;
+  return <MarConFauna W={W} H={H} t={t} s0={s0} dur={quieto ? 3 : ctx.dur} y0={H * y} elenco={quieto ? ctx.elenco0 : ctx.elenco} botella={botella} botellaDesde={botellaDesde} sube={sube} izquierda={quieto ? true : undefined} />;
 };
 
 // ---------- escenas ----------
@@ -307,20 +307,22 @@ const Lanza: React.FC<{ctx: Ctx; s0: number; e: Extract<Escena, {tipo: 'lanza'}>
   const {W, H, t, cx} = ctx;
   const v = interpolate(t, [s0 + 0.1, s0 + 1.0], [0, 1], {...clamp, easing: Easing.bezier(0.3, 0, 0.7, 1)});
   const x = interpolate(v, [0, 1], [-W * 0.1, cx]);
-  const y = H * 0.66 - Math.sin(v * Math.PI) * H * 0.33;
+  // cae justo en la línea del agua; después la toma MarConFauna, que la saca a flote acostada
+  const y = H * 0.76 - Math.sin(v * Math.PI) * H * 0.4;
   const caida = interpolate(t, [s0 + 1.0, s0 + 1.7], [0, 1], clamp);
-  const deriva = interpolate(t, [s0 + 1.0, s0 + e.dur], [0, 1], clamp);
   return (
     <>
       <Fondo col={C.mar1} col2={C.mar2} />
-      <MarAbajo ctx={ctx} s0={s0} y={0.66} />
-      <div style={{position: 'absolute', left: x - W * 0.08 + deriva * W * 0.12, top: y - W * 0.19 + (caida > 0 ? H * 0.03 + Math.sin(t * 3) * 10 : 0), transform: `rotate(${v < 1 ? v * 450 : 10 + Math.sin(t * 3) * 8}deg)`}}>
-        <BotellaPlana w={W * 0.16} rollo={1} corcho={1} />
-      </div>
+      <MarAbajo ctx={ctx} s0={s0} y={0.66} botella botellaDesde={1.0} />
+      {v < 1 ? (
+        <div style={{position: 'absolute', left: x - W * 0.08, top: y - W * 0.19, transform: `rotate(${v * 450}deg)`}}>
+          <BotellaPlana w={W * 0.16} rollo={1} corcho={1} />
+        </div>
+      ) : null}
       {caida > 0 && caida < 1
         ? [0, 1, 2].map((k) => {
             const g = interpolate(caida, [k * 0.12, 1], [0, 1], {...clamp, easing: salir});
-            return <div key={k} style={{position: 'absolute', left: cx - W * 0.35 * g, top: H * 0.72 - W * 0.07 * g, width: W * 0.7 * g, height: W * 0.14 * g, borderRadius: '50%', border: `${8 - k * 2}px solid ${C.blanco}`, opacity: 1 - g}} />;
+            return <div key={k} style={{position: 'absolute', left: cx - W * 0.35 * g, top: H * 0.76 - W * 0.07 * g, width: W * 0.7 * g, height: W * 0.14 * g, borderRadius: '50%', border: `${8 - k * 2}px solid ${C.blanco}`, opacity: 1 - g}} />;
           })
         : null}
       <Lineas ctx={ctx} s0={s0} lineas={e.lineas} fondo="mar" top={0.13} max={0.13} paso={0.5} />

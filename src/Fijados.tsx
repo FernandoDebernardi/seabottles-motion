@@ -43,10 +43,10 @@ const Pastilla: React.FC<{desde: number; texto: string; fondo: string; tinta: st
 
 // el mar con fauna 2D del tercio de abajo (ver src/tiktok/Fauna.tsx); entra desde abajo al empezar
 // la escena, salvo en el gancho (s0 = 0) y en el empalme del loop (s0 = fin), que deben ser idénticos
-const MarDe: React.FC<{t: number; s0: number; dur: number; y: number; elenco: Bicho[]; botella?: boolean; fijo?: boolean}> = ({t, s0, dur, y, elenco, botella, fijo}) => {
+const MarDe: React.FC<{t: number; s0: number; dur: number; y: number; elenco: Bicho[]; botella?: boolean; botellaDesde?: number; fijo?: boolean}> = ({t, s0, dur, y, elenco, botella, botellaDesde, fijo}) => {
   const {W, H} = useCol();
   const sube = fijo ? 1 : interpolate(t, [s0, s0 + 0.35], [0, 1], {...clamp, easing: salir});
-  return <MarConFauna W={W} H={H} t={t} s0={s0} dur={dur} y0={H * y} elenco={elenco} botella={botella} sube={sube} izquierda={fijo ? true : undefined} />;
+  return <MarConFauna W={W} H={H} t={t} s0={s0} dur={dur} y0={H * y} elenco={elenco} botella={botella} botellaDesde={botellaDesde} sube={sube} izquierda={fijo ? true : undefined} />;
 };
 
 const sacudida = (t: number, golpes: number[]) => {
@@ -146,16 +146,8 @@ export const EnQuince: React.FC<{musica_archivo?: string}> = ({musica_archivo}) 
                 <Pastilla key={n} desde={T15.mar + 0.5 + i * 0.25} texto={n} fondo={f} tinta={ti} tam={W * 0.05} />
               ))}
             </Linea>
-            {(() => {
-              const b = popEn(frame, fps, T15.mar + 0.3, 12, 160);
-              return (
-                <div style={{position: 'absolute', left: cx - W * 0.1, top: H * 0.5, transform: `scale(${b}) rotate(${Math.sin(t * 4) * 6}deg)`, transformOrigin: '50% 100%'}}>
-                  <BotellaPlana w={W * 0.2} rollo={1} corcho={1} />
-                </div>
-              );
-            })()}
-            {/* después de la botella: la ola de adelante le tapa la base y queda flotando */}
-            <MarDe t={t} s0={T15.mar} dur={T15.corriente - T15.mar} y={0.72} elenco={['tortuga', 'barquito']} />
+            {/* la botella sale a flote, acostada y medio hundida */}
+            <MarDe t={t} s0={T15.mar} dur={T15.corriente - T15.mar} y={0.66} elenco={['tortuga']} botella botellaDesde={0.3} />
           </>
         ) : null}
 
@@ -351,19 +343,20 @@ export const Manifiesto: React.FC<{musica_archivo?: string}> = ({musica_archivo}
             {(() => {
               const v = interpolate(t, [TM.corriente + 0.1, TM.corriente + 1.0], [0, 1], {...clamp, easing: Easing.bezier(0.3, 0, 0.7, 1)});
               const x = interpolate(v, [0, 1], [-W * 0.1, cx]);
-              const y = H * 0.66 - Math.sin(v * Math.PI) * H * 0.35;
+              const y = H * 0.76 - Math.sin(v * Math.PI) * H * 0.42; // cae en la línea del agua
               const caida = interpolate(t, [TM.corriente + 1.0, TM.corriente + 1.7], [0, 1], clamp);
-              const deriva = interpolate(t, [TM.corriente + 1.0, TM.cta], [0, 1], clamp);
-              return (
+                            return (
                 <>
-                  <MarDe t={t} s0={TM.corriente} dur={TM.cta - TM.corriente} y={0.66} elenco={['ballena']} fijo />
-                  <div style={{position: 'absolute', left: x - W * 0.08 + deriva * W * 0.15, top: y - W * 0.19 + (caida > 0 ? H * 0.03 + Math.sin(t * 3) * 10 : 0), transform: `rotate(${v < 1 ? v * 450 : 10 + Math.sin(t * 3) * 8}deg)`}}>
-                    <BotellaPlana w={W * 0.16} rollo={1} corcho={1} />
-                  </div>
+                  <MarDe t={t} s0={TM.corriente} dur={TM.cta - TM.corriente} y={0.66} elenco={['ballena']} fijo botella botellaDesde={1.0} />
+                  {v < 1 ? (
+                    <div style={{position: 'absolute', left: x - W * 0.08, top: y - W * 0.19, transform: `rotate(${v * 450}deg)`}}>
+                      <BotellaPlana w={W * 0.16} rollo={1} corcho={1} />
+                    </div>
+                  ) : null}
                   {caida > 0 && caida < 1
                     ? [0, 1, 2].map((k) => {
                         const gg = interpolate(caida, [k * 0.12, 1], [0, 1], {...clamp, easing: salir});
-                        return <div key={k} style={{position: 'absolute', left: cx - W * 0.35 * gg, top: H * 0.72 - W * 0.07 * gg, width: W * 0.7 * gg, height: W * 0.14 * gg, borderRadius: '50%', border: `${8 - k * 2}px solid ${C.blanco}`, opacity: 1 - gg}} />;
+                        return <div key={k} style={{position: 'absolute', left: cx - W * 0.35 * gg, top: H * 0.76 - W * 0.07 * gg, width: W * 0.7 * gg, height: W * 0.14 * gg, borderRadius: '50%', border: `${8 - k * 2}px solid ${C.blanco}`, opacity: 1 - gg}} />;
                       })
                     : null}
                   <Linea top={0.13}>

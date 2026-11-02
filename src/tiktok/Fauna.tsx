@@ -1,5 +1,5 @@
 import React from 'react';
-import {interpolate} from 'remotion';
+import {Img, interpolate, staticFile} from 'remotion';
 import {BotellaPlana, C, clamp, salir} from '../plano';
 
 // Fauna y objetos marinos en 2D plano para los videos de TikTok (pedido de Fer, 2/11/2026).
@@ -157,6 +157,43 @@ export const ELENCOS: Bicho[][] = [
   ['pulpo', 'gaviota'],
 ];
 
+// ---------- lo lejano: barcos en el horizonte, un volador, nubes (los dibujos de la app) ----------
+// Son los mismos SVG de la aplicación (public/fondo/, copiados de seabottles-app) y siguen sus reglas
+// (index.html, BARCOS/AIRE, y tests/navegador/los-barcos-del-horizonte.js):
+//  · los barcos navegan SOLO sobre la línea del horizonte (el casco apenas hundido en la ola del
+//    fondo), siempre DETRÁS de la botella, nunca más de dos, chicos (están lejos), muy lentos y de PROA;
+//  · un solo volador a la vez y nunca junto a la gaviota (ella también vuela); arriba de la línea,
+//    lento, de nariz hacia donde va, subiendo apenas, sin balancearse;
+//  · nubes muy tenues, casi quietas, todas corridas por el mismo viento.
+// Todo detrás del texto y lejos de él: lo principal es el mensaje.
+type Lejano = {img: string; ar: number; mira: 'izq' | 'der'};
+const BARCOS_APP: Lejano[] = [
+  {img: 'sb-barco-dhow.svg', ar: 527 / 413, mira: 'izq'},
+  {img: 'sb-barco-crucero.svg', ar: 712 / 330, mira: 'izq'},
+  {img: 'sb-barco-carguero.svg', ar: 922 / 298, mira: 'der'},
+  {img: 'sb-barco-galeon.svg', ar: 824 / 599, mira: 'der'},
+  {img: 'sb-barco-goleta.svg', ar: 705 / 477, mira: 'izq'},
+  {img: 'sb-barco-vapor.svg', ar: 701 / 301, mira: 'izq'},
+  {img: 'sb-barco-remolcador.svg', ar: 693 / 309, mira: 'izq'},
+  {img: 'sb-barco-ferry.svg', ar: 768 / 250, mira: 'izq'},
+];
+const AVIONES_APP: Lejano[] = [
+  {img: 'sb-aire-avioneta.svg', ar: 69 / 29, mira: 'izq'},
+  {img: 'sb-aire-avion.svg', ar: 103 / 54, mira: 'izq'},
+  {img: 'sb-aire-biplano.svg', ar: 69 / 34, mira: 'der'},
+  {img: 'sb-aire-jet.svg', ar: 115 / 70, mira: 'izq'},
+];
+const NUBES_APP = [
+  {img: 'sb-nube-3.svg', ar: 54 / 29},
+  {img: 'sb-nube-4.svg', ar: 82 / 34},
+  {img: 'sb-nube-2.svg', ar: 46 / 27},
+  {img: 'sb-nube-5.svg', ar: 122 / 52},
+];
+const hash = (n: number) => {
+  const x = Math.sin(n * 12.9898) * 43758.5453;
+  return x - Math.floor(x);
+};
+
 const capa = (W: number, alto: number, k: number, t: number) => (
   <path
     d={`M0 60 ${Array.from({length: 12}, (_, i) => `Q ${i * 130 + 65} ${k % 2 ? 0 : 120} ${(i + 1) * 130} 60`).join(' ')} L ${W * 1.4} ${alto} L 0 ${alto} Z`}
@@ -194,11 +231,13 @@ type PropsMar = {
   y0: number; // borde de arriba de la primera ola (px)
   elenco: Bicho[];
   botella?: boolean; // la botella que flota en el medio
+  botellaDesde?: number; // s desde el inicio de la escena: sale del agua (después de caer al mar)
   sube?: number; // 0→1: el mar entra desde abajo al empezar la escena
   izquierda?: boolean; // fuerza el lado de los bichos (si no, alterna por escena)
+  lejos?: boolean; // barcos en el horizonte, volador y nubes (por defecto, sí)
 };
 
-export const MarConFauna: React.FC<PropsMar> = ({W, H, t, s0, dur, y0: y0base, elenco, botella, sube = 1, izquierda}) => {
+export const MarConFauna: React.FC<PropsMar> = ({W, H, t, s0, dur, y0: y0base, elenco, botella, botellaDesde, sube = 1, izquierda, lejos = true}) => {
   const y0 = y0base + (1 - sube) * H * 0.2;
   const dy = H * 0.07;
   const alto = H - y0 + 40;
@@ -247,7 +286,8 @@ export const MarConFauna: React.FC<PropsMar> = ({W, H, t, s0, dur, y0: y0base, e
   const asomaBallena = interpolate(lt, [0.2, 0.9, dur - 0.7, dur], [0, 1, 1, 0.2], {...clamp, easing: salir});
   const sopla = interpolate(lt, [1.0, 2.0], [0, 1], clamp);
   const wB = W * 0.36;
-  const xB = W * lado(0.08) - (izq ? 0 : wB) + lt * W * 0.012 * (izq ? 1 : -1);
+  // con botella en el medio, la ballena se corre al borde para no quedar detrás de ella
+  const xB = (botella ? W * lado(-0.07) : W * lado(0.08)) - (izq ? 0 : wB) + lt * W * 0.012 * (izq ? 1 : -1);
   const asomaPulpo = interpolate(lt, [0.3, 0.9, dur - 0.6, dur], [0, 1, 1, 0.3], {...clamp, easing: salir});
   const wP = W * 0.16;
   const xP = W * lado(0.2) - wP / 2;
@@ -270,15 +310,68 @@ export const MarConFauna: React.FC<PropsMar> = ({W, H, t, s0, dur, y0: y0base, e
 
   return (
     <>
+      {/* lo lejano, detrás de todo */}
+      {lejos ? (() => {
+        // misma semilla en el gancho y en su empalme del loop (los dos llegan con `izquierda` fija)
+        const sem = izquierda ? 3 : Math.round(s0 * 10) + 3;
+        // el horizonte es una línea RECTA: el mar lejano, calmo, detrás de las olas. Los barcos
+        // se apoyan en ella y el agua lejana les tapa 4 px de casco (apoyados, no posados encima)
+        const horizonte = y0 + 38;
+        const viento = hash(sem) < 0.5 ? 1 : -1; // nubes y barcos de vela con el mismo viento
+        // nubes: dos, muy tenues, bajas (entre el texto y el mar) y casi quietas
+        // con el mar alto en el cuadro (texto cerca), sin nubes: no compiten con el mensaje
+        const nubes = y0base >= H * 0.74 ? [] : [0, 1].map((k) => {
+          const n = NUBES_APP[Math.floor(hash(sem + k * 7) * NUBES_APP.length)];
+          const w = W * (0.16 + hash(sem + k * 11) * 0.1);
+          const x = W * (k === 0 ? 0.04 + hash(sem + 1) * 0.2 : 0.62 + hash(sem + 2) * 0.22) + viento * lt * W * 0.004;
+          const y = horizonte - H * (0.05 + hash(sem + k * 5) * 0.035) - w / n.ar;
+          return <Img key={'n' + k} src={staticFile('fondo/' + n.img)} style={{position: 'absolute', left: x, top: y, width: w, height: w / n.ar, opacity: 0.32}} />;
+        });
+        // barcos: uno o dos, sobre la línea, de proa, a unos 7 px por segundo
+        const cuantos = hash(sem + 4) < 0.45 ? 1 : 2;
+        const barcos = Array.from({length: cuantos}, (_, k) => {
+          const b = BARCOS_APP[Math.floor(hash(sem + 13 + k * 17) * BARCOS_APP.length)];
+          const va = k === 0 ? viento : -viento;
+          const w = W * (0.085 + hash(sem + 19 + k) * 0.045);
+          const h = w / b.ar;
+          const x = W * (k === 0 ? 0.12 + hash(sem + 23) * 0.25 : 0.6 + hash(sem + 29) * 0.25) + va * lt * W * 0.0065;
+          const espejo = (va > 0) === (b.mira === 'izq'); // la proa del dibujo tiene que apuntar hacia donde va
+          return (
+            <div key={'b' + k} style={{position: 'absolute', left: x, top: horizonte + 4 - h, width: w, height: h, transform: `scaleX(${espejo ? -1 : 1})`, opacity: 0.95}}>
+              <Img src={staticFile('fondo/' + b.img)} style={{width: '100%', height: '100%', display: 'block'}} />
+            </div>
+          );
+        });
+        // un volador (avioncito), solo si no hay gaviota y si hay cielo libre entre el texto y el mar
+        const hayAvion = !elenco.includes('gaviota') && y0base < H * 0.7 && hash(sem + 31) < 0.6;
+        let avion: React.ReactNode = null;
+        if (hayAvion) {
+          const a = AVIONES_APP[Math.floor(hash(sem + 37) * AVIONES_APP.length)];
+          const va = hash(sem + 41) < 0.5 ? 1 : -1;
+          const w = W * 0.1;
+          const x0 = va > 0 ? W * (0.05 + hash(sem + 43) * 0.2) : W * (0.75 + hash(sem + 43) * 0.15);
+          const x = x0 + va * lt * W * 0.035;
+          const y = horizonte - H * 0.085 - lt * H * 0.003; // bajo, lejos del texto; sube apenas mientras cruza
+          const espejo = (va > 0) === (a.mira === 'izq');
+          avion = (
+            <div style={{position: 'absolute', left: x - w / 2, top: y, width: w, height: w / a.ar, transform: `scaleX(${espejo ? -1 : 1})`, opacity: 0.8}}>
+              <Img src={staticFile('fondo/' + a.img)} style={{width: '100%', height: '100%', display: 'block'}} />
+            </div>
+          );
+        }
+        return (
+          <>
+            {nubes}
+            {avion}
+            {barcos}
+            <div style={{position: 'absolute', left: 0, top: horizonte, width: W, height: H - horizonte + 40, background: '#8ACBD6', borderTop: `4px solid ${T}`}} />
+          </>
+        );
+      })() : null}
       {/* cielo */}
       {tiene('gaviota') ? (
         <div style={{position: 'absolute', left: gx, top: gy, transform: `scaleX(${izq ? 1 : -1}) rotate(${Math.sin(lt * 2.2) * 4}deg)`}}>
           <Gaviota w={W * 0.13} ala={ala} />
-        </div>
-      ) : null}
-      {botella ? (
-        <div style={{position: 'absolute', left: W * 0.5 - W * 0.08 + Math.sin(lt * 1.3) * W * 0.02, top: y0 - W * 0.3 + Math.sin(lt * 3) * 10, transform: `rotate(${12 + Math.sin(lt * 2.4) * 9}deg)`, transformOrigin: '50% 80%'}}>
-          <BotellaPlana w={W * 0.16} rollo={1} corcho={1} />
         </div>
       ) : null}
       <svg width={W} height={H} style={{position: 'absolute', left: 0, top: 0, overflow: 'visible'}}>
@@ -308,6 +401,24 @@ export const MarConFauna: React.FC<PropsMar> = ({W, H, t, s0, dur, y0: y0base, e
           <Aleta w={W * 0.11} />
         </div>
       ) : null}
+      {/* la botella FLOTA: acostada, con el cuello apenas levantado y el cuerpo medio hundido. Se
+          dibuja detrás de la ola del medio, así la línea del agua la corta por la mitad; sube y baja
+          con la ola y se balancea. Nunca parada sobre el agua (corrección de Fer, 2/11/2026). */}
+      {botella && (botellaDesde === undefined || lt >= botellaDesde) ? (() => {
+        const wb = W * 0.19; // ancho de la botella parada; acostada mide 2,4 veces esto de largo
+        const hb = wb * 2.4;
+        // después de caer: arranca hundida y sale a flote con un rebote
+        const emerge = botellaDesde === undefined ? 1 : interpolate(lt, [botellaDesde, botellaDesde + 0.9], [0, 1], {...clamp, easing: salir});
+        const hundida = (1 - emerge) * wb * 1.2;
+        const cxB = W * 0.5 + Math.sin(lt * 0.5) * W * 0.03;
+        const cyB = y0 + dy + 22 + Math.sin(lt * 2.2) * 9 + hundida; // un 40 % queda bajo el agua
+        const giro = 74 + Math.sin(lt * 1.7) * 7; // 90° sería horizontal; el cuello queda unos 16° arriba
+        return (
+          <div style={{position: 'absolute', left: cxB - wb / 2, top: cyB - hb / 2, width: wb, height: hb, transform: `rotate(${giro}deg)`}}>
+            <BotellaPlana w={wb} rollo={1} corcho={1} />
+          </div>
+        );
+      })() : null}
       <svg width={W} height={H} style={{position: 'absolute', left: 0, top: 0, overflow: 'visible'}}>
         <g transform={`translate(${-W * 0.2} ${y0 + dy})`}>{capa(W, alto, 1, lt)}</g>
       </svg>

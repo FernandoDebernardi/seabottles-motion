@@ -1,6 +1,6 @@
 {"escenas": [
-  {"tipo": "gancho", "dur": 2.2, "lineas": [{"t": "Si alguien"}, {"t": "encuentra tu", "c": "lima"}, {"t": "botella, ve esto:"}]},
-  {"tipo": "ficha", "dur": 4.4, "fondo": "lima", "titulo": "Así llega tu botella", "filas": [{"k": "Nombre", "v": "Fernanda R.", "oculto": true}, {"k": "Foto", "v": "tu cara", "oculto": true}, {"k": "Seguidores", "v": "1.240", "oculto": true}, {"k": "Desde", "v": "Montevideo, Uruguay", "bandera": "uy"}]},
-  {"tipo": "gancho", "dur": 2.3, "fondo": "hondo", "lineas": [{"t": "Nada más."}, {"t": "Ni likes.", "c": "dorado"}, {"t": "Ni seguidores.", "c": "lima"}]},
-  {"tipo": "cta", "dur": 3.0, "fondo": "papel", "lineas": [{"t": "¿Qué escribirías"}, {"t": "si nadie supiera"}, {"t": "que fuiste tú?"}], "pregunta": "Dímelo sin nombre aquí abajo"}
+  {"tipo": "gancho", "dur": 2.3, "lineas": [{"t": "Esto ve"}, {"t": "quien abre", "c": "lima"}, {"t": "tu botella:"}]},
+  {"tipo": "ficha", "dur": 5.6, "fondo": "lima", "titulo": "Así llega tu botella", "filas": [{"k": "Nombre", "v": "Fernanda R.", "oculto": true}, {"k": "Foto", "v": "tu cara", "oculto": true}, {"k": "Seguidores", "v": "1.240", "oculto": true}, {"k": "Desde", "v": "Montevideo, Uruguay", "bandera": "uy"}]},
+  {"tipo": "gancho", "dur": 2.5, "fondo": "hondo", "lineas": [{"t": "Nada más."}, {"t": "Ni likes.", "c": "dorado"}, {"t": "Ni seguidores.", "c": "lima"}]},
+  {"tipo": "cta", "dur": 4.1, "fondo": "papel", "lineas": [{"t": "¿Qué escribirías"}, {"t": "si nadie supiera"}, {"t": "que fuiste tú?"}], "pregunta": "Dímelo sin nombre aquí abajo"}
 ]}

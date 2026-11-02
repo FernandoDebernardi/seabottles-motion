@@ -5,17 +5,17 @@
 // Todo sintetizado aquí, sin muestras ni dependencias: no hay licencias de por medio.
 // Uso: node musica-viral.mjs public/audio/viral.wav
 
-import {writeFileSync} from 'node:fs';
+import {readFileSync, writeFileSync} from 'node:fs';
 
 const salida = process.argv[2] || 'public/audio/viral.wav';
 const SR = 44100;
-const DUR = 26.2;
+const DUR = JSON.parse(readFileSync(new URL('./src/tiempos.json', import.meta.url), 'utf8')).viral.fin + 0.2;
 const N = Math.floor(SR * DUR);
 const L = new Float32Array(N);
 const BPM = 120;
 const BEAT = 60 / BPM;
 // mismos tiempos que src/Viral.tsx
-const TV = {gancho: 0, escribe: 2, enrolla: 5, lanza: 6.5, viaje: 8.5, montaje: 12.5, ceros: 16.5, respuesta: 19.5, cta: 23, fin: 26};
+const TV = {gancho: 0, ...JSON.parse(readFileSync(new URL('./src/tiempos.json', import.meta.url), 'utf8')).viral};
 
 let semilla = 12345;
 const rnd = () => ((semilla = (semilla * 1664525 + 1013904223) >>> 0) / 4294967296) * 2 - 1;
@@ -167,15 +167,15 @@ groove(TV.cta, TV.fin);
 golpe(TV.fin - 0.02, 0.8); // empalma con el primer golpe del gancho
 
 // efectos sincronizados con la imagen
-for (let t = TV.escribe + 0.25; t < TV.escribe + 1.9; t += 0.045 + Math.abs(rnd()) * 0.03) tick(t);
-golpe(TV.escribe + 2.15, 0.7); // sello «sin firma»
+for (let t = TV.tipeo[0]; t < TV.tipeo[1]; t += 0.045 + Math.abs(rnd()) * 0.03) tick(t);
+golpe(TV.sello, 0.7); // sello «sin firma»
 whoosh(TV.enrolla - 0.05, 0.5, 0.8); // se enrolla
 pop(TV.enrolla + 1.1, 1.2); // corcho
 whoosh(TV.lanza + 0.1, 1.05, 1.2); // vuelo
 salpicadura(TV.lanza + 1.15, 1.1);
 campana(TV.viaje + 3.0, 88, 1); // llega
-for (let i = 0; i < 8; i++) whoosh(TV.montaje + i * 0.5 - 0.06, 0.22, 0.6);
-for (let t = TV.respuesta + 0.9; t < TV.respuesta + 2.3; t += 0.05 + Math.abs(rnd()) * 0.03) tick(t, 0.7);
+for (let i = 0; i < 4; i++) whoosh(TV.montaje + i * TV.paso - 0.06, 0.22, 0.6);
+for (let t = TV.tipeoResp[0]; t < TV.tipeoResp[1]; t += 0.05 + Math.abs(rnd()) * 0.03) tick(t, 0.7);
 campana(TV.respuesta + 1.1, 84, 0.9);
 pop(TV.cta + 1.3, 1);
 

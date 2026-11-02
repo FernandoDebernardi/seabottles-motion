@@ -1,7 +1,7 @@
 {"escenas": [
-  {"tipo": "gancho", "dur": 2.1, "etiqueta": "POV", "lineas": [{"t": "Abres la app"}, {"t": "y te llegó esto", "c": "lima"}, {"t": "desde España:"}]},
-  {"tipo": "botella", "dur": 3.4, "fondo": "vidrio", "texto": "¿A alguien más le pasa que los domingos duran el doble?", "mar": "Mar de los pensamientos", "pais": "España", "bandera": "es"},
-  {"tipo": "opciones", "dur": 3.6, "fondo": "papel", "pregunta": "¿Qué haces?", "opciones": [{"t": "Resonar", "d": "«Esta me llegó». Le avisa, sin nombres."}, {"t": "Responder", "d": "Una charla solo entre ustedes dos."}, {"t": "Pasar la botella", "d": "Que siga su viaje a otra persona."}], "correcta": -1},
+  {"tipo": "gancho", "dur": 2.5, "etiqueta": "POV", "lineas": [{"t": "Te llegó"}, {"t": "una botella", "c": "lima"}, {"t": "desde España:"}]},
+  {"tipo": "botella", "dur": 4.4, "fondo": "vidrio", "texto": "¿A alguien más le pasa que los domingos duran el doble?", "mar": "Mar de los pensamientos", "pais": "España", "bandera": "es"},
+  {"tipo": "opciones", "dur": 6.7, "fondo": "papel", "pregunta": "¿Qué haces?", "opciones": [{"t": "Resonar", "d": "«Me llegó»."}, {"t": "Responder", "d": "Solo ustedes dos."}, {"t": "Pasar la botella", "d": "Que siga viajando."}], "correcta": -1, "paso": 1.7},
   {"tipo": "gancho", "dur": 2.4, "fondo": "hondo", "lineas": [{"t": "No sabes"}, {"t": "quién es.", "c": "lima"}, {"t": "Ni lo sabrás.", "c": "dorado"}]},
-  {"tipo": "cta", "dur": 2.8, "fondo": "lima", "lineas": [{"t": "¿Tú qué"}, {"t": "harías?"}], "pregunta": "¿Resonar, responder o pasar?"}
+  {"tipo": "cta", "dur": 3.5, "fondo": "lima", "lineas": [{"t": "¿Tú qué"}, {"t": "harías?"}], "pregunta": "¿Resonar, responder o pasar?"}
 ]}

@@ -73,17 +73,21 @@ export const BotellaDelDia: React.FC<PropsBotellaDelDia> = (p) => {
   return (
     <AbsoluteFill>
       {p.musica ? <Audio src={staticFile(p.musica_archivo || 'audio/musica.m4a')} loop volume={0.6} /> : null}
-      <Escenario
-        paleta={paleta}
-        variante={variante}
-        semilla={semilla}
-        deco={p.deco}
-        banderaCodigo={p.bandera_codigo}
-        haciaAbajo={haciaAbajo}
-        cierreIn={T.cierreIn}
-        clima={p.clima}
-      />
-      <Clima tipo={p.clima} semilla={semilla} noche={paleta.noche} />
+      {/* TikTok: la cámara se acerca despacio al mar y vuelve (empieza y termina igual, por el loop):
+          en TikTok un cuadro quieto varios segundos se desliza; esto le da movimiento sin tocar la tarjeta */}
+      <AbsoluteFill style={tk ? {transform: `scale(${1 + 0.08 * Math.sin((Math.PI * frame) / T.total)})`, transformOrigin: '50% 75%'} : undefined}>
+        <Escenario
+          paleta={paleta}
+          variante={variante}
+          semilla={semilla}
+          deco={p.deco}
+          banderaCodigo={p.bandera_codigo}
+          haciaAbajo={haciaAbajo}
+          cierreIn={T.cierreIn}
+          clima={p.clima}
+        />
+        <Clima tipo={p.clima} semilla={semilla} noche={paleta.noche} />
+      </AbsoluteFill>
 
       {/* título superior */}
       <div

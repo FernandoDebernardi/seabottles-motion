@@ -8,7 +8,7 @@ const metadataTikTok = ({props}: {props: PropsBotellaDelDia}) => ({durationInFra
 import {DURACION_SEG, esquemaBotellaDelDia, FPS, PropsBotellaDelDia} from './esquema';
 import {Explicativo, DURACION_EXPLICATIVO} from './Explicativo';
 import {Viral, DURACION_VIRAL} from './Viral';
-import {EnQuince, Manifiesto} from './Fijados';
+import {EnQuince, Manifiesto, T15, TM} from './Fijados';
 import {duracionSerie, PropsSerie, Serie} from './tiktok/Serie';
 import serieEjemplo from '../piezas/tiktok/01-adivina-el-mar.json';
 import {duracionViaje, ElViaje, esquemaElViaje, PropsElViaje} from './ElViaje';
@@ -77,10 +77,10 @@ export const Root: React.FC = () => {
       {/* Serie viral de TikTok «Juegos y POV»: cada video es un JSON en piezas/tiktok/ */}
       <Composition id="TikTokSerie" component={Serie} defaultProps={serieEjemplo as unknown as PropsSerie} calculateMetadata={({props}: {props: PropsSerie}) => ({durationInFrames: Math.round(duracionSerie(props.escenas) * FPS)})} durationInFrames={450} fps={FPS} width={1080} height={1920} />
       {/* Videos para fijar en TikTok */}
-      <Composition id="EnQuince" component={EnQuince} defaultProps={{musica_archivo: undefined as string | undefined}} durationInFrames={15 * FPS} fps={FPS} width={1080} height={1920} />
-      <Composition id="Manifiesto" component={Manifiesto} defaultProps={{musica_archivo: undefined as string | undefined}} durationInFrames={12 * FPS} fps={FPS} width={1080} height={1920} />
+      <Composition id="EnQuince" component={EnQuince} defaultProps={{musica_archivo: undefined as string | undefined}} durationInFrames={Math.round(T15.fin * FPS)} fps={FPS} width={1080} height={1920} />
+      <Composition id="Manifiesto" component={Manifiesto} defaultProps={{musica_archivo: undefined as string | undefined}} durationInFrames={Math.round(TM.fin * FPS)} fps={FPS} width={1080} height={1920} />
       {/* Versión viral: kinetic type al beat, solo paleta */}
-      <Composition id="Viral" component={Viral} defaultProps={{musica_archivo: undefined as string | undefined}} durationInFrames={DURACION_VIRAL * FPS} fps={FPS} width={1080} height={1920} />
+      <Composition id="Viral" component={Viral} defaultProps={{musica_archivo: undefined as string | undefined}} durationInFrames={Math.round(DURACION_VIRAL * FPS)} fps={FPS} width={1080} height={1920} />
       {/* «Cómo funciona Seabottles» en 3D, para quien no conoce la app */}
       <Composition id="ComoFunciona" component={Explicativo} defaultProps={{musica_archivo: undefined as string | undefined}} durationInFrames={DURACION_EXPLICATIVO * FPS} fps={FPS} width={1080} height={1920} />
       {/* «El viaje»: la vida de una botella, para Reels y TikTok (larga y corta) */}

@@ -2,11 +2,12 @@
 // Pistas de los dos videos fijados de TikTok («Seabottles en 15 segundos» y «Manifiesto»):
 // beat a 120 bpm sintetizado + efectos sincronizados con src/Fijados.tsx (mismos tiempos).
 // Uso: node musica-fijados.mjs quince public/audio/quince.wav | node musica-fijados.mjs manifiesto public/audio/manifiesto.wav
-import {writeFileSync} from 'node:fs';
+import {readFileSync, writeFileSync} from 'node:fs';
 const cual = process.argv[2] || 'quince';
 const salida = process.argv[3] || `public/audio/${cual}.wav`;
 const SR = 44100;
-const DUR = cual === 'quince' ? 15.2 : 12.2;
+const TIEMPOS = JSON.parse(readFileSync(new URL('./src/tiempos.json', import.meta.url), 'utf8'));
+const DUR = (cual === 'quince' ? TIEMPOS.quince.fin : TIEMPOS.manifiesto.fin) + 0.2;
 const N = Math.floor(SR * DUR);
 const L = new Float32Array(N);
 const BEAT = 0.5;
@@ -132,7 +133,7 @@ const groove = (desde, hasta, {bombo = true, palmas = true, platillos = true, ba
 };
 
 if (cual === 'quince') {
-  const T = {escribe: 2, mar: 5, corriente: 8, acciones: 11, cta: 13.5, fin: 15};
+  const T = TIEMPOS.quince;
   golpe(0, 1.1);
   groove(0.5, T.escribe, {bajoOn: false, plucks: false, palmas: false});
   pad(0, [45, 57, 64], 2, 1.2);
@@ -152,13 +153,13 @@ if (cual === 'quince') {
   pop(T.cta + 0.5, 1);
   golpe(T.fin - 0.02, 0.8);
 } else {
-  const T = {solo: 3, corriente: 5.5, cta: 9, fin: 12};
+  const T = TIEMPOS.manifiesto;
   [0, 0.75, 1.5].forEach((d) => { golpe(d, 1); whoosh(d + 0.2, 0.25, 0.7); });
   pad(0, [45, 57, 64], 3, 1.2);
   riser(2.2, 0.8, 0.9);
   golpe(T.solo, 1.1);
   groove(T.solo, T.cta);
-  for (let t = T.solo + 0.9; t < T.solo + 2.2; t += 0.05 + Math.abs(rnd()) * 0.03) tick(t);
+  for (let t = T.tipeo[0]; t < T.tipeo[1]; t += 0.05 + Math.abs(rnd()) * 0.03) tick(t);
   whoosh(T.corriente + 0.05, 0.95, 1.1);
   salpicadura(T.corriente + 1.0, 1);
   golpe(T.cta, 1.1);

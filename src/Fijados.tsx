@@ -4,6 +4,8 @@ import {noise2D} from '@remotion/noise';
 import {asegurarFuentes} from './fuentes';
 import {fuente} from './tema';
 import {Bandera, Barrido, BotellaPlana, C, clamp, Fondo, io, Palabra, popEn, salir} from './Viral';
+import tiempos from './tiempos.json';
+import {Bicho, MarConFauna} from './tiktok/Fauna';
 
 // Los dos videos para FIJAR en el perfil de TikTok (series de identidad del informe de TikTok):
 //  · «Seabottles en 15 segundos» (#6): cómo funciona, de punta a punta.
@@ -12,8 +14,9 @@ import {Bandera, Barrido, BotellaPlana, C, clamp, Fondo, io, Palabra, popEn, sal
 // TikTok según el informe: texto entre y≈260 e y≈1240, ancho ≤ 780 px, sin tocar la columna de
 // botones de la derecha.
 
-export const T15 = {gancho: 0, escribe: 2, mar: 5, corriente: 8, acciones: 11, cta: 13.5, fin: 15};
-export const TM = {gancho: 0, solo: 3, corriente: 5.5, cta: 9, fin: 12};
+// tiempos (s) en src/tiempos.json — musica-fijados.mjs lee el mismo archivo
+export const T15 = {gancho: 0, ...tiempos.quince};
+export const TM = {gancho: 0, ...tiempos.manifiesto};
 
 // columna segura
 const useCol = () => {
@@ -36,6 +39,14 @@ const Pastilla: React.FC<{desde: number; texto: string; fondo: string; tinta: st
       {texto}
     </span>
   );
+};
+
+// el mar con fauna 2D del tercio de abajo (ver src/tiktok/Fauna.tsx); entra desde abajo al empezar
+// la escena, salvo en el gancho (s0 = 0) y en el empalme del loop (s0 = fin), que deben ser idénticos
+const MarDe: React.FC<{t: number; s0: number; dur: number; y: number; elenco: Bicho[]; botella?: boolean; fijo?: boolean}> = ({t, s0, dur, y, elenco, botella, fijo}) => {
+  const {W, H} = useCol();
+  const sube = fijo ? 1 : interpolate(t, [s0, s0 + 0.35], [0, 1], {...clamp, easing: salir});
+  return <MarConFauna W={W} H={H} t={t} s0={s0} dur={dur} y0={H * y} elenco={elenco} botella={botella} sube={sube} izquierda={fijo ? true : undefined} />;
 };
 
 const sacudida = (t: number, golpes: number[]) => {
@@ -65,13 +76,15 @@ export const EnQuince: React.FC<{musica_archivo?: string}> = ({musica_archivo}) 
         {en(0, T15.escribe) ? (
           <>
             <Fondo col={C.hondo} col2={C.hondo2} />
+            <MarDe t={t} s0={0} dur={T15.escribe} y={0.68} elenco={['ballena', 'gaviota']} fijo />
             <Linea top={0.16}>
               <div style={{fontFamily: fuente.display, fontWeight: 800, fontSize: g, lineHeight: 1.02, letterSpacing: '-0.025em', color: C.blanco}}>Una red social</div>
               <div style={{fontFamily: fuente.display, fontWeight: 800, fontSize: g * 1.12, lineHeight: 1.05, letterSpacing: '-0.025em', color: C.lima, transform: `scale(${1.12 - 0.12 * popEn(frame, fps, 0, 12, 200)})`}}>sin likes.</div>
             </Linea>
             <Linea top={0.47}>
-              <Palabra desde={0.9} tam={m} col={C.dorado}>Así</Palabra>
-              <Palabra desde={1.2} tam={m} col={C.dorado}>funciona:</Palabra>
+              {/* gancho completo desde el cuadro 0: solo golpea al beat */}
+              <Palabra fijo desde={0.9} tam={m} col={C.dorado}>Así</Palabra>
+              <Palabra fijo desde={1.2} tam={m} col={C.dorado}>funciona:</Palabra>
             </Linea>
           </>
         ) : null}
@@ -80,6 +93,7 @@ export const EnQuince: React.FC<{musica_archivo?: string}> = ({musica_archivo}) 
         {en(T15.escribe, T15.mar) ? (
           <>
             <Fondo col={C.lima} />
+            <MarDe t={t} s0={T15.escribe} dur={T15.mar - T15.escribe} y={0.71} elenco={['peces']} />
             {(() => {
               const p = popEn(frame, fps, T15.escribe + 0.1, 12, 170);
               const texto = 'Hoy por fin dije que no.';
@@ -91,7 +105,7 @@ export const EnQuince: React.FC<{musica_archivo?: string}> = ({musica_archivo}) 
                     <Palabra desde={T15.escribe} tam={m} col={C.tinta}>Escribes</Palabra>
                     <br />
                     <Palabra desde={T15.escribe + 0.3} tam={m} col={C.tinta}>sin decir</Palabra>
-                    <Palabra desde={T15.escribe + 0.55} tam={m} col={C.blanco} sombra={sombra}>quién eres.</Palabra>
+                    <Palabra desde={T15.escribe + 0.55} tam={m} col={C.lima} resalte={C.tinta}>quién eres.</Palabra>
                   </Linea>
                   <div style={{position: 'absolute', left: cx - W * 0.33, top: H * 0.38, width: W * 0.66, transform: `translateY(${(1 - p) * H * 0.3}px) rotate(${-6 + 4 * p}deg)`}}>
                     <div style={{background: C.papel, border: `5px solid ${C.tinta}`, borderRadius: W * 0.035, padding: `${W * 0.045}px ${W * 0.05}px`, boxShadow: `${W * 0.02}px ${W * 0.02}px 0 ${C.tinta}`}}>
@@ -117,7 +131,7 @@ export const EnQuince: React.FC<{musica_archivo?: string}> = ({musica_archivo}) 
             <Fondo col={C.papel} />
             <Linea top={0.12}>
               <Palabra desde={T15.mar} tam={m} col={C.tinta}>Eliges</Palabra>
-              <Palabra desde={T15.mar + 0.25} tam={m} col={C.dorado} sombra={sombra}>un mar.</Palabra>
+              <Palabra desde={T15.mar + 0.25} tam={m} col={C.dorado} resalte={C.tinta}>un mar.</Palabra>
             </Linea>
             <Linea top={0.27}>
               {[
@@ -140,6 +154,8 @@ export const EnQuince: React.FC<{musica_archivo?: string}> = ({musica_archivo}) 
                 </div>
               );
             })()}
+            {/* después de la botella: la ola de adelante le tapa la base y queda flotando */}
+            <MarDe t={t} s0={T15.mar} dur={T15.corriente - T15.mar} y={0.72} elenco={['tortuga', 'barquito']} />
           </>
         ) : null}
 
@@ -198,6 +214,7 @@ export const EnQuince: React.FC<{musica_archivo?: string}> = ({musica_archivo}) 
         {en(T15.acciones, T15.cta) ? (
           <>
             <Fondo col={C.vidrio} col2={C.mar1} />
+            <MarDe t={t} s0={T15.acciones} dur={T15.cta - T15.acciones} y={0.72} elenco={['delfines']} />
             <Linea top={0.12}>
               <Palabra desde={T15.acciones} tam={W * 0.085} col={C.tinta}>Quien la encuentra</Palabra>
               <Palabra desde={T15.acciones + 0.3} tam={W * 0.085} col={C.tinta}>puede:</Palabra>
@@ -214,7 +231,7 @@ export const EnQuince: React.FC<{musica_archivo?: string}> = ({musica_archivo}) 
               ))}
             </Linea>
             <Linea top={0.64}>
-              <Palabra desde={T15.acciones + 2.0} tam={W * 0.055} col={C.tinta}>Sin nombres. Sin números.</Palabra>
+              <Palabra desde={T15.acciones + 1.9} tam={W * 0.065} col={C.tinta}>Sin nombres. Sin números.</Palabra>
             </Linea>
           </>
         ) : null}
@@ -223,10 +240,11 @@ export const EnQuince: React.FC<{musica_archivo?: string}> = ({musica_archivo}) 
         {en(T15.cta, T15.fin + 1) ? (
           <>
             <Fondo col={C.lima} />
+            <MarDe t={t} s0={T15.cta} dur={T15.fin - T15.cta} y={0.7} elenco={['pulpo']} botella />
             <Linea top={0.18}>
               <Palabra desde={T15.cta} tam={m} col={C.tinta}>Escribe tu</Palabra>
               <br />
-              <Palabra desde={T15.cta + 0.25} tam={m * 1.15} col={C.blanco} sombra={sombra}>primera botella.</Palabra>
+              <Palabra desde={T15.cta + 0.25} tam={m * 1.15} col={C.lima} resalte={C.tinta}>primera botella.</Palabra>
             </Linea>
             <Linea top={0.47}>
               <Pastilla desde={T15.cta + 0.5} texto="seabottles.org" fondo={C.tinta} tinta={C.lima} tam={W * 0.07} />
@@ -236,8 +254,10 @@ export const EnQuince: React.FC<{musica_archivo?: string}> = ({musica_archivo}) 
               if (k <= 0) return null;
               return (
                 <AbsoluteFill style={{background: `linear-gradient(180deg, ${C.hondo} 0%, ${C.hondo2} 100%)`, clipPath: `circle(${k * 120}% at 50% 40%)`}}>
+                  <MarDe t={t} s0={T15.fin} dur={T15.escribe} y={0.68} elenco={['ballena', 'gaviota']} fijo />
                   <Linea top={0.16}>
                     <div style={{fontFamily: fuente.display, fontWeight: 800, fontSize: g, lineHeight: 1.02, letterSpacing: '-0.025em', color: C.blanco, opacity: k}}>Una red social</div>
+                    <div style={{fontFamily: fuente.display, fontWeight: 800, fontSize: g * 1.12, lineHeight: 1.05, letterSpacing: '-0.025em', color: C.lima, opacity: k}}>sin likes.</div>
                   </Linea>
                 </AbsoluteFill>
               );
@@ -267,15 +287,15 @@ export const Manifiesto: React.FC<{musica_archivo?: string}> = ({musica_archivo}
 
   // tres golpes: cada línea entra y tacha lo que las otras redes cuentan
   const Golpe: React.FC<{d: number; tachado: string; col: string}> = ({d, tachado, col}) => {
-    if (t < d) return null;
-    const p = d === 0 ? 1 : popEn(frame, fps, d, 10, 230);
+    // las tres líneas ya están en el cuadro 0 (portada y loop); al beat solo se tacha cada palabra
     const raya = interpolate(t, [d + 0.25, d + 0.45], [0, 1], {...clamp, easing: salir});
+    const golpe = t >= d + 0.25 ? Math.exp(-(t - d - 0.25) * 9) : 0;
     return (
-      <div style={{fontFamily: fuente.display, fontWeight: 800, fontSize: g, lineHeight: 1.08, letterSpacing: '-0.025em', color: C.blanco, transform: `translateX(${(1 - p) * -W * 0.5}px)`, whiteSpace: 'nowrap'}}>
+      <div style={{fontFamily: fuente.display, fontWeight: 800, fontSize: g, lineHeight: 1.08, letterSpacing: '-0.025em', color: C.blanco, transform: `scale(${1 + 0.06 * golpe})`, transformOrigin: 'left center', whiteSpace: 'nowrap'}}>
         Sin{' '}
         <span style={{position: 'relative', color: col}}>
           {tachado}
-          <span style={{position: 'absolute', left: -6, top: '52%', height: g * 0.12, width: `calc(${raya * 100}% + 12px)`, background: C.coral, borderRadius: 6, transform: 'rotate(-3deg)'}} />
+          <span style={{position: 'absolute', left: -6, top: '52%', height: g * 0.12, width: `calc(${raya * 100}% + ${raya * 12}px)`, background: C.coral, borderRadius: 6, transform: 'rotate(-3deg)', opacity: raya > 0 ? 1 : 0}} />
         </span>
       </div>
     );
@@ -288,6 +308,7 @@ export const Manifiesto: React.FC<{musica_archivo?: string}> = ({musica_archivo}
         {en(0, TM.solo) ? (
           <>
             <Fondo col={C.hondo} col2={C.hondo2} />
+            <MarDe t={t} s0={0} dur={TM.solo} y={0.68} elenco={['medusa', 'gaviota']} fijo />
             <div style={{position: 'absolute', left: W * 0.12, top: H * 0.135, fontFamily: fuente.display, fontWeight: 800, fontSize: W * 0.06, color: C.dorado}}>Una red social…</div>
             <div style={{position: 'absolute', left: W * 0.12, top: H * 0.2}}>
               {/* la primera línea ya está en el cuadro 0 */}
@@ -304,17 +325,20 @@ export const Manifiesto: React.FC<{musica_archivo?: string}> = ({musica_archivo}
             <Linea top={0.2}>
               <Palabra desde={TM.solo} tam={W * 0.17} col={C.tinta}>Solo</Palabra>
               <br />
-              <Palabra desde={TM.solo + 0.4} tam={W * 0.17} col={C.blanco} sombra={sombra}>escribes.</Palabra>
+              <Palabra desde={TM.solo + 0.4} tam={W * 0.17} col={C.lima} resalte={C.tinta}>escribes.</Palabra>
             </Linea>
             {(() => {
               const texto = 'Lo que no le dices a nadie.';
-              const vis = Math.floor(interpolate(t, [TM.solo + 0.9, TM.solo + 2.2], [0, texto.length], clamp));
+              const vis = Math.floor(interpolate(t, TM.tipeo, [0, texto.length], clamp));
+              const p = popEn(frame, fps, TM.solo + 0.75, 12, 180);
+              // caja de tamaño fijo (dos renglones): antes era un span en línea y al cortar el renglón
+              // «nadie.» quedaba en una caja aparte encimada
               return (
-                <Linea top={0.55}>
-                  <span style={{fontFamily: fuente.display, fontWeight: 700, fontSize: W * 0.06, color: C.tinta, background: C.papel, border: `5px solid ${C.tinta}`, borderRadius: W * 0.025, padding: `${W * 0.02}px ${W * 0.035}px`, boxShadow: `6px 6px 0 ${C.tinta}`, opacity: t > TM.solo + 0.8 ? 1 : 0}}>
+                <Linea top={0.52}>
+                  <div style={{display: 'inline-block', width: W * 0.7, minHeight: W * 0.27, textAlign: 'left', fontFamily: fuente.display, fontWeight: 700, fontSize: W * 0.085, lineHeight: 1.15, color: C.tinta, background: C.papel, border: `5px solid ${C.tinta}`, borderRadius: W * 0.03, padding: `${W * 0.03}px ${W * 0.045}px`, boxShadow: `8px 8px 0 ${C.tinta}`, opacity: t > TM.solo + 0.75 ? 1 : 0, transform: `scale(${0.8 + 0.2 * p}) rotate(${-2 + 2 * p}deg)`}}>
                     {texto.slice(0, vis)}
-                    <span style={{color: C.coral, opacity: Math.floor(frame / 6) % 2 ? 1 : 0.2}}>|</span>
-                  </span>
+                    {vis < texto.length ? <span style={{color: C.coral, opacity: Math.floor(frame / 6) % 2 ? 1 : 0.2}}>|</span> : null}
+                  </div>
                 </Linea>
               );
             })()}
@@ -332,11 +356,7 @@ export const Manifiesto: React.FC<{musica_archivo?: string}> = ({musica_archivo}
               const deriva = interpolate(t, [TM.corriente + 1.0, TM.cta], [0, 1], clamp);
               return (
                 <>
-                  {[0, 1, 2].map((k) => (
-                    <svg key={k} width={W * 1.4} height={H * 0.4} style={{position: 'absolute', left: -W * 0.2 + Math.sin(t * 2 + k) * 30, top: H * (0.68 + k * 0.08)}}>
-                      <path d={`M0 60 ${Array.from({length: 12}, (_, i) => `Q ${i * 130 + 65} ${k % 2 ? 0 : 120} ${(i + 1) * 130} 60`).join(' ')} L ${W * 1.4} ${H * 0.4} L 0 ${H * 0.4} Z`} fill={[C.mar1, C.mar2, '#2C7488'][k]} stroke={C.tinta} strokeWidth={5} />
-                    </svg>
-                  ))}
+                  <MarDe t={t} s0={TM.corriente} dur={TM.cta - TM.corriente} y={0.66} elenco={['ballena']} fijo />
                   <div style={{position: 'absolute', left: x - W * 0.08 + deriva * W * 0.15, top: y - W * 0.19 + (caida > 0 ? H * 0.03 + Math.sin(t * 3) * 10 : 0), transform: `rotate(${v < 1 ? v * 450 : 10 + Math.sin(t * 3) * 8}deg)`}}>
                     <BotellaPlana w={W * 0.16} rollo={1} corcho={1} />
                   </div>
@@ -349,7 +369,7 @@ export const Manifiesto: React.FC<{musica_archivo?: string}> = ({musica_archivo}
                   <Linea top={0.13}>
                     <Palabra desde={TM.corriente + 0.1} tam={W * 0.11} col={C.tinta}>La corriente</Palabra>
                     <br />
-                    <Palabra desde={TM.corriente + 1.0} tam={W * 0.13} col={C.blanco} sombra={sombra}>hace el resto.</Palabra>
+                    <Palabra desde={TM.corriente + 1.0} tam={W * 0.13} col={C.lima} resalte={C.tinta}>hace el resto.</Palabra>
                   </Linea>
                 </>
               );
@@ -360,10 +380,11 @@ export const Manifiesto: React.FC<{musica_archivo?: string}> = ({musica_archivo}
         {en(TM.cta, TM.fin + 1) ? (
           <>
             <Fondo col={C.papel} />
+            <MarDe t={t} s0={TM.cta} dur={TM.fin - TM.cta} y={0.68} elenco={['peces', 'velero']} botella />
             <Linea top={0.17}>
               <Palabra desde={TM.cta} tam={W * 0.1} col={C.tinta}>Alguien, lejos,</Palabra>
               <br />
-              <Palabra desde={TM.cta + 0.35} tam={W * 0.13} col={C.dorado} sombra={sombra}>lo leerá.</Palabra>
+              <Palabra desde={TM.cta + 0.35} tam={W * 0.13} col={C.dorado} resalte={C.tinta}>lo leerá.</Palabra>
             </Linea>
             <Linea top={0.46}>
               <Pastilla desde={TM.cta + 0.8} texto="seabottles.org" fondo={C.tinta} tinta={C.lima} tam={W * 0.07} />
@@ -371,7 +392,20 @@ export const Manifiesto: React.FC<{musica_archivo?: string}> = ({musica_archivo}
             {(() => {
               const k = interpolate(t, [TM.fin - 0.3, TM.fin - 0.05], [0, 1], {...clamp, easing: io});
               if (k <= 0) return null;
-              return <AbsoluteFill style={{background: `linear-gradient(180deg, ${C.hondo} 0%, ${C.hondo2} 100%)`, clipPath: `circle(${k * 120}% at 30% 25%)`}} />;
+              // empalme: vuelve exactamente al primer cuadro (las tres líneas sin tachar)
+              return (
+                <AbsoluteFill style={{background: `linear-gradient(180deg, ${C.hondo} 0%, ${C.hondo2} 100%)`, clipPath: `circle(${k * 120}% at 30% 25%)`}}>
+                  <MarDe t={t} s0={TM.fin} dur={TM.solo} y={0.68} elenco={['medusa', 'gaviota']} fijo />
+                  <div style={{position: 'absolute', left: W * 0.12, top: H * 0.135, fontFamily: fuente.display, fontWeight: 800, fontSize: W * 0.06, color: C.dorado}}>Una red social…</div>
+                  <div style={{position: 'absolute', left: W * 0.12, top: H * 0.2}}>
+                    {[['likes.', C.lima], ['seguidores.', C.vidrio], ['apuro.', C.dorado]].map(([x, c]) => (
+                      <div key={x} style={{fontFamily: fuente.display, fontWeight: 800, fontSize: g, lineHeight: 1.08, letterSpacing: '-0.025em', color: C.blanco, whiteSpace: 'nowrap'}}>
+                        Sin <span style={{color: c}}>{x}</span>
+                      </div>
+                    ))}
+                  </div>
+                </AbsoluteFill>
+              );
             })()}
           </>
         ) : null}

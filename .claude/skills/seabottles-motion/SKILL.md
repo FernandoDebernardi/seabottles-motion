@@ -231,16 +231,70 @@ muestra trazos de escritura ilegibles. Todo lo que dice tiene que ser verdad en 
 
 ## Versión viral (1/11/2026)
 
-Composición `Viral` (`src/Viral.tsx`, 26 s) y su pista `musica-viral.mjs`. Pedido de Fer: ajustarse
+Composición `Viral` (`src/Viral.tsx`, 28 s desde el 2/11/2026) y su pista `musica-viral.mjs`. Pedido de Fer: ajustarse
 al informe de animaciones virales, **sin la música calma de piano y sin las ilustraciones de
 Recraft; solo la paleta**. Se permiten textos de botellas **simulados** (escritos para la pieza).
 
 - Estilo: tipografía cinética Bricolage 800 enorme, formas vectoriales planas con contorno tinta y
   sombra dura, fondo de color pleno que cambia en cada corte, barridos en diagonal.
-- Ritmo: 120 bpm (un beat = 0,5 s). Gancho en el cuadro 0 («Nunca le dije esto a nadie.»),
-  subtítulos de 1–3 palabras con la palabra clave en otro color, montaje de 8 botellas a una por
-  beat, sacudida de cámara en los golpes, último medio segundo empalma con el primer cuadro.
-- Audio: `node musica-viral.mjs public/audio/viral.wav` sintetiza beat, bajo, acordes, riser y los
-  efectos (tipeo, sello, corcho, vuelo, salpicadura, campanas) en los mismos tiempos `TV` del
-  componente; si se mueve un tiempo, cambiarlo en los dos archivos. Después, loudnorm a −14 LUFS.
+- Ritmo: 120 bpm (un beat = 0,5 s). Gancho COMPLETO en el cuadro 0 («Nunca le dije esto a nadie.»,
+  cada palabra golpea al beat), subtítulos de 1–3 palabras con la palabra clave en otro color,
+  montaje de 4 botellas a una por segundo (con 8 a medio segundo no se leían), sacudida de cámara
+  en los golpes, último medio segundo empalma con el primer cuadro.
+- Tiempos en `src/tiempos.json` (viral, quince, manifiesto): los leen los componentes y las
+  músicas (`musica-viral.mjs`, `musica-fijados.mjs`), así que se cambian en un solo lugar.
+  Después del render, loudnorm a −14 LUFS.
 - Render 2D: ~1,5 min a 1080×1920.
+
+## Lectura y gancho en TikTok (regla de Fer, 2/11/2026)
+
+Revisión de los 10 videos de TikTok: los ganchos aparecían de a una palabra, las botellas se
+escribían a 34 letras/s y quedaban quietas 1,4 s, las opciones del POV no se llegaban a leer y el
+manifiesto tenía la frase central rota. Desde ahora, en todo video nuevo:
+
+1. **Gancho completo en el cuadro 0.** Es la portada y lo que ve quien desliza. Las palabras pueden
+   dar un golpe al beat (`fijo` en `Palabra`/`Pal`), pero no aparecer de a una. El último cuadro
+   vuelve exactamente a ese primer cuadro (loop sin salto).
+2. **Tiempo de lectura**: cada texto queda en pantalla ≥ 0,5 s + caracteres/17 (velocidad de
+   subtítulos para adultos), contando desde que empieza a aparecer. Las botellas se escriben a
+   ≤ 20 caracteres/s y quedan quietas ≥ 1,2 s. El cierre con pregunta dura ≥ 3 s.
+   La serie se controla sola: `node revisar-lectura.mjs piezas/tiktok/*.json` (sale con error si
+   una escena es corta). Correrlo antes de cada render.
+3. **Opciones con explicación** (tipo «¿Qué haces?»): de a una, `paso` ≈ 1,6 s, textos de 2–4
+   palabras. **Montajes rápidos**: máximo una tarjeta por segundo y textos ≤ 35 caracteres.
+4. **Contraste**: nunca texto blanco sobre lima, celeste o papel. La palabra destacada va en caja
+   oscura (`resalte={C.tinta}` con `col={C.lima}` o `C.dorado`). Dorado sobre papel, igual.
+5. **Cajas de texto con tamaño fijo** (`display: inline-block`, ancho y alto mínimos): un `span`
+   en línea con borde se parte en dos cajas encimadas cuando el texto salta de renglón.
+6. **La mitad de abajo** la tapa la interfaz de TikTok: ahí va algo visual (`MarAbajo`: mar y
+   botella que flota en los ganchos), nunca información.
+7. **Para gente nueva** (etapa de captación): nada de jerga interna («La arena» → «juegos de
+   Seabottles»); en los quiz la pregunta tiene que coincidir con lo que se revela («¿A qué mar la
+   tiraron?», no «¿A qué mar la tirarías?» + «Era Recuerdos»).
+8. **Botella del día en TikTok**: la cámara se acerca y vuelve (seno sobre toda la duración, así
+   el loop no salta) para que no haya cuadros quietos.
+9. Revisión final siempre con hoja de contacto a 2 cuadros por segundo y medición de LUFS.
+
+## Fauna marina 2D en los videos de TikTok (pedido de Fer, 2/11/2026)
+
+«Como en las publicaciones de Instagram»: animales y objetos marinos en todos los videos, pero
+**en 2D plano** (paleta + contorno tinta, como la versión viral), no las capas de Recraft.
+Están en `src/tiktok/Fauna.tsx` (la paleta y la botella plana, en `src/plano.tsx`):
+
+- Figuras: pez, delfín, ballena (solo el lomo), pulpo, medusa, tortuga, aleta de tiburón, gaviota,
+  barquito de papel y velero. Todas miran a la derecha; se espejan según hacia dónde van.
+- `MarConFauna` dibuja las tres olas con los bichos ENTRE las capas, que es lo que hace que cada
+  uno esté en su lugar: la gaviota cruza el cielo aleteando; ballena, pulpo y aleta asoman detrás
+  de la ola del medio (la de adelante los tapa en la línea del agua; la ballena resopla); peces y
+  delfines saltan en parábola desde detrás de la ola de adelante, rotados según la trayectoria y
+  con salpicadura al salir y al entrar; medusa (late y sube a impulsos) y tortuga (rema) nadan en
+  el agua de la ola del medio; barquito y velero flotan con el casco hundido en la ola de adelante,
+  del lado contrario a los delfines.
+- Elencos: `ELENCOS` reparte combinaciones (una del agua y, a veces, una del cielo o la superficie)
+  por escena y por video (semilla = el gancho), para que no se repitan.
+- Todo se mueve con el tiempo de la ESCENA: el empalme del loop dibuja el gancho con `s0 = fin` y
+  `izquierda` fija, así el último cuadro queda idéntico al primero (bichos incluidos).
+- El mar va en el tercio de abajo (entre el 66 % y el 75 % de la altura según la escena) y nunca
+  lleva información: lo tapa la interfaz de TikTok.
+- Al sumar un bicho nuevo: figura plana en `Fauna.tsx`, su lugar en las capas según las cuatro
+  preguntas de «Cada elemento en su lugar», y revisarlo en una hoja de contacto.

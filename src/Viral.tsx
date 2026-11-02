@@ -3,6 +3,8 @@ import {AbsoluteFill, Audio, Easing, Img, interpolate, spring, staticFile, useCu
 import {noise2D} from '@remotion/noise';
 import {asegurarFuentes} from './fuentes';
 import {color, fuente} from './tema';
+import tiempos from './tiempos.json';
+import {MarConFauna} from './tiktok/Fauna';
 
 // «Seabottles en 26 segundos»: versión hecha con lo que aprendimos de las animaciones virales
 // (gancho en el primer segundo, subtítulos de 1–3 palabras con la palabra clave en otro color,
@@ -10,39 +12,32 @@ import {color, fuente} from './tema';
 // Solo usa la paleta de Seabottles: nada de las ilustraciones de Recraft. Las botellas que se ven
 // son SIMULADAS (textos escritos para la pieza, no de personas reales).
 
-export const DURACION_VIRAL = 26;
-// tiempos (s) — musica-viral.mjs usa los mismos
-export const TV = {gancho: 0, escribe: 2, enrolla: 5, lanza: 6.5, viaje: 8.5, montaje: 12.5, ceros: 16.5, respuesta: 19.5, cta: 23, fin: 26};
+// tiempos (s) en src/tiempos.json — musica-viral.mjs lee el mismo archivo
+export const TV = {gancho: 0, ...tiempos.viral};
+export const DURACION_VIRAL = TV.fin;
 
-export const C = {
-  hondo: '#0F2F2E',
-  hondo2: '#1C4A44',
-  lima: color.limaBrillante,
-  limaV: color.limaVerde,
-  verde: color.verdeOscuro,
-  verdeP: color.verdeProfundo,
-  dorado: color.dorado,
-  papel: color.papel,
-  papelB: color.papelBorde,
-  tinta: color.tinta,
-  vidrio: color.vidrio,
-  mar1: '#69BCCA',
-  mar2: '#3F96AB',
-  coral: '#E5484D',
-  blanco: color.verdeBlanco,
-};
-export const clamp = {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'} as const;
-export const io = Easing.bezier(0.65, 0, 0.35, 1); // easeInOutCubic
-export const salir = Easing.bezier(0.22, 1, 0.36, 1);
+// paleta y piezas planas en ./plano (las comparte la fauna 2D sin importar este archivo)
+export {C, clamp, io, salir, BotellaPlana} from './plano';
+import {C, clamp, io, salir, BotellaPlana} from './plano';
 
 // ---------- piezas ----------
 export const popEn = (frame: number, fps: number, desde: number, damping = 11, stiffness = 180) =>
   spring({frame: frame - Math.round(desde * fps), fps, config: {damping, stiffness, mass: 0.7}});
 
 // palabra que «cae» con resorte (subtítulo cinético)
-export const Palabra: React.FC<{desde: number; children: React.ReactNode; tam: number; col?: string; sombra?: string}> = ({desde, children, tam, col = C.blanco, sombra}) => {
+// `resalte`: la palabra va en una caja de color (regla de contraste: nunca texto blanco sobre lima,
+// celeste o papel). `fijo`: ya está en el cuadro 0 y en `desde` solo da un golpe al beat (ganchos).
+export const Palabra: React.FC<{desde: number; children: React.ReactNode; tam: number; col?: string; sombra?: string; resalte?: string; fijo?: boolean}> = ({desde, children, tam, col = C.blanco, sombra, resalte, fijo}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
+  if (fijo) {
+    const g = desde > 0 && frame >= Math.round(desde * fps) ? Math.exp(-(frame / fps - desde) * 9) : 0;
+    return (
+      <span style={{display: 'inline-block', fontFamily: fuente.display, fontWeight: 800, fontSize: tam, lineHeight: 1.02, letterSpacing: '-0.025em', color: col, textShadow: sombra, marginRight: tam * 0.22, transform: `scale(${1 + 0.14 * g}) rotate(${-3 * g}deg)`, ...(resalte ? cajaResalte(resalte, tam) : {})}}>
+        {children}
+      </span>
+    );
+  }
   const p = popEn(frame, fps, desde, 10, 210);
   if (frame < Math.round(desde * fps)) return null;
   return (
@@ -59,6 +54,7 @@ export const Palabra: React.FC<{desde: number; children: React.ReactNode; tam: n
         opacity: Math.min(1, p * 2),
         textShadow: sombra,
         marginRight: tam * 0.22,
+        ...(resalte ? cajaResalte(resalte, tam) : {}),
       }}
     >
       {children}
@@ -66,31 +62,19 @@ export const Palabra: React.FC<{desde: number; children: React.ReactNode; tam: n
   );
 };
 
+export const cajaResalte = (fondo: string, tam: number): React.CSSProperties => ({
+  background: fondo,
+  padding: `${tam * 0.02}px ${tam * 0.16}px ${tam * 0.08}px`,
+  borderRadius: tam * 0.16,
+  border: `${Math.max(4, tam * 0.035)}px solid ${C.tinta}`,
+  boxShadow: `${tam * 0.05}px ${tam * 0.05}px 0 ${C.tinta}`,
+  textShadow: 'none',
+  margin: `${tam * 0.04}px ${tam * 0.22}px ${tam * 0.04}px 0`,
+});
+
 export const Bandera: React.FC<{c: string; w: number; style?: React.CSSProperties}> = ({c, w, style}) => (
   <Img src={staticFile(`banderas/${c}.svg`)} style={{width: w, height: w * 0.75, borderRadius: w * 0.12, objectFit: 'cover', border: `3px solid ${C.tinta}`, ...style}} />
 );
-
-// botella vectorial plana (solo paleta): vidrio celeste, contorno tinta, corcho, rollo adentro
-export const BotellaPlana: React.FC<{w: number; rollo: number; corcho: number; style?: React.CSSProperties}> = ({w, rollo, corcho, style}) => {
-  const h = w * 2.4;
-  return (
-    <svg width={w} height={h} viewBox="0 0 100 240" style={{overflow: 'visible', ...style}}>
-      <path d="M38 22 L38 62 Q38 74 26 86 Q10 102 10 122 L10 222 Q10 234 22 234 L78 234 Q90 234 90 222 L90 122 Q90 102 74 86 Q62 74 62 62 L62 22 Z" fill={C.vidrio} fillOpacity={0.85} stroke={C.tinta} strokeWidth={6} strokeLinejoin="round" />
-      {/* rollo de papel */}
-      <g opacity={rollo} transform={`translate(0 ${(1 - rollo) * -120})`}>
-        <rect x={30} y={118} width={40} height={96} rx={10} fill={C.papel} stroke={C.tinta} strokeWidth={5} />
-        <rect x={30} y={160} width={40} height={10} fill={C.dorado} stroke={C.tinta} strokeWidth={4} />
-      </g>
-      {/* brillo */}
-      <path d="M22 128 L22 206" stroke="#FFFFFF" strokeWidth={7} strokeLinecap="round" opacity={0.8} />
-      <path d="M30 96 Q24 102 22 112" stroke="#FFFFFF" strokeWidth={6} strokeLinecap="round" opacity={0.8} fill="none" />
-      {/* corcho */}
-      <g transform={`translate(0 ${(1 - corcho) * -70}) `}>
-        <rect x={34} y={4} width={32} height={30} rx={6} fill={color.corcho} stroke={C.tinta} strokeWidth={5} />
-      </g>
-    </svg>
-  );
-};
 
 // tarjeta de papel (botella simulada)
 export const Tarjeta: React.FC<{texto: string; mar: string; acento: string; pais: string; bandera: string; w: number; visibles?: number; caret?: boolean; style?: React.CSSProperties}> = ({texto, mar, acento, pais, bandera, w, visibles, caret, style}) => {
@@ -125,6 +109,7 @@ export const Barrido: React.FC<{en: number; col: string}> = ({en, col}) => {
   return <div style={{position: 'absolute', left: 0, width: W, height: H * 1.3, top: interpolate(p, [0, 1], [H, -H * 1.3]), background: col, transform: 'skewY(-8deg)'}} />;
 };
 
+// el montaje usa 4 (una por compás, TV.paso = 1 s): con 8 a medio segundo no se llegaban a leer
 const BOTELLAS = [
   {texto: '¿Qué canción te salvó un día?', mar: 'Mar de los recuerdos', acento: C.dorado, pais: 'México', bandera: 'mx', fondo: C.dorado},
   {texto: 'Hoy me animé a pedir ayuda.', mar: 'Mar de la vida', acento: C.verdeP, pais: 'Chile', bandera: 'cl', fondo: C.lima},
@@ -135,6 +120,18 @@ const BOTELLAS = [
   {texto: '¿Cuál fue tu mejor error?', mar: 'Mar de la vida', acento: C.verdeP, pais: 'Uruguay', bandera: 'uy', fondo: C.limaV},
   {texto: 'Gracias, desconocido de ayer.', mar: 'Mar del amor', acento: C.coral, pais: 'Ecuador', bandera: 'ec', fondo: C.dorado},
 ];
+
+const GanchoViral: React.FC<{gran: number; quieto?: boolean}> = ({gran, quieto}) => {
+  const d = quieto ? 999 : 0;
+  return (
+    <>
+      <div><Palabra fijo desde={d + 0} tam={gran}>Nunca</Palabra></div>
+      <div><Palabra fijo desde={d + 0.45} tam={gran}>le dije</Palabra></div>
+      <div><Palabra fijo desde={d + 0.9} tam={gran} col={C.dorado}>esto</Palabra></div>
+      <div><Palabra fijo desde={d + 1.35} tam={gran}>a <span style={{color: C.lima}}>nadie.</span></Palabra></div>
+    </>
+  );
+};
 
 export const Viral: React.FC<{musica_archivo?: string}> = ({musica_archivo}) => {
   asegurarFuentes();
@@ -163,19 +160,8 @@ export const Viral: React.FC<{musica_archivo?: string}> = ({musica_archivo}) => 
           <>
             <Fondo col={C.hondo} col2={C.hondo2} />
             <div style={{position: 'absolute', left: W * 0.12, width: W * 0.8, top: H * 0.17}}>
-              {/* la primera palabra ya está en el cuadro 0 (portada de TikTok) */}
-              <div style={{fontFamily: fuente.display, fontWeight: 800, fontSize: gran, lineHeight: 1.02, letterSpacing: '-0.025em', color: C.blanco, transform: `scale(${1.08 - 0.08 * usePop(0, 14, 200)})`, transformOrigin: 'left center'}}>Nunca</div>
-              <div>
-                <Palabra desde={0.45} tam={gran}>le dije</Palabra>
-              </div>
-              <div>
-                <Palabra desde={0.9} tam={gran} col={C.dorado}>esto</Palabra>
-              </div>
-              <div>
-                <Palabra desde={1.35} tam={gran}>
-                  a <span style={{color: C.lima}}>nadie.</span>
-                </Palabra>
-              </div>
+              {/* la frase COMPLETA ya está en el cuadro 0 (portada de TikTok y loop); cada palabra da un golpe al beat */}
+              <GanchoViral gran={gran} />
             </div>
           </>
         ) : null}
@@ -187,14 +173,14 @@ export const Viral: React.FC<{musica_archivo?: string}> = ({musica_archivo}) => 
             {(() => {
               const texto = 'A veces finjo que estoy bien para que nadie se preocupe.';
               const entra = usePop(TV.escribe, 12, 160);
-              const vis = interpolate(t, [TV.escribe + 0.25, TV.escribe + 1.9], [0, texto.length], clamp);
-              const sello = usePop(TV.escribe + 2.15, 9, 260);
+              const vis = interpolate(t, TV.tipeo, [0, texto.length], clamp);
+              const sello = usePop(TV.sello, 9, 260);
               const enrolla = interpolate(t, [TV.enrolla, TV.enrolla + 0.4], [0, 1], {...clamp, easing: io});
               return (
                 <>
                   <div style={{position: 'absolute', left: cx - W * 0.4, top: H * 0.17, width: W * 0.8, transform: `translateY(${(1 - entra) * H * 0.4}px) rotate(${-7 + entra * 5}deg) scaleY(${1 - enrolla * 0.92}) scaleX(${1 - enrolla * 0.5})`, transformOrigin: '50% 30%'}}>
                     <Tarjeta texto={texto} mar="Mar de los secretos" acento={C.hondo2} pais="Argentina" bandera="ar" w={W * 0.8} visibles={vis} caret />
-                    {sello > 0.01 && t >= TV.escribe + 2.15 ? (
+                    {sello > 0.01 && t >= TV.sello ? (
                       <div style={{position: 'absolute', right: -W * 0.03, bottom: -W * 0.07, padding: `${W * 0.015}px ${W * 0.035}px`, border: `6px solid ${C.coral}`, borderRadius: W * 0.02, color: C.coral, fontFamily: fuente.display, fontWeight: 800, fontSize: W * 0.06, letterSpacing: '.04em', textTransform: 'uppercase', background: C.papel, transform: `rotate(${-12 + (1 - sello) * 20}deg) scale(${2.2 - 1.2 * sello})`, opacity: Math.min(1, sello * 3)}}>
                         Sin firma
                       </div>
@@ -204,7 +190,7 @@ export const Viral: React.FC<{musica_archivo?: string}> = ({musica_archivo}) => 
                     <Palabra desde={TV.escribe + 0.3} tam={W * 0.1} col={C.tinta}>Lo</Palabra>
                     <Palabra desde={TV.escribe + 0.6} tam={W * 0.1} col={C.tinta}>escribí</Palabra>
                     <br />
-                    <Palabra desde={TV.escribe + 1.1} tam={W * 0.1} col={C.blanco} sombra={`4px 4px 0 ${C.tinta}`}>sin nombre.</Palabra>
+                    <Palabra desde={TV.escribe + 1.1} tam={W * 0.1} col={C.lima} resalte={C.tinta}>sin nombre.</Palabra>
                   </div>
                 </>
               );
@@ -251,12 +237,8 @@ export const Viral: React.FC<{musica_archivo?: string}> = ({musica_archivo}) => 
               const lineas = v > 0.05 && v < 0.98;
               return (
                 <>
-                  {/* olas planas */}
-                  {[0, 1, 2].map((k) => (
-                    <svg key={k} width={W * 1.4} height={H * 0.4} style={{position: 'absolute', left: -W * 0.2 + Math.sin(t * 2 + k) * 30, top: H * (0.66 + k * 0.08)}}>
-                      <path d={`M0 60 ${Array.from({length: 12}, (_, i) => `Q ${i * 130 + 65} ${k % 2 ? 0 : 120} ${(i + 1) * 130} 60`).join(' ')} L ${W * 1.4} ${H * 0.4} L 0 ${H * 0.4} Z`} fill={[C.mar1, C.mar2, '#2C7488'][k]} stroke={C.tinta} strokeWidth={5} />
-                    </svg>
-                  ))}
+                  {/* el mar con una ballena que asoma a un costado y mira caer la botella */}
+                  <MarConFauna W={W} H={H} t={t} s0={TV.lanza} dur={TV.viaje - TV.lanza} y0={H * 0.64} elenco={['ballena', 'gaviota']} izquierda />
                   {lineas
                     ? [0, 1, 2, 3].map((k) => (
                         <div key={k} style={{position: 'absolute', left: x - W * (0.25 + k * 0.05), top: y + W * (0.05 + k * 0.06), width: W * (0.18 + k * 0.03), height: 8, borderRadius: 8, background: C.blanco, opacity: 0.8 - k * 0.15}} />
@@ -344,15 +326,16 @@ export const Viral: React.FC<{musica_archivo?: string}> = ({musica_archivo}) => 
         {/* ===== 6. MONTAJE: botellas de otras personas (simuladas), una por beat ===== */}
         {en(TV.montaje, TV.ceros) ? (
           (() => {
-            const i = Math.min(BOTELLAS.length - 1, Math.floor((t - TV.montaje) / 0.5));
-            const b = BOTELLAS[i];
-            const local = t - TV.montaje - i * 0.5;
+            const MONTAJE = [BOTELLAS[2], BOTELLAS[1], BOTELLAS[3], BOTELLAS[7]];
+            const i = Math.min(MONTAJE.length - 1, Math.floor((t - TV.montaje) / TV.paso));
+            const b = MONTAJE[i];
+            const local = t - TV.montaje - i * TV.paso;
             const p = spring({frame: Math.round(local * fps), fps, config: {damping: 12, stiffness: 260, mass: 0.6}});
             const lado = i % 2 ? 1 : -1;
             return (
               <>
                 <Fondo col={b.fondo} />
-                <div style={{position: 'absolute', left: cx - W * 0.4, top: H * 0.3, transform: `translateX(${(1 - p) * lado * W * 0.6}px) rotate(${lado * (4 - 2 * p)}deg) scale(${0.9 + 0.1 * p + local * 0.06})`}}>
+                <div style={{position: 'absolute', left: cx - W * 0.4, top: H * 0.3, transform: `translateX(${(1 - p) * lado * W * 0.6}px) rotate(${lado * (4 - 2 * p)}deg) scale(${0.9 + 0.1 * p + local * 0.03})`}}>
                   <Tarjeta {...b} w={W * 0.8} />
                 </div>
                 <div style={{position: 'absolute', left: W * 0.09, width: W * 0.82, top: H * 0.1, textAlign: 'center'}}>
@@ -392,11 +375,12 @@ export const Viral: React.FC<{musica_archivo?: string}> = ({musica_archivo}) => 
         {en(TV.respuesta, TV.cta) ? (
           <>
             <Fondo col={C.vidrio} col2={C.mar1} />
+            <MarConFauna W={W} H={H} t={t} s0={TV.respuesta} dur={TV.cta - TV.respuesta} y0={H * 0.73} elenco={['tortuga', 'barquito']} sube={interpolate(t, [TV.respuesta, TV.respuesta + 0.35], [0, 1], {...clamp, easing: salir})} />
             {(() => {
               const p = usePop(TV.respuesta + 0.1, 12, 150);
               const linea = interpolate(t, [TV.respuesta + 0.3, TV.respuesta + 1.1], [0, 1], {...clamp, easing: io});
               const texto = 'Yo también lo hago. Aquí no hace falta fingir: te leí.';
-              const vis = interpolate(t, [TV.respuesta + 0.9, TV.respuesta + 2.3], [0, texto.length], clamp);
+              const vis = interpolate(t, TV.tipeoResp, [0, texto.length], clamp);
               return (
                 <>
                   <div style={{position: 'absolute', left: cx - W * 0.3, top: H * 0.17, width: W * 0.6, display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
@@ -411,9 +395,9 @@ export const Viral: React.FC<{musica_archivo?: string}> = ({musica_archivo}) => 
                     <Tarjeta texto={texto} mar="Respuesta" acento={C.coral} pais="España" bandera="es" w={W * 0.8} visibles={vis} caret />
                   </div>
                   <div style={{position: 'absolute', left: W * 0.09, width: W * 0.82, top: H * 0.58, textAlign: 'center'}}>
-                    <Palabra desde={TV.respuesta + 2.4} tam={W * 0.1} col={C.tinta}>Y no sabes</Palabra>
+                    <Palabra desde={TV.tipeoResp[1] + 0.1} tam={W * 0.1} col={C.tinta}>Y no sabes</Palabra>
                     <br />
-                    <Palabra desde={TV.respuesta + 2.8} tam={W * 0.1} col={C.blanco} sombra={`4px 4px 0 ${C.tinta}`}>quién es.</Palabra>
+                    <Palabra desde={TV.tipeoResp[1] + 0.5} tam={W * 0.1} col={C.lima} resalte={C.tinta}>quién es.</Palabra>
                   </div>
                 </>
               );
@@ -435,7 +419,7 @@ export const Viral: React.FC<{musica_archivo?: string}> = ({musica_archivo}) => 
                     <br />
                     <Palabra desde={TV.cta + 0.4} tam={W * 0.12} col={C.tinta}>dirías a un</Palabra>
                     <br />
-                    <Palabra desde={TV.cta + 0.8} tam={W * 0.12} col={C.blanco} sombra={`6px 6px 0 ${C.tinta}`}>desconocido?</Palabra>
+                    <Palabra desde={TV.cta + 0.8} tam={W * 0.12} col={C.lima} resalte={C.tinta}>desconocido?</Palabra>
                   </div>
                   {t >= TV.cta + 1.3 ? (
                     <div style={{position: 'absolute', left: cx - W * 0.3, width: W * 0.6, top: H * 0.56, textAlign: 'center', transform: `scale(${pill * pulso})`}}>
@@ -447,6 +431,8 @@ export const Viral: React.FC<{musica_archivo?: string}> = ({musica_archivo}) => 
                       <BotellaPlana w={W * 0.18} rollo={1} corcho={1} />
                     </div>
                   ) : null}
+                  {/* después de la botella: la ola le tapa la base y queda flotando; delfines al costado */}
+                  <MarConFauna W={W} H={H} t={t} s0={TV.cta} dur={TV.fin - TV.cta} y0={H * 0.8} elenco={['delfines']} sube={interpolate(t, [TV.cta, TV.cta + 0.35], [0, 1], {...clamp, easing: salir})} />
                 </>
               );
             })()}
@@ -456,7 +442,9 @@ export const Viral: React.FC<{musica_archivo?: string}> = ({musica_archivo}) => 
               if (k <= 0) return null;
               return (
                 <AbsoluteFill style={{background: `linear-gradient(180deg, ${C.hondo} 0%, ${C.hondo2} 100%)`, clipPath: `circle(${k * 120}% at 50% 50%)`}}>
-                  <div style={{position: 'absolute', left: W * 0.12, top: H * 0.17, fontFamily: fuente.display, fontWeight: 800, fontSize: gran, lineHeight: 1.02, letterSpacing: '-0.025em', color: C.blanco, transform: 'scale(1.08)', transformOrigin: 'left center', opacity: k}}>Nunca</div>
+                  <div style={{position: 'absolute', left: W * 0.12, width: W * 0.8, top: H * 0.17, opacity: k}}>
+                    <GanchoViral gran={gran} quieto />
+                  </div>
                 </AbsoluteFill>
               );
             })()}

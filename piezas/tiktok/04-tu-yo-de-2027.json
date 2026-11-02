@@ -1,7 +1,7 @@
 {"escenas": [
-  {"tipo": "gancho", "dur": 2.0, "etiqueta": "POV", "lineas": [{"t": "Le escribes"}, {"t": "a tu yo", "c": "lima"}, {"t": "del futuro."}]},
-  {"tipo": "botella", "dur": 3.4, "fondo": "papel", "texto": "Ojalá ya hayas aprendido a descansar sin culpa.", "encabezado": "Para mí, dentro de un año", "mar": "Mar de los sueños", "pais": "Argentina", "bandera": "ar"},
+  {"tipo": "gancho", "dur": 2.3, "etiqueta": "POV", "lineas": [{"t": "Le escribes"}, {"t": "a tu yo", "c": "lima"}, {"t": "del futuro."}]},
+  {"tipo": "botella", "dur": 5.4, "fondo": "papel", "texto": "Ojalá ya hayas aprendido a descansar sin culpa.", "encabezado": "Para mí, dentro de un año", "mar": "Mar de los sueños", "pais": "Argentina", "bandera": "ar"},
   {"tipo": "contador", "dur": 3.2, "fondo": "noche", "desde": 2026, "hasta": 2027, "lineas": [{"t": "Se guarda"}, {"t": "un año entero.", "c": "dorado"}]},
   {"tipo": "lanza", "dur": 2.6, "lineas": [{"t": "Y zarpa"}, {"t": "en 2027."}]},
-  {"tipo": "cta", "dur": 3.0, "fondo": "lima", "lineas": [{"t": "¿Qué le dirías"}, {"t": "a tu yo"}, {"t": "de 2027?"}], "pregunta": "Escríbelo aquí abajo"}
+  {"tipo": "cta", "dur": 3.2, "fondo": "lima", "lineas": [{"t": "¿Qué le dirías"}, {"t": "a tu yo"}, {"t": "de 2027?"}], "pregunta": "Escríbelo aquí abajo"}
 ]}

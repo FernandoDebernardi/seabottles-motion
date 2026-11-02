@@ -4,6 +4,7 @@ import {noise2D} from '@remotion/noise';
 import {asegurarFuentes} from '../fuentes';
 import {fuente} from '../tema';
 import {Bandera, Barrido, BotellaPlana, C, clamp, Fondo, io, popEn, salir} from '../Viral';
+import {Bicho, ELENCOS, MarConFauna} from './Fauna';
 
 // Serie viral de TikTok: «Juegos y POV de Seabottles». Cada video muestra UNA función de la red y
 // termina con una pregunta para los comentarios. Pensado para gente que nunca vio la cuenta:
@@ -17,7 +18,7 @@ export type Linea = {t: string; c?: Col};
 export type Escena =
   | {tipo: 'gancho'; dur: number; fondo?: Col; etiqueta?: string; lineas: Linea[]}
   | {tipo: 'botella'; dur: number; fondo?: Col; texto: string; mar?: string; pais?: string; bandera?: string; encabezado?: string; arriba?: Linea[]}
-  | {tipo: 'opciones'; dur: number; fondo?: Col; pregunta: string; opciones: {t: string; bandera?: string; d?: string}[]; correcta: number; revelar?: number; pie?: string}
+  | {tipo: 'opciones'; dur: number; fondo?: Col; pregunta: string; opciones: {t: string; bandera?: string; d?: string}[]; correcta: number; revelar?: number; pie?: string; paso?: number}
   | {tipo: 'desorden'; dur: number; fondo?: Col; palabras: string[]; ordenar: number; arriba?: Linea[]}
   | {tipo: 'contador'; dur: number; fondo?: Col; desde: number; hasta: number; lineas: Linea[]; pie?: string}
   | {tipo: 'lanza'; dur: number; lineas: Linea[]}
@@ -45,10 +46,19 @@ export const inicios = (escenas: Escena[]) => {
 export const duracionSerie = (escenas: Escena[]) => escenas.reduce((s, e) => s + e.dur, 0);
 
 // ---------- piezas comunes ----------
-type Ctx = {t: number; frame: number; fps: number; W: number; H: number; x: number; ancho: number; cx: number};
+type Ctx = {t: number; frame: number; fps: number; W: number; H: number; x: number; ancho: number; cx: number; elenco: Bicho[]; elenco0: Bicho[]; dur: number};
 
-const Pal: React.FC<{ctx: Ctx; desde: number; tam: number; col: string; sombra?: string; children: React.ReactNode}> = ({ctx, desde, tam, col, sombra, children}) => {
+const Pal: React.FC<{ctx: Ctx; desde: number; tam: number; col: string; sombra?: string; fijo?: boolean; children: React.ReactNode}> = ({ctx, desde, tam, col, sombra, fijo, children}) => {
   const {frame, fps} = ctx;
+  if (fijo) {
+    // gancho: la palabra ya está en el cuadro 0 (portada, loop) y en `desde` solo da un golpe al beat
+    const g = desde > 0 && frame >= Math.round(desde * fps) ? Math.exp(-(frame / fps - desde) * 9) : 0;
+    return (
+      <span style={{display: 'inline-block', fontFamily: fuente.display, fontWeight: 800, fontSize: tam, lineHeight: 1.04, letterSpacing: '-0.025em', color: col, textShadow: sombra, transform: `scale(${1 + 0.14 * g}) rotate(${-3 * g}deg)`, marginRight: tam * 0.24}}>
+        {children}
+      </span>
+    );
+  }
   if (desde > 0 && frame < Math.round(desde * fps)) return null;
   const p = desde <= 0 ? 1 : popEn(frame, fps, desde, 10, 210);
   return (
@@ -70,7 +80,7 @@ const Lineas: React.FC<{ctx: Ctx; s0: number; lineas: Linea[]; fondo: Col; top: 
           {l.t.split(' ').map((w, j) => {
             const d = s0 + 0.05 + k++ * paso * 0.55;
             return (
-              <Pal key={j} ctx={ctx} desde={fijoAlInicio && i === 0 ? 0 : d} tam={tam} col={colorLinea(l, fondo)} sombra={l.c === 'lima' || l.c === 'dorado' || l.c === 'papel' ? sombraPara(fondo) : undefined}>
+              <Pal key={j} ctx={ctx} desde={d} fijo={fijoAlInicio} tam={tam} col={colorLinea(l, fondo)} sombra={l.c === 'lima' || l.c === 'dorado' || l.c === 'papel' ? sombraPara(fondo) : undefined}>
                 {w}
               </Pal>
             );
@@ -115,12 +125,23 @@ const Carta: React.FC<{ctx: Ctx; s0: number; texto: string; mar?: string; pais?:
   );
 };
 
+// el mar del tercio de abajo, con fauna marina 2D (Fauna.tsx): llena la mitad vacía del cuadro y
+// dice de entrada de qué se trata. La tapa en parte la interfaz de TikTok: nunca lleva información.
+// `quieto`: el gancho del principio (ya está en su lugar en el cuadro 0); el empalme del loop lo
+// dibuja con s0 = fin, así los bichos quedan exactamente como en el cuadro 0.
+const MarAbajo: React.FC<{ctx: Ctx; s0: number; y?: number; botella?: boolean; quieto?: boolean}> = ({ctx, s0, y = 0.66, botella, quieto}) => {
+  const {W, H, t} = ctx;
+  const sube = quieto || s0 < 0 ? 1 : interpolate(t, [s0, s0 + 0.35], [0, 1], {...clamp, easing: salir});
+  return <MarConFauna W={W} H={H} t={t} s0={s0} dur={quieto ? 3 : ctx.dur} y0={H * y} elenco={quieto ? ctx.elenco0 : ctx.elenco} botella={botella} sube={sube} izquierda={quieto ? true : undefined} />;
+};
+
 // ---------- escenas ----------
 const Gancho: React.FC<{ctx: Ctx; s0: number; e: Extract<Escena, {tipo: 'gancho'}>; primera: boolean}> = ({ctx, s0, e, primera}) => {
   const f = fondoDe(e);
   return (
     <>
       <Fondo col={COL[f]} col2={f === 'hondo' ? C.hondo2 : undefined} />
+      <MarAbajo ctx={ctx} s0={s0} quieto={primera} botella />
       {e.etiqueta ? <Etiqueta ctx={ctx} texto={e.etiqueta} s0={primera ? 0 : s0} /> : null}
       <Lineas ctx={ctx} s0={s0} lineas={e.lineas} fondo={f} top={e.etiqueta ? 0.21 : 0.17} fijoAlInicio={primera} />
     </>
@@ -129,10 +150,12 @@ const Gancho: React.FC<{ctx: Ctx; s0: number; e: Extract<Escena, {tipo: 'gancho'
 
 const EscBotella: React.FC<{ctx: Ctx; s0: number; e: Extract<Escena, {tipo: 'botella'}>}> = ({ctx, s0, e}) => {
   const f = fondoDe(e);
-  const dur = Math.min(e.dur - 0.8, 0.35 + e.texto.length / 34);
+  // se escribe a velocidad de lectura (20 caracteres/s) y queda quieta al menos 1,2 s
+  const dur = Math.min(e.dur - 1.2, 0.35 + e.texto.length / 20);
   return (
     <>
       <Fondo col={COL[f]} />
+      <MarAbajo ctx={ctx} s0={s0} y={0.68} />
       {e.arriba ? <Lineas ctx={ctx} s0={s0} lineas={e.arriba} fondo={f} top={0.13} max={0.09} /> : null}
       <Carta ctx={ctx} s0={s0} texto={e.texto} mar={e.mar} pais={e.pais} bandera={e.bandera} encabezado={e.encabezado} escribe={[0.35, dur]} top={e.arriba ? 0.27 : 0.2} />
     </>
@@ -149,16 +172,18 @@ const Opciones: React.FC<{ctx: Ctx; s0: number; e: Extract<Escena, {tipo: 'opcio
   return (
     <>
       <Fondo col={COL[f]} />
+      <MarAbajo ctx={ctx} s0={s0} y={0.75} />
       <Lineas ctx={ctx} s0={s0} lineas={[{t: e.pregunta}]} fondo={f} top={0.13} max={0.09} />
       <div style={{position: 'absolute', left: ctx.x, width: ctx.ancho, top: H * 0.25, display: 'flex', flexDirection: 'column', gap: W * 0.028}}>
         {e.opciones.map((o, i) => {
-          const d = s0 + 0.35 + i * (acciones ? 0.7 : 0.25);
+          const pasoA = e.paso ?? 1.5;
+          const d = s0 + 0.35 + i * (acciones ? pasoA : 0.25);
           if (t < d) return null;
           const p = popEn(frame, fps, d, 11, 220);
           const ok = revelado && i === e.correcta;
           const mal = revelado && i !== e.correcta;
           const pulso = ok ? 1 + 0.06 * Math.sin(Math.min(1, (t - s0 - rev) / 0.3) * Math.PI) : 1;
-          const activa = acciones && t >= d && (i === e.opciones.length - 1 || t < s0 + 0.35 + (i + 1) * 0.7);
+          const activa = acciones && t >= d && (i === e.opciones.length - 1 || t < s0 + 0.35 + (i + 1) * pasoA);
           return (
             <div key={i} style={{display: 'flex', alignItems: 'center', gap: W * 0.03, background: ok ? C.lima : activa ? C.papel : C.blanco, border: `5px solid ${C.tinta}`, borderRadius: W * 0.04, padding: `${W * 0.028}px ${W * 0.04}px`, boxShadow: `${W * 0.012}px ${W * 0.012}px 0 ${C.tinta}`, opacity: mal ? 0.45 : 1, transform: `translateX(${(1 - p) * (i % 2 ? 1 : -1) * W * 0.5}px) scale(${pulso})`}}>
               {!acciones ? (
@@ -167,7 +192,7 @@ const Opciones: React.FC<{ctx: Ctx; s0: number; e: Extract<Escena, {tipo: 'opcio
               {o.bandera ? <Bandera c={o.bandera} w={W * 0.085} /> : null}
               <div>
                 <div style={{fontFamily: fuente.display, fontWeight: 800, fontSize: W * 0.062, lineHeight: 1.05, color: C.tinta}}>{o.t}</div>
-                {o.d ? <div style={{fontFamily: fuente.cuerpo, fontWeight: 600, fontSize: W * 0.034, lineHeight: 1.25, color: C.verdeP, marginTop: W * 0.006}}>{o.d}</div> : null}
+                {o.d ? <div style={{fontFamily: fuente.cuerpo, fontWeight: 600, fontSize: W * 0.042, lineHeight: 1.25, color: C.verdeP, marginTop: W * 0.006}}>{o.d}</div> : null}
               </div>
             </div>
           );
@@ -230,6 +255,7 @@ const Desorden: React.FC<{ctx: Ctx; s0: number; e: Extract<Escena, {tipo: 'desor
   return (
     <>
       <Fondo col={COL[f]} />
+      <MarAbajo ctx={ctx} s0={s0} y={0.75} />
       {e.arriba ? <Lineas ctx={ctx} s0={s0} lineas={e.arriba} fondo={f} top={0.13} max={0.09} /> : null}
       {e.palabras.map((w, i) => {
         const d = s0 + 0.2 + i * 0.12;
@@ -287,11 +313,7 @@ const Lanza: React.FC<{ctx: Ctx; s0: number; e: Extract<Escena, {tipo: 'lanza'}>
   return (
     <>
       <Fondo col={C.mar1} col2={C.mar2} />
-      {[0, 1, 2].map((k) => (
-        <svg key={k} width={W * 1.4} height={H * 0.4} style={{position: 'absolute', left: -W * 0.2 + Math.sin(t * 2 + k) * 30, top: H * (0.68 + k * 0.08)}}>
-          <path d={`M0 60 ${Array.from({length: 12}, (_, i) => `Q ${i * 130 + 65} ${k % 2 ? 0 : 120} ${(i + 1) * 130} 60`).join(' ')} L ${W * 1.4} ${H * 0.4} L 0 ${H * 0.4} Z`} fill={[C.mar1, C.mar2, '#2C7488'][k]} stroke={C.tinta} strokeWidth={5} />
-        </svg>
-      ))}
+      <MarAbajo ctx={ctx} s0={s0} y={0.66} />
       <div style={{position: 'absolute', left: x - W * 0.08 + deriva * W * 0.12, top: y - W * 0.19 + (caida > 0 ? H * 0.03 + Math.sin(t * 3) * 10 : 0), transform: `rotate(${v < 1 ? v * 450 : 10 + Math.sin(t * 3) * 8}deg)`}}>
         <BotellaPlana w={W * 0.16} rollo={1} corcho={1} />
       </div>
@@ -351,6 +373,7 @@ const Ficha: React.FC<{ctx: Ctx; s0: number; e: Extract<Escena, {tipo: 'ficha'}>
   return (
     <>
       <Fondo col={COL[f]} />
+      <MarAbajo ctx={ctx} s0={s0} y={0.68} />
       <div style={{position: 'absolute', left: ctx.x, width: ctx.ancho, top: H * 0.15, transform: `translateY(${(1 - p) * H * 0.3}px)`}}>
         <div style={{background: C.papel, border: `5px solid ${C.tinta}`, borderRadius: W * 0.04, padding: `${W * 0.045}px ${W * 0.05}px`, boxShadow: `${W * 0.018}px ${W * 0.018}px 0 ${C.tinta}`}}>
           <div style={{fontFamily: fuente.cuerpo, fontWeight: 800, fontSize: W * 0.034, letterSpacing: '.08em', textTransform: 'uppercase', color: C.mar2, marginBottom: W * 0.035}}>{e.titulo}</div>
@@ -384,6 +407,7 @@ const Cta: React.FC<{ctx: Ctx; s0: number; e: Extract<Escena, {tipo: 'cta'}>; pr
   return (
     <>
       <Fondo col={COL[f]} />
+      <MarAbajo ctx={ctx} s0={s0} y={0.71} />
       <Lineas ctx={ctx} s0={s0} lineas={e.lineas} fondo={f} top={0.15} max={0.13} />
       <div style={{position: 'absolute', left: ctx.x, width: ctx.ancho, top: H * 0.46, textAlign: 'center'}}>
         {pill > 0 ? <span style={{display: 'inline-block', fontFamily: fuente.display, fontWeight: 800, fontSize: W * 0.07, color: C.lima, background: C.tinta, padding: `${W * 0.02}px ${W * 0.05}px`, borderRadius: 999, transform: `scale(${pill})`}}>seabottles.org</span> : null}
@@ -396,7 +420,7 @@ const Cta: React.FC<{ctx: Ctx; s0: number; e: Extract<Escena, {tipo: 'cta'}>; pr
       ) : null}
       {k > 0 ? (
         <AbsoluteFill style={{clipPath: `circle(${k * 120}% at 50% 35%)`}}>
-          {primera.tipo === 'gancho' ? <Gancho ctx={ctx} s0={-10} e={primera} primera /> : <Fondo col={COL[fondoDe(primera)]} />}
+          {primera.tipo === 'gancho' ? <Gancho ctx={ctx} s0={fin} e={primera} primera /> : <Fondo col={COL[fondoDe(primera)]} />}
         </AbsoluteFill>
       ) : null}
     </>
@@ -408,13 +432,17 @@ export const Serie: React.FC<PropsSerie> = ({escenas, musica_archivo}) => {
   const frame = useCurrentFrame();
   const {fps, width: W, height: H} = useVideoConfig();
   const t = frame / fps;
-  const ctx: Ctx = {t, frame, fps, W, H, x: W * 0.12, ancho: W * 0.76, cx: W * 0.5};
   const s0s = inicios(escenas);
   const fin = duracionSerie(escenas);
   let i = s0s.findIndex((s, k) => t >= s && t < s + escenas[k].dur);
   if (i < 0) i = escenas.length - 1;
   const e = escenas[i];
   const s0 = s0s[i];
+  // fauna de cada escena: cambia de escena a escena y de video a video (semilla = el gancho)
+  const semilla = JSON.stringify(escenas[0]).split('').reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 9973, 7);
+  const elenco = ELENCOS[(semilla + i * 3) % ELENCOS.length];
+  const elenco0 = ELENCOS[semilla % ELENCOS.length];
+  const ctx: Ctx = {t, frame, fps, W, H, x: W * 0.12, ancho: W * 0.76, cx: W * 0.5, elenco, elenco0, dur: e.dur};
 
   // sacudida corta en cada corte de escena (no en el primer cuadro)
   let sh = 0;

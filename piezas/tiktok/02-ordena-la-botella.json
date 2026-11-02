@@ -1,7 +1,7 @@
 {"escenas": [
-  {"tipo": "gancho", "dur": 1.9, "etiqueta": "JUEGO", "lineas": [{"t": "Esta botella"}, {"t": "llegó rota.", "c": "lima"}]},
-  {"tipo": "desorden", "dur": 6.2, "fondo": "coral", "palabras": ["Nunca", "es", "tarde", "para", "empezar", "de", "nuevo."], "ordenar": 4.4, "arriba": [{"t": "Ordénala antes que yo"}]},
-  {"tipo": "gancho", "dur": 2.6, "fondo": "hondo", "lineas": [{"t": "Es uno de los"}, {"t": "juegos de", "c": "dorado"}, {"t": "La arena.", "c": "lima"}]},
-  {"tipo": "gancho", "dur": 2.2, "fondo": "papel", "lineas": [{"t": "Sin puntos."}, {"t": "Sin ganar."}, {"t": "Sin perder.", "c": "coral"}]},
-  {"tipo": "cta", "dur": 2.8, "fondo": "lima", "lineas": [{"t": "¿La armaste"}, {"t": "antes?"}], "pregunta": "Cuéntalo en los comentarios"}
+  {"tipo": "gancho", "dur": 2.0, "etiqueta": "JUEGO", "lineas": [{"t": "Esta botella"}, {"t": "llegó rota.", "c": "lima"}]},
+  {"tipo": "desorden", "dur": 6.4, "fondo": "coral", "palabras": ["Nunca", "es", "tarde", "para", "empezar", "de", "nuevo."], "ordenar": 4.4, "arriba": [{"t": "Ordénala antes que yo"}]},
+  {"tipo": "gancho", "dur": 2.6, "fondo": "hondo", "lineas": [{"t": "Es uno de los"}, {"t": "juegos de", "c": "dorado"}, {"t": "Seabottles.", "c": "lima"}]},
+  {"tipo": "gancho", "dur": 2.5, "fondo": "papel", "lineas": [{"t": "Sin puntos."}, {"t": "Sin ganar."}, {"t": "Sin perder.", "c": "coral"}]},
+  {"tipo": "cta", "dur": 3.4, "fondo": "lima", "lineas": [{"t": "¿La armaste"}, {"t": "antes?"}], "pregunta": "Cuéntalo en los comentarios"}
 ]}

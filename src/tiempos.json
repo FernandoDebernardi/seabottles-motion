@@ -1,0 +1,6 @@
+{
+  "_nota": "Tiempos (s) de los videos de tiempos fijos. Los leen los componentes (Viral.tsx, Fijados.tsx) y las músicas (musica-viral.mjs, musica-fijados.mjs): si se cambia uno, cambia en los dos. Reglas de lectura en .claude/skills/seabottles-motion/SKILL.md (Lectura y gancho, 2/11/2026).",
+  "viral": {"escribe": 2, "tipeo": [2.25, 4.3], "sello": 4.5, "enrolla": 6, "lanza": 7.5, "viaje": 9.5, "montaje": 13.5, "paso": 1.0, "ceros": 17.5, "respuesta": 20.5, "tipeoResp": [21.4, 23.5], "cta": 25, "fin": 28},
+  "quince": {"escribe": 2.2, "mar": 5.4, "corriente": 8.2, "acciones": 11.8, "cta": 15.3, "fin": 17.5},
+  "manifiesto": {"solo": 3, "tipeo": [3.9, 5.0], "corriente": 6.5, "cta": 10, "fin": 13}
+}

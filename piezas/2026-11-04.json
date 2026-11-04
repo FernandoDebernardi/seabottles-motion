@@ -1,0 +1,16 @@
+{
+  "texto": "Cuánto tiempo pasó desde que hiciste algo por primera vez?",
+  "mar_clave": "secretos",
+  "pais": "Argentina",
+  "bandera": "🇦🇷",
+  "deco": {"mata": true, "tapa": "corcho", "paper": "arena", "sello": "estrella", "tinta": "sepia", "cordel": "nudo", "etiqueta": "faro"},
+  "origen": "Lanzada desde Argentina",
+  "clima": "despejado",
+  "momento": "noche",
+  "respuesta": {
+    "texto": "Hace dos semanas hice pan casero por primera vez. Salió chato y duro, y igual me lo comí con orgullo.",
+    "pais": "Argentina",
+    "bandera_codigo": "ar"
+  },
+  "semilla": "2026-11-04:869khhh2zqjz"
+}

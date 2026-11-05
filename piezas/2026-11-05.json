@@ -1,0 +1,22 @@
+{
+  "titulo": "A message in a bottle",
+  "etiqueta_desde": "sent from",
+  "texto": "If you could change anything in your life, what would it be?",
+  "mar_clave": "pensamientos",
+  "mar": "Sea of Thoughts",
+  "pais": "South Africa",
+  "bandera": "🇿🇦",
+  "deco": {"mata": true, "tapa": "corcho", "paper": "crema", "sello": "none", "tinta": "grafito", "cordel": "none", "etiqueta": "none"},
+  "origen": "Cast from South Africa",
+  "frase_cierre": "What if you didn't know who you were writing to?",
+  "clima": "despejado",
+  "momento": "atardecer",
+  "respuesta": {
+    "texto": "I would worry less about what others think. Your question found me on a slow afternoon in Mexico and I'm still thinking.",
+    "pais": "Mexico",
+    "bandera_codigo": "mx",
+    "encabezado": "This is how someone from Mexico might reply",
+    "pie": "The bottle set sail from South Africa."
+  },
+  "semilla": "2026-11-05:52ghwmpn2bdt"
+}

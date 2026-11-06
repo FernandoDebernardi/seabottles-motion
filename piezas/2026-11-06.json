@@ -1,0 +1,12 @@
+{
+  "texto": "Yo no creo en el amor a primera vista. Atracción si pero no amor. El amor se construye con el tiempo no?",
+  "mar_clave": "amor",
+  "pais": "El Salvador",
+  "bandera": "🇸🇻",
+  "deco": {"mata":true,"tapa":"corcho","paper":"crema","sello":"pais","tinta":"lima","cordel":"yute","etiqueta":"corazon"},
+  "origen": "Lanzada desde El Salvador",
+  "clima": "nublado",
+  "momento": "dia",
+  "respuesta": {"texto": "Pienso parecido. La primera vez que vi a quien hoy quiero no sentí nada especial; vino después, con los cafés y las charlas largas.", "pais": "México", "bandera_codigo": "mx"},
+  "semilla": "2026-11-06:6hdfjbdc7scf"
+}

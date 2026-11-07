@@ -1,0 +1,16 @@
+{
+  "texto": "Cómo es el clima de tu país en esta época del año?, y el de tu corazón?",
+  "mar_clave": "recuerdos",
+  "pais": "Argentina",
+  "bandera": "🇦🇷",
+  "deco": {"mata": true, "tapa": "corcho", "paper": "cuadros", "sello": "gota", "tinta": "grafito", "cordel": "nudo", "etiqueta": "tortuga"},
+  "origen": "Lanzada desde Argentina",
+  "clima": "despejado",
+  "momento": "noche",
+  "respuesta": {
+    "texto": "Aquí se van despidiendo las lluvias y las tardes están tibias. El corazón anda parecido: despejándose de a poco.",
+    "pais": "El Salvador",
+    "bandera_codigo": "sv"
+  },
+  "semilla": "2026-11-07:32s3wxpbx59v"
+}

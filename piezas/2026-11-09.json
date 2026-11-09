@@ -1,0 +1,12 @@
+{
+  "texto": "Hola extraño/a del otro lado del mundo ..que deseas para ti en este momento de la vida?",
+  "mar_clave": "vida",
+  "pais": "Chile",
+  "bandera": "🇨🇱",
+  "deco": {"mata":true,"tapa":"corcho","paper":"crema","sello":"none","tinta":"grafito","cordel":"none","etiqueta":"nube"},
+  "origen": "Lanzada desde Chile",
+  "clima": "despejado",
+  "momento": "noche",
+  "respuesta": {"texto": "Desde aquí deseo un poco de calma: terminar el año sin correr y volver a tener tardes libres para leer.", "pais": "Colombia", "bandera_codigo": "co"},
+  "semilla": "2026-11-09:2gf3x2vwmksr"
+}

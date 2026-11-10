@@ -1,0 +1,12 @@
+{
+  "texto": "Cuando renuncias a un trabajo ¿Les explicas todo lo malo por lo que te vas o los dejas seguir así?",
+  "mar_clave": "pensamientos",
+  "pais": "Perú",
+  "bandera": "🇵🇪",
+  "deco": {"mata": true, "tapa": "corcho", "paper": "crema", "sello": "none", "tinta": "grafito", "cordel": "none", "etiqueta": "none"},
+  "origen": "Lanzada desde Perú",
+  "clima": "nublado",
+  "momento": "dia",
+  "respuesta": {"texto": "Yo lo conté con calma en mi última reunión. No cambió nada grande, pero me fui más liviano y en paz.", "pais": "Costa Rica", "bandera_codigo": "cr"},
+  "semilla": "2026-11-10:mcbsp4mrcdmw"
+}

@@ -1,0 +1,12 @@
+{
+  "texto": "Alto, inspector de palabras poco usuales.\nDígame la suya.\nYo le diré: Estromatolitos",
+  "mar_clave": "pensamientos",
+  "pais": "Argentina",
+  "bandera": "🇦🇷",
+  "deco": {"mata": true, "tapa": "corcho", "paper": "arena", "sello": "faro", "tinta": "grafito", "cordel": "yute", "etiqueta": "pez"},
+  "origen": "Lanzada desde Argentina",
+  "clima": "despejado",
+  "momento": "noche",
+  "respuesta": {"texto": "Acepto el control. La mía es «ataraxia»: la encontré en un libro viejo y todavía la uso poco.", "pais": "Argentina", "bandera_codigo": "ar"},
+  "semilla": "2026-11-11:7t7hg8h3kvtw"
+}

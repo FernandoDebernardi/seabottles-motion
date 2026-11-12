@@ -1,0 +1,22 @@
+{
+  "titulo": "A message in a bottle",
+  "etiqueta_desde": "sent from",
+  "texto": "Hi,how you doing?how is life there on other part of the world?I would like to hear from you.",
+  "mar_clave": "amor",
+  "mar": "Sea of Love",
+  "pais": "South Africa",
+  "bandera": "🇿🇦",
+  "deco": {"mata": true, "tapa": "corcho", "paper": "crema", "sello": "none", "tinta": "grafito", "cordel": "none", "etiqueta": "corazon"},
+  "origen": "Cast from South Africa",
+  "frase_cierre": "Write without a name. Someone, far away, will read it.",
+  "clima": "lluvia",
+  "momento": "atardecer",
+  "respuesta": {
+    "texto": "Life here is slow this week: warm afternoons, mate with friends and long walks after work. How is it there?",
+    "pais": "Argentina",
+    "bandera_codigo": "ar",
+    "encabezado": "This is how someone from Argentina might reply",
+    "pie": "The bottle set sail from South Africa."
+  },
+  "semilla": "2026-11-12:6mn2fntq6jcg"
+}

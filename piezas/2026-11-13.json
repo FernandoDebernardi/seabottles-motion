@@ -1,0 +1,12 @@
+{
+  "texto": "Cuentame como sería una cita perfecta para ti.",
+  "mar_clave": "amor",
+  "pais": "Chile",
+  "bandera": "🇨🇱",
+  "deco": {"mata": true, "tapa": "corcho", "paper": "arena", "sello": "coral", "tinta": "sepia", "cordel": "oro", "etiqueta": "corazon"},
+  "origen": "Lanzada desde Chile",
+  "clima": "despejado",
+  "momento": "dia",
+  "respuesta": {"texto": "Un café largo frente al mar, sin mirar la hora, y volver caminando despacio con la charla todavía encendida.", "pais": "Brasil", "bandera_codigo": "br"},
+  "semilla": "2026-11-13:bckx3tj775qh"
+}

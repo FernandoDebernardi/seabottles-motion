@@ -1,0 +1,12 @@
+{
+  "texto": "Poder compartir mi arte con mi el mundo exponer en varios países es unos de mis sueños que quiero hacer realidad",
+  "mar_clave": "suenos",
+  "pais": "México",
+  "bandera": "🇲🇽",
+  "deco": {"mata": true, "tapa": "corcho", "paper": "crema", "sello": "none", "tinta": "grafito", "cordel": "none", "etiqueta": "brote"},
+  "origen": "Lanzada desde México",
+  "clima": "despejado",
+  "momento": "dia",
+  "respuesta": {"texto": "Si algún día expones en Santiago, iré a ver tus obras y pensaré que una vez tu sueño cruzó el mar hasta mí.", "pais": "Chile", "bandera_codigo": "cl"},
+  "semilla": "2026-11-14:fnnz4rxbdsqd"
+}

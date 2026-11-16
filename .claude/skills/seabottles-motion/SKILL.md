@@ -36,12 +36,22 @@ estáticas.
   viste con la decoración real que eligió la persona (campo `deco` de la base: etiqueta, cordel,
   sello; `sello: "pais"` muestra la bandera). Las piezas están en `public/deco/` y se colocan en las
   mismas posiciones que usa la app (`src/escenas/Botella.tsx`). Sin gotas ni salpicaduras pegadas.
-- **Música**: nada de ruido de fondo y nunca la misma en dos videos (regla de Fer, 23/10/2026):
-  `musica.mjs` compone para cada pieza una melodía sutil de PIANO ACÚSTICO (muestras de piano de cola
-  grabado en `public/piano/`), distinta a partir de la semilla; nada de sintetizadores ni ambientes
-  (`generar.mjs` lo llama solo). En Instagram se reemplaza al programar
-  con `audioConfiguration` (biblioteca de música de Instagram para cuentas de empresa; la canción se
-  elige por id numérico, con `videoVolume: 0` para que no se mezclen).
+- **Música** (regla de Fer, 16/11/2026; reemplaza la del piano del 23/10): toda publicación de
+  Seabottles lleva música hecha con la skill «musica-gancho-corto» (pautas de composición del
+  estudio de ABBA: gancho desde el segundo 0, pocos acordes con melodía amplia, paso de menor a
+  mayor, voces dobladas). Sale del banco `public/musica/` (17 pistas de 15 s: `calma-*`, `media-*`,
+  `juguetona-*`; la lista y qué es cada una, en `public/musica/banco.json`). `musica-banco.mjs`
+  (lo llama `generar.mjs`) elige por ánimo y va rotando: usa la pista de ese ánimo que hace más
+  tiempo no suena (`musica-usadas.json`, que se sube al repo junto con el video) y le da la misma
+  al Reel y a su versión de TikTok. **El ánimo sale de la botella**: campo `"animo"` del JSON
+  (`calma` para lo íntimo, nostálgico o triste; `media` para lo cotidiano y las preguntas;
+  `juguetona` solo para botellas livianas o con humor y para juegos); si falta, lo decide el mar
+  (recuerdos, secretos y amor → calma; el resto → media). `"pista"` fuerza una pista concreta.
+  **En Instagram también suena la música del video**: ya no se usa la biblioteca de Instagram
+  (nada de `audioConfiguration` ni `videoVolume: 0`). Para otras piezas (viral, fijados, serie de
+  TikTok) vale la misma regla: componer con la skill o tomar una pista del banco. Para sumar
+  pistas: generarlas con la skill, dejarlas como WAV de 16 bits en `public/musica/` y agregarlas a
+  `banco.json`. `musica.mjs` (piano) queda solo para las postales, que no llevan sonido.
 - **Formato**: 1080×1920, 30 fps, H.264 + AAC. Es la medida de Reels; el texto va centrado para que
   sobreviva al recorte 4:5 del feed.
 - Duración por defecto 12 s a 30 fps. Formatos: 1080×1920 (`BotellaDelDia`) y 1080×1080
@@ -193,7 +203,7 @@ y `ElViajeCorto` (13 s, sin respuesta, para Trial Reel y TikTok) en `src/ElViaje
   libre de ~140 px a la derecha (íconos de TikTok): las tarjetas van corridas 3,5 % a la izquierda
   y al 92–95 % de tamaño.
 - El primer cuadro ya tiene texto (TikTok lo usa de portada) y el final empalma con el principio.
-- Audio: piano de `musica.mjs`, normalizado a −14 LUFS con
+- Audio: pista del banco (`musica-banco.mjs`), normalizada a −14 LUFS con
   `ffmpeg -i in.mp4 -c:v copy -af loudnorm=I=-14:TP=-1.5:LRA=11 -c:a aac -b:a 192k out.mp4`.
 
 ## Revisión antes del render final (de la investigación de animaciones virales, 1/11/2026)

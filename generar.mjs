@@ -35,11 +35,13 @@ if (pieza.bandera_codigo && !existsSync(`public/banderas/${pieza.bandera_codigo}
 }
 if (!pieza.semilla) pieza.semilla = `${basename(entrada)}:${pieza.texto.slice(0, 40)}`;
 
-// Música propia de la pieza (distinta por semilla)
+// Música de la pieza: sale del banco de pistas (regla de Fer, 16/11/2026: pautas ABBA, skill
+// «musica-gancho-corto»). musica-banco.mjs elige por ánimo ("animo" del JSON o el mar) y rota;
+// el Reel y su versión de TikTok reciben la misma pista. El piano de musica.mjs ya no se usa acá.
 import {execFileSync as ejecutar} from 'node:child_process';
 mkdirSync('public/audio', {recursive: true});
 const nombreMusica = `audio/generada-${basename(entrada).replace(/\.json$/, '')}${tiktok ? '-tiktok' : ''}.wav`;
-ejecutar('node', ['musica.mjs', pieza.semilla, `public/${nombreMusica}`, '60'], {stdio: 'inherit', env: {...process.env, MUSICA_PULSO: tiktok ? '1' : '0'}});
+ejecutar('node', ['musica-banco.mjs', entrada, `public/${nombreMusica}`, '60'], {stdio: 'inherit'});
 pieza.musica_archivo = nombreMusica;
 
 const salida = salidaArg || `out/${basename(entrada).replace(/\.json$/, '')}${tiktok ? '-tiktok' : ''}.mp4`;
@@ -48,7 +50,7 @@ const props = resolve('out', `${basename(entrada).replace(/\.json$/, '')}${tikto
 import('node:fs').then(({writeFileSync}) => {
   writeFileSync(props, JSON.stringify(pieza));
   const args = [
-    'remotion', 'render', tiktok ? 'BotellaTikTok' : 'BotellaDelDia', tiktok ? salida.replace(/\.mp4$/, '.raw.mp4') : salida,
+    'remotion', 'render', tiktok ? 'BotellaTikTok' : 'BotellaDelDia', salida.replace(/\.mp4$/, '.raw.mp4'),
     `--props=${props}`, '--codec=h264', '--crf=18', '--log=error',
   ];
   // Chrome: usa el que Remotion descargó, o uno del sistema si está
@@ -56,11 +58,18 @@ import('node:fs').then(({writeFileSync}) => {
   const chrome = process.env.CHROME || chromes.find((c) => existsSync(c));
   if (chrome) args.push(`--browser-executable=${chrome}`);
   execFileSync('npx', args, {stdio: 'inherit'});
-  if (tiktok) {
-    // volumen estándar de TikTok (-14 LUFS); si no hay ffmpeg, queda el render tal cual
+  {
+    // volumen estándar de las redes (-14 LUFS) en las dos versiones; el Reel normal además baja la
+    // música en el último segundo (la de TikTok no, porque empalma con el principio).
+    // Si no hay ffmpeg, queda el render tal cual.
     const crudo = salida.replace(/\.mp4$/, '.raw.mp4');
     try {
-      execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-i', crudo, '-c:v', 'copy', '-af', 'loudnorm=I=-14:TP=-1.5:LRA=11', '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', salida], {stdio: 'inherit'});
+      let filtro = 'loudnorm=I=-14:TP=-1.5:LRA=11';
+      if (!tiktok) {
+        const dur = Number(execFileSync('ffprobe', ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', crudo]).toString().trim());
+        if (dur > 3) filtro += `,afade=t=out:st=${(dur - 1.2).toFixed(2)}:d=1.2`;
+      }
+      execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-i', crudo, '-c:v', 'copy', '-af', filtro, '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', salida], {stdio: 'inherit'});
       import('node:fs').then(({unlinkSync}) => unlinkSync(crudo));
     } catch {
       import('node:fs').then(({renameSync}) => renameSync(crudo, salida));

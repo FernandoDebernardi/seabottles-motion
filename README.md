@@ -55,7 +55,7 @@ los sueños, de noche. Renderizá 9:16 y 1:1».
   `public/deco/`: las etiquetas, cordeles y sellos de la app, que se colocan sobre la botella según
   el campo `deco` de cada botella. `public/capas/olas.png`: olas generadas en Recraft.
 - `public/elementos/`: faro (con isla de arena), gaviota, barquito, pez y las lunas de la app.
-- Música: `musica.mjs` compone para cada pieza una melodía sutil de piano acústico, distinta cada vez (tonalidad, modo, tempo, acordes, mano izquierda y melodía salen de la semilla), con muestras de piano de cola grabado (`public/piano/`, Salamander Grand Piano, CC-BY); `generar.mjs` la crea sola en `public/audio/generada-<pieza>.wav` (no se sube al repo). En Instagram se reemplaza por una canción de piano de la biblioteca de Instagram al programar.
+- Música: banco de pistas en `public/musica/` (regla del 16/11/2026: pautas de composición del estudio de ABBA, skill «musica-gancho-corto»). `musica-banco.mjs` elige por ánimo (`"animo"` del JSON o el mar) y rota; `generar.mjs` lo llama solo y deja el volumen en −14 LUFS. La misma música va en Instagram, Facebook y TikTok.
 - `public/fuentes/`: Bricolage Grotesque y Hanken Grotesk, copiadas del Seabottles Design System.
 - Paleta y gradientes del mar: `src/tema.ts` (copiados del design system).
 

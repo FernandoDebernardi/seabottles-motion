@@ -1,0 +1,138 @@
+[
+ {
+  "pista": "calma-01",
+  "animo": "calma",
+  "bpm": 84,
+  "segundos": 15.06,
+  "termina_sola": false,
+  "que": "Cajita de música y piano; de Mi menor a Sol mayor; coro suave"
+ },
+ {
+  "pista": "calma-02",
+  "animo": "calma",
+  "bpm": 88,
+  "segundos": 14.92,
+  "termina_sola": true,
+  "que": "Piano y celesta; bajo que sube de a medio tono; voces al final"
+ },
+ {
+  "pista": "calma-03",
+  "animo": "calma",
+  "bpm": 80,
+  "segundos": 15.05,
+  "termina_sola": false,
+  "que": "Nocturna: campanitas y guitarra; de La menor a Do mayor"
+ },
+ {
+  "pista": "calma-04",
+  "animo": "calma",
+  "bpm": 90,
+  "segundos": 15.01,
+  "termina_sola": false,
+  "que": "Piano, arpa y cajita; de Re menor a Fa mayor; para botellas de amor"
+ },
+ {
+  "pista": "calma-05",
+  "animo": "calma",
+  "bpm": 86,
+  "segundos": 14.38,
+  "termina_sola": true,
+  "que": "Celesta y piano apagado; motivo que se repite; para secretos"
+ },
+ {
+  "pista": "calma-06",
+  "animo": "calma",
+  "bpm": 82,
+  "segundos": 14.98,
+  "termina_sola": true,
+  "que": "Kalimba, guitarra y acordeón con aire de folclore sueco"
+ },
+ {
+  "pista": "juguetona-01",
+  "animo": "juguetona",
+  "bpm": 128,
+  "segundos": 15.05,
+  "termina_sola": false,
+  "que": "Pianito de juguete, xilofón, silbido y coro «la la la»"
+ },
+ {
+  "pista": "juguetona-02",
+  "animo": "juguetona",
+  "bpm": 126,
+  "segundos": 15.01,
+  "termina_sola": false,
+  "que": "Marimba y campanitas, bajo saltarín, palmas"
+ },
+ {
+  "pista": "juguetona-03",
+  "animo": "juguetona",
+  "bpm": 124,
+  "segundos": 14.34,
+  "termina_sola": true,
+  "que": "Pianito, cuerdas punteadas y acordeón de danza"
+ },
+ {
+  "pista": "juguetona-04",
+  "animo": "juguetona",
+  "bpm": 130,
+  "segundos": 15.02,
+  "termina_sola": false,
+  "que": "Xilofón, ukelele y silbido; bajo que sube"
+ },
+ {
+  "pista": "juguetona-05",
+  "animo": "juguetona",
+  "bpm": 128,
+  "segundos": 15.06,
+  "termina_sola": false,
+  "que": "La versión C que aprobó Fer el 16/11/2026 (referencia del estilo)"
+ },
+ {
+  "pista": "media-01",
+  "animo": "media",
+  "bpm": 104,
+  "segundos": 14.87,
+  "termina_sola": true,
+  "que": "Piano en octavas, palmas suaves y coro en terceras"
+ },
+ {
+  "pista": "media-02",
+  "animo": "media",
+  "bpm": 108,
+  "segundos": 15.02,
+  "termina_sola": true,
+  "que": "Marimba, ukelele y campanitas; chasquidos"
+ },
+ {
+  "pista": "media-03",
+  "animo": "media",
+  "bpm": 100,
+  "segundos": 14.78,
+  "termina_sola": true,
+  "que": "Piano eléctrico y vibráfono; bajo que baja; para sueños"
+ },
+ {
+  "pista": "media-04",
+  "animo": "media",
+  "bpm": 112,
+  "segundos": 14.86,
+  "termina_sola": true,
+  "que": "Guitarra y piano que se contestan; coro «la la»"
+ },
+ {
+  "pista": "media-05",
+  "animo": "media",
+  "bpm": 106,
+  "segundos": 14.94,
+  "termina_sola": true,
+  "que": "Piano en secuencia que sube, cuerdas punteadas y coro"
+ },
+ {
+  "pista": "media-06",
+  "animo": "media",
+  "bpm": 110,
+  "segundos": 14.74,
+  "termina_sola": false,
+  "que": "Melodía silbada, kalimba y contrabajo"
+ }
+]

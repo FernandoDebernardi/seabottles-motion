@@ -1,0 +1,12 @@
+{
+  "texto": "Si pudieras volver a vivir un día concreto de toda tu existencia (con sus cosas buenas o malas, sin poder eliminar ninguna), ¿Cuál elegirías? ¿Y por qué?",
+  "mar_clave": "recuerdos",
+  "pais": "España",
+  "bandera": "🇪🇸",
+  "deco": {"mata": true, "tapa": "corcho", "paper": "crema", "sello": "none", "tinta": "grafito", "cordel": "none", "etiqueta": "none"},
+  "origen": "Lanzada desde España",
+  "clima": "despejado",
+  "momento": "noche",
+  "respuesta": {"texto": "Elegiría una tarde de verano en casa de mi abuela, con la radio puesta y olor a pan. No pasó nada especial, y por eso.", "pais": "Chile", "bandera_codigo": "cl"},
+  "semilla": "2026-11-16:njmfzr4pshd4"
+}

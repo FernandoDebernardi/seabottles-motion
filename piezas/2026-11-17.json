@@ -1,0 +1,17 @@
+{
+  "texto": "¿Escribes un diario de vida? Si no lo escribes ¿Te gustaría escribir uno?",
+  "mar_clave": "secretos",
+  "pais": "Chile",
+  "bandera": "🇨🇱",
+  "deco": {"mata": true, "tapa": "corcho", "paper": "crema", "sello": "ancla", "tinta": "grafito", "cordel": "yute", "etiqueta": "nube"},
+  "origen": "Lanzada desde Chile",
+  "clima": "despejado",
+  "momento": "dia",
+  "respuesta": {
+    "texto": "Escribo uno desde hace años, en un cuaderno gastado. Releerlo es como encontrarme con alguien que ya no soy.",
+    "pais": "Chile",
+    "bandera_codigo": "cl"
+  },
+  "semilla": "2026-11-17:5xk4bcfs76q5",
+  "animo": "media"
+}

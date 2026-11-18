@@ -1,0 +1,13 @@
+{
+  "texto": "Que harías si el mundo se acabara mañana?",
+  "mar_clave": "pensamientos",
+  "pais": "Uruguay",
+  "bandera": "🇺🇾",
+  "deco": {"mata":true,"tapa":"corcho","paper":"crema","sello":"none","tinta":"grafito","cordel":"none","etiqueta":"corazon"},
+  "origen": "Lanzada desde Uruguay",
+  "clima": "despejado",
+  "momento": "noche",
+  "respuesta": {"texto": "Llamaría a mi abuela, cocinaríamos juntos y miraría el atardecer desde la playa, sin ningún apuro.", "pais": "Chile", "bandera_codigo": "cl"},
+  "animo": "media",
+  "semilla": "2026-11-18:xnczb2g7gkcf"
+}

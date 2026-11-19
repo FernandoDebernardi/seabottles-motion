@@ -33,13 +33,13 @@ function seasonWorld(key, o = {}) {
   pier(380, 1250);
   if (o.bottle !== false) sprite('botella.png', 900, 1150 + Math.sin(TT * 2) * 3, 300, { rot: -0.1 });
   clayWaves(1320, 110, S.sea, { amp: 16, sp: 1.2 });
+  // el árbol de la orilla: colores naturales según la estación, con el tronco enterrado en la arena (nunca flotando)
+  sprite('arbol-' + key + '.png', 175, 1085, 360);
   clayMound(1330, S.sand, { amp: 140, cx: 60, wid: 420, drop: 700 });
-  // el árbol de la orilla cambia con la estación
-  sprite('arbol.png', 190, 1000, 360); ctx.save(); ctx.beginPath(); ctx.rect(0, 0, W, 1000 - 240 + 0.64 * 480); ctx.clip(); ctx.filter = S.tree; sprite('arbol.png', 190, 1000, 360, { shadow: false }); ctx.restore();
   const R = RNG('fx' + key);
   if (key === 'oto') for (let i = 0; i < 18; i++) { const x = mod(R.r(0, 1080) + TT * R.r(80, 160), 1180) - 50, y = mod(R.r(600, 1300) + TT * 60, 1200) + 500, a = TT * 3 + i; ctx.save(); ctx.translate(x, y); ctx.rotate(a); ctx.fillStyle = i % 2 ? '#d9772f' : '#e8a23a'; ctx.beginPath(); ctx.ellipse(0, 0, 16, 8, 0, 0, TAU); ctx.fill(); ctx.restore(); }
   if (key === 'inv') for (let i = 0; i < 60; i++) { const x = mod(R.r(0, 1080) + Math.sin(TT + i) * 30, 1080), y = mod(R.r(0, 1920) + TT * R.r(60, 140), 1920); dot(x, y, R.r(4, 9), 'rgba(255,255,255,0.9)'); }
-  if (key === 'pri') for (let i = 0; i < 16; i++) { const a = R.r(0, TAU), r = R.r(20, 150); dot(190 + Math.cos(a) * r, 880 + Math.sin(a) * r * 0.8, R.r(8, 13) * Math.min(1, popS(E0 + 0.2 + i * 0.05)), '#f4a6b8'); }
+  if (key === 'pri') for (let i = 0; i < 16; i++) { const a = R.r(0, TAU), r = R.r(20, 150); dot(175 + Math.cos(a) * r, 990 + Math.sin(a) * r * 0.8, R.r(8, 13) * Math.min(1, popS(E0 + 0.2 + i * 0.05)), '#f4a6b8'); }
 }
 // ---- 1 · GANCHO (0-3.5): el muelle en otoño; las hojas vuelan; la botella cae al muelle y rebota
 function s_hook() {

@@ -1,0 +1,23 @@
+{
+  "titulo": "A message in a bottle",
+  "etiqueta_desde": "sent from",
+  "texto": "The smell of rain on hot pavement takes me back to being a kid in about half a second. Is there a smell that does that to you?",
+  "mar_clave": "recuerdos",
+  "mar": "Sea of Memories",
+  "pais": "Argentina",
+  "bandera": "🇦🇷",
+  "deco": {"mata": true, "tapa": "corcho", "paper": "cuadros", "sello": "faro", "tinta": "sepia", "cordel": "oro", "etiqueta": "sol"},
+  "origen": "Cast from Argentina",
+  "frase_cierre": "A bottle always reaches someone.",
+  "clima": "despejado",
+  "momento": "dia",
+  "respuesta": {
+    "texto": "Jasmine on my grandmother's windowsill does that to me. One breath and I'm seven again, sitting on her cool floor.",
+    "pais": "India",
+    "bandera_codigo": "in",
+    "encabezado": "This is how someone from India might reply",
+    "pie": "The bottle set sail from Argentina."
+  },
+  "animo": "media",
+  "semilla": "2026-11-19:tpcnsjg5ttvc"
+}

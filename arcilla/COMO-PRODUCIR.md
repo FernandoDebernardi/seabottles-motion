@@ -42,7 +42,11 @@ con las mismas reglas). Los guiones están en `arcilla/GUIONES.md`.
 5. Cuadros clave: `node <tools>/build.mjs . && node <tools>/still.mjs . t1,t2,… look.png --scale 0.4` y **mirarlos**.
 6. Render: `node <tools>/export.mjs . --workers 6 --share`. Mezcla final:
    `ffmpeg -i audio/track.wav -i renders/stem-sfx.wav -filter_complex "[1:a]volume=-13dB[s];[0:a][s]amix=inputs=2:normalize=0,loudnorm=I=-14:TP=-1.5:LRA=11[o]" -map "[o]" -ar 48000 mix.wav`
-   y `ffmpeg -i renders/share.mp4 -i mix.wav -map 0:v -map 1:a -c:v copy -c:a aac -b:a 192k -shortest videos/arcilla-<fecha>.mp4`.
+   y `ffmpeg -i renders/share.mp4 -i mix.wav -map 0:v -map 1:a -c:v copy -c:a aac -b:a 192k -shortest /tmp/mux.mp4`.
+   **Obligatorio (pedido de Fer del 19/11/2026: el video «empezaba y se frenaba solo»)**: el MP4 final se re-codifica con
+   inicio rápido y un cuadro clave por segundo, para que no se trabe al reproducirse desde un enlace:
+   `ffmpeg -i /tmp/mux.mp4 -c:v libx264 -preset veryfast -crf 18 -g 24 -keyint_min 24 -sc_threshold 0 -pix_fmt yuv420p -c:a copy -movflags +faststart videos/arcilla-<fecha>-<nn>.mp4`.
+   Comprobar que el átomo `moov` está al principio del archivo (antes de `mdat`) y que hay un cuadro clave por segundo.
 7. Revisión obligatoria: `node <tools>/review.mjs .` (cortes, texto fuera de la zona de la interfaz, tramos quietos) +
    medir el audio cada 100 ms (ninguna caída de más de 10 dB bajo la mediana) + hoja de contacto.
 
@@ -52,6 +56,9 @@ con las mismas reglas). Los guiones están en `arcilla/GUIONES.md`.
 - **Gancho con movimiento y sorpresa en el cuadro 0**, con el texto completo. Pensar si sirve para TikTok.
 - Versión corta: 15–20 s, 9:16. Textos en la mitad de arriba (y 250–1000), dentro de x 60–940.
 - Misma botella en todo el video; todo de frente, sin vistas isométricas.
+- Nada flota sin sentido: árboles, faros, casas y personas apoyados en el suelo (el tronco entra en la arena o la tierra).
+- Colores naturales: un árbol tiene tronco marrón y copa verde (en otoño naranja o amarilla, en invierno con nieve); nada de
+  copas celestes, violetas o rosas. Lo mismo para cualquier objeto real (agua, arena, piel, madera).
 - Objetos en su lugar lógico (nada de barcos en nubes); pájaros en el cielo, peces que saltan con la cabeza adelante;
   nubes y barcos en una sola dirección; el sol con rayos.
 - Recortes limpios, sin sombras ni restos. Personas de cuerpo entero, con piernas, piel de color real (nunca celeste o

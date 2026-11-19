@@ -1,8 +1,8 @@
 # Cómo producir los videos de arcilla (tarea semanal)
 
 Procedimiento que sigue la tarea programada «Seabottles · Videos de arcilla (semanal)». Cada domingo produce
-los 5 videos de lunes a viernes de la semana siguiente y los deja en Metricool **para revisión** (Fer los aprueba
-con un toque antes de que salgan). Todo en español neutro, sin voseo.
+los 5 videos de lunes a viernes de la semana siguiente y los deja **programados para publicarse solos** en Metricool
+(decisión de Fer del 19/11/2026: si quiere cambiar alguno, entra a Metricool antes de la hora). Todo en español neutro, sin voseo.
 
 ## 1. Preparar el entorno (cada corrida empieza de cero)
 
@@ -62,15 +62,16 @@ con las mismas reglas). Los guiones están en `arcilla/GUIONES.md`.
 - Cierre siempre con «Súmate y lanza tu primera botella» + **seabottles.org**.
 - Pantallas de la app solo si son capturas reales (nunca inventadas).
 
-## 5. Publicar (para revisión)
+## 5. Publicar (automático)
 
 1. `git add arcilla videos/arcilla-*.mp4 && git commit -m "Arcilla: semana <fecha>" && git push` (rama `main`).
 2. Enlace público: `https://raw.githubusercontent.com/FernandoDebernardi/seabottles-motion/main/videos/arcilla-<fecha>-<nn>.mp4`.
 3. En Metricool (marca `@seabottles__org`, id `7607772`, zona `America/Argentina/Buenos_Aires`) crear con
-   **createScheduledPostForReview**, por cada video:
+   **createScheduledPost** con `autoPublish: true` y `draft: false` (NO usar createScheduledPostForReview), por cada video:
    - TikTok a las **10:00** del día de publicación.
    - Instagram Reel + Facebook Reel a las **10:30**.
    - Texto en español (el video está en español): gancho como primera línea, qué es Seabottles en una línea, una
      pregunta abierta para comentar, «seabottles.org» (en Instagram «Enlace en la bio»), 2 o 3 hashtags como máximo.
 4. Agregar cada video a `estado.json` → `hechos` y hacer commit + push.
-5. Avisar a Fer con un resumen breve: qué 5 guiones se hicieron, qué días salen y qué hay que aprobar en Metricool.
+5. Avisar a Fer con un resumen breve: qué 5 guiones se hicieron, qué día y hora sale cada uno y el enlace (plannerUrl)
+   de cada publicación, por si quiere cambiar o frenar alguno antes de su hora.

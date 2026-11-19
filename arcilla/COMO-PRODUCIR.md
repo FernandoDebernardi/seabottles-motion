@@ -19,8 +19,10 @@ Herramientas del motor: `~/animate/plugins/animate/skills/animate/tools/{build,s
 ## 2. Elegir los guiones
 
 Leer `arcilla/estado.json`: tomar los 5 primeros números de `orden` que no estén en `hechos`.
-Si quedan menos de 5, producir los que haya y avisar a Fer que la lista se termina (proponer 10 guiones nuevos
-con las mismas reglas). Los guiones están en `arcilla/GUIONES.md`.
+Si quedan menos de 5 (o ninguno), **escribir 10 guiones nuevos** con las mismas reglas (gancho humano, una sola idea,
+sin repetir los ya hechos, funciones reales de la app según las preguntas frecuentes del proyecto), sumarlos al final de
+`arcilla/GUIONES.md` con números correlativos y a `estado.json` → `orden`, y seguir produciendo hasta completar los 5
+(pedido de Fer del 19/11/2026: que la producción no se corte cuando se termina la lista). Los guiones están en `arcilla/GUIONES.md`.
 
 ## 3. Producir cada video (uno por guion)
 

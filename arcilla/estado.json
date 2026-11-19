@@ -66,41 +66,41 @@
       "numero": 4,
       "fecha_publicacion": "2026-11-27",
       "archivo": "videos/arcilla-2026-11-27-04.mp4",
-      "metricool_uuid_ig": null,
-      "metricool_uuid_tt": null,
-      "metricool": "pendiente: no se pudo crear (el plan no tiene revisión/aprobación)"
+      "metricool_uuid_ig": "-5004056553868476122",
+      "metricool_uuid_tt": "1679361465302863236",
+      "metricool": "programado 19/11/2026: TikTok 10:00, Instagram y Facebook Reel 10:30, publicación automática"
     },
     {
       "numero": 7,
       "fecha_publicacion": "2026-11-30",
       "archivo": "videos/arcilla-2026-11-30-07.mp4",
-      "metricool_uuid_ig": null,
-      "metricool_uuid_tt": null,
-      "metricool": "pendiente: no se pudo crear (el plan no tiene revisión/aprobación)"
+      "metricool_uuid_ig": "5977722333359065643",
+      "metricool_uuid_tt": "-5771222724621023210",
+      "metricool": "programado 19/11/2026: TikTok 10:00, Instagram y Facebook Reel 10:30, publicación automática"
     },
     {
       "numero": 8,
       "fecha_publicacion": "2026-12-01",
       "archivo": "videos/arcilla-2026-12-01-08.mp4",
-      "metricool_uuid_ig": null,
-      "metricool_uuid_tt": null,
-      "metricool": "pendiente: no se pudo crear (el plan no tiene revisión/aprobación)"
+      "metricool_uuid_ig": "4786794739369067340",
+      "metricool_uuid_tt": "-6595302686771886607",
+      "metricool": "programado 19/11/2026: TikTok 10:00, Instagram y Facebook Reel 10:30, publicación automática"
     },
     {
       "numero": 9,
       "fecha_publicacion": "2026-12-02",
       "archivo": "videos/arcilla-2026-12-02-09.mp4",
-      "metricool_uuid_ig": null,
-      "metricool_uuid_tt": null,
-      "metricool": "pendiente: no se pudo crear (el plan no tiene revisión/aprobación)"
+      "metricool_uuid_ig": "1999886263410904549",
+      "metricool_uuid_tt": "-20331004333243583",
+      "metricool": "programado 19/11/2026: TikTok 10:00, Instagram y Facebook Reel 10:30, publicación automática"
     },
     {
       "numero": 10,
       "fecha_publicacion": "2026-12-03",
       "archivo": "videos/arcilla-2026-12-03-10.mp4",
-      "metricool_uuid_ig": null,
-      "metricool_uuid_tt": null,
-      "metricool": "pendiente: no se pudo crear (el plan no tiene revisión/aprobación)"
+      "metricool_uuid_ig": "8340797883141736771",
+      "metricool_uuid_tt": "6135680189372255554",
+      "metricool": "programado 19/11/2026: TikTok 10:00, Instagram y Facebook Reel 10:30, publicación automática"
     }
   ],
   "notas": "Cada entrada de 'hechos' = {numero, fecha_publicacion, archivo, metricool_uuid_ig, metricool_uuid_tt}"

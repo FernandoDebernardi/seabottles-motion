@@ -21,6 +21,47 @@
     19,
     20
   ],
-  "hechos": [],
+  "hechos": [
+    {
+      "numero": 1,
+      "fecha_publicacion": "2026-11-20",
+      "archivo": "videos/arcilla-2026-11-20-01.mp4",
+      "metricool_uuid_ig": null,
+      "metricool_uuid_tt": null,
+      "metricool": "pendiente: no se pudo crear (el plan no tiene revisión/aprobación)"
+    },
+    {
+      "numero": 2,
+      "fecha_publicacion": "2026-11-23",
+      "archivo": "videos/arcilla-2026-11-23-02.mp4",
+      "metricool_uuid_ig": null,
+      "metricool_uuid_tt": null,
+      "metricool": "pendiente: no se pudo crear (el plan no tiene revisión/aprobación)"
+    },
+    {
+      "numero": 5,
+      "fecha_publicacion": "2026-11-24",
+      "archivo": "videos/arcilla-2026-11-24-05.mp4",
+      "metricool_uuid_ig": null,
+      "metricool_uuid_tt": null,
+      "metricool": "pendiente: no se pudo crear (el plan no tiene revisión/aprobación)"
+    },
+    {
+      "numero": 6,
+      "fecha_publicacion": "2026-11-25",
+      "archivo": "videos/arcilla-2026-11-25-06.mp4",
+      "metricool_uuid_ig": null,
+      "metricool_uuid_tt": null,
+      "metricool": "pendiente: no se pudo crear (el plan no tiene revisión/aprobación)"
+    },
+    {
+      "numero": 3,
+      "fecha_publicacion": "2026-11-26",
+      "archivo": "videos/arcilla-2026-11-26-03.mp4",
+      "metricool_uuid_ig": null,
+      "metricool_uuid_tt": null,
+      "metricool": "pendiente: no se pudo crear (el plan no tiene revisión/aprobación)"
+    }
+  ],
   "notas": "Cada entrada de 'hechos' = {numero, fecha_publicacion, archivo, metricool_uuid_ig, metricool_uuid_tt}"
 }

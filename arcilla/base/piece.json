@@ -1,0 +1,39 @@
+{
+  "name": "botella-arcilla-corta",
+  "title": "Seabottles — Lanza tu primera botella (versión corta)",
+  "format": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 24,
+    "bpm": 120,
+    "duration": 20.0,
+    "frames": 480
+  },
+  "style": "cut-paper",
+  "music": {
+    "file": "audio/track.wav",
+    "start": 0,
+    "gain": 0,
+    "fade": 0
+  },
+  "build": [
+    "src/head.html",
+    "kit/core.js",
+    "style",
+    "src/scenes.js",
+    "src/bridges.js",
+    "kit/morph.js",
+    "kit/board.js",
+    "kit/score-head.js",
+    "src/score.js",
+    "kit/score-tail.js"
+  ],
+  "review": {
+    "safe": {
+      "top": 240,
+      "bottom": 420,
+      "right": 140
+    },
+    "refs": {}
+  }
+}

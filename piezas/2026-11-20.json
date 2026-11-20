@@ -1,0 +1,13 @@
+{
+  "texto": "¿Viviste la época del Messenger?\n¿A quién volverías a mandar un zumbido?",
+  "mar_clave": "recuerdos",
+  "pais": "España",
+  "bandera": "🇪🇸",
+  "deco": {"mata": true, "tapa": "corcho", "paper": "crema", "sello": "none", "tinta": "grafito", "cordel": "none", "etiqueta": "none"},
+  "origen": "Lanzada desde España",
+  "clima": "despejado",
+  "momento": "dia",
+  "respuesta": {"texto": "Sí, y todavía me acuerdo del sonido. Se lo mandaría a mi amiga del colegio, con la que hablaba hasta tarde cada noche.", "pais": "Estados Unidos", "bandera_codigo": "us"},
+  "animo": "media",
+  "semilla": "2026-11-20:2t8gv4qrxcwm"
+}

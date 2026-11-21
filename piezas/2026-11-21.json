@@ -1,0 +1,13 @@
+{
+  "texto": "Que palabras al juntar te evocan y sacan una sonrisa..las mías son verano mar y sol.. combinación perfecta",
+  "mar_clave": "recuerdos",
+  "pais": "Chile",
+  "bandera": "🇨🇱",
+  "deco": {"mata": true, "tapa": "corcho", "paper": "crema", "sello": "none", "tinta": "grafito", "cordel": "none", "etiqueta": "sol"},
+  "origen": "Lanzada desde Chile",
+  "clima": "despejado",
+  "momento": "noche",
+  "respuesta": {"texto": "Las mías son lluvia, café y pan dulce. Me llevan directo a las tardes en casa de mi abuela.", "pais": "México", "bandera_codigo": "mx"},
+  "animo": "media",
+  "semilla": "2026-11-21:f7dmj9wqhn7t"
+}

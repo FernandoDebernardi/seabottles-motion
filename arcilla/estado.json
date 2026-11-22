@@ -101,7 +101,61 @@
       "metricool_uuid_ig": "8340797883141736771",
       "metricool_uuid_tt": "6135680189372255554",
       "metricool": "programado 19/11/2026: TikTok 10:00, Instagram y Facebook Reel 10:30, publicación automática"
+    },
+    {
+      "numero": 11,
+      "fecha_publicacion": "2026-12-04",
+      "archivo": "videos/arcilla-2026-12-04-11.mp4",
+      "metricool_uuid_ig": null,
+      "metricool_uuid_tt": null,
+      "metricool": "programado 22/11/2026: TikTok 10:00, Instagram y Facebook Reel 10:30, publicación automática"
+    },
+    {
+      "numero": 12,
+      "fecha_publicacion": "2026-12-07",
+      "archivo": "videos/arcilla-2026-12-07-12.mp4",
+      "metricool_uuid_ig": null,
+      "metricool_uuid_tt": null,
+      "metricool": "programado 22/11/2026: TikTok 10:00, Instagram y Facebook Reel 10:30, publicación automática"
+    },
+    {
+      "numero": 13,
+      "fecha_publicacion": "2026-12-08",
+      "archivo": "videos/arcilla-2026-12-08-13.mp4",
+      "metricool_uuid_ig": null,
+      "metricool_uuid_tt": null,
+      "metricool": "programado 22/11/2026: TikTok 10:00, Instagram y Facebook Reel 10:30, publicación automática"
+    },
+    {
+      "numero": 14,
+      "fecha_publicacion": "2026-12-09",
+      "archivo": "videos/arcilla-2026-12-09-14.mp4",
+      "metricool_uuid_ig": null,
+      "metricool_uuid_tt": null,
+      "metricool": "programado 22/11/2026: TikTok 10:00, Instagram y Facebook Reel 10:30, publicación automática"
+    },
+    {
+      "numero": 15,
+      "fecha_publicacion": "2026-12-10",
+      "archivo": "videos/arcilla-2026-12-10-15.mp4",
+      "metricool_uuid_ig": null,
+      "metricool_uuid_tt": null,
+      "metricool": "programado 22/11/2026: TikTok 10:00, Instagram y Facebook Reel 10:30, publicación automática"
     }
   ],
-  "notas": "Cada entrada de 'hechos' = {numero, fecha_publicacion, archivo, metricool_uuid_ig, metricool_uuid_tt}"
+  "notas": "Cada entrada de 'hechos' = {numero, fecha_publicacion, archivo, metricool_uuid_ig, metricool_uuid_tt}",
+  "historias": [
+    {
+      "fecha": "2026-12-04",
+      "archivo": "videos/arcilla-historia-2026-12-04.mp4",
+      "videos": [
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "metricool": "programada 22/11/2026 20:00: historias IG+FB y TikTok"
+    }
+  ]
 }

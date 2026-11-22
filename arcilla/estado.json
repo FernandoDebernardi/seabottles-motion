@@ -106,40 +106,40 @@
       "numero": 11,
       "fecha_publicacion": "2026-12-04",
       "archivo": "videos/arcilla-2026-12-04-11.mp4",
-      "metricool_uuid_ig": null,
-      "metricool_uuid_tt": null,
+      "metricool_uuid_ig": "-2727409421688094198",
+      "metricool_uuid_tt": "4610438657209027640",
       "metricool": "programado 22/11/2026: TikTok 10:00, Instagram y Facebook Reel 10:30, publicación automática"
     },
     {
       "numero": 12,
       "fecha_publicacion": "2026-12-07",
       "archivo": "videos/arcilla-2026-12-07-12.mp4",
-      "metricool_uuid_ig": null,
-      "metricool_uuid_tt": null,
+      "metricool_uuid_ig": "-2634729860494570818",
+      "metricool_uuid_tt": "4026882149261856528",
       "metricool": "programado 22/11/2026: TikTok 10:00, Instagram y Facebook Reel 10:30, publicación automática"
     },
     {
       "numero": 13,
       "fecha_publicacion": "2026-12-08",
       "archivo": "videos/arcilla-2026-12-08-13.mp4",
-      "metricool_uuid_ig": null,
-      "metricool_uuid_tt": null,
+      "metricool_uuid_ig": "-8164818822199557703",
+      "metricool_uuid_tt": "5768754401142260428",
       "metricool": "programado 22/11/2026: TikTok 10:00, Instagram y Facebook Reel 10:30, publicación automática"
     },
     {
       "numero": 14,
       "fecha_publicacion": "2026-12-09",
       "archivo": "videos/arcilla-2026-12-09-14.mp4",
-      "metricool_uuid_ig": null,
-      "metricool_uuid_tt": null,
+      "metricool_uuid_ig": "-7573022052999805393",
+      "metricool_uuid_tt": "8958067565684016874",
       "metricool": "programado 22/11/2026: TikTok 10:00, Instagram y Facebook Reel 10:30, publicación automática"
     },
     {
       "numero": 15,
       "fecha_publicacion": "2026-12-10",
       "archivo": "videos/arcilla-2026-12-10-15.mp4",
-      "metricool_uuid_ig": null,
-      "metricool_uuid_tt": null,
+      "metricool_uuid_ig": "4426219202042544780",
+      "metricool_uuid_tt": "7695269006792411371",
       "metricool": "programado 22/11/2026: TikTok 10:00, Instagram y Facebook Reel 10:30, publicación automática"
     }
   ],
@@ -155,7 +155,9 @@
         14,
         15
       ],
-      "metricool": "programada 22/11/2026 20:00: historias IG+FB y TikTok"
+      "metricool": "programada 22/11/2026 20:00: historias IG+FB y TikTok",
+      "metricool_uuid_historias": "-6826537934123940954",
+      "metricool_uuid_tt": "-4984018133680437989"
     }
   ]
 }

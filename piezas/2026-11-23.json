@@ -1,0 +1,13 @@
+{
+  "texto": "No hay edad para aprender acá estoy casi a mis 60 emprendiendo un nuevo camino",
+  "mar_clave": "vida",
+  "pais": "Argentina",
+  "bandera": "🇦🇷",
+  "deco": {"mata":true,"tapa":"corcho","paper":"crema","sello":"none","tinta":"lima","cordel":"none","etiqueta":"brote"},
+  "origen": "Lanzada desde Argentina",
+  "clima": "lluvia",
+  "momento": "noche",
+  "respuesta": {"texto": "Yo empecé a tocar la guitarra a los 52 y todavía me equivoco en cada acorde. Lo lindo es animarse a empezar.", "pais": "Argentina", "bandera_codigo": "ar"},
+  "animo": "media",
+  "semilla": "2026-11-23:5hs7jrvmzs25"
+}

@@ -1,0 +1,13 @@
+{
+  "texto": "Y si todo es un sueño, una ilusión..... Cómo descubres cual es la realidad?",
+  "mar_clave": "pensamientos",
+  "pais": "Uruguay",
+  "bandera": "🇺🇾",
+  "deco": {"mata":true,"tapa":"corcho","paper":"crema","sello":"pais","tinta":"grafito","cordel":"red","etiqueta":"nube"},
+  "origen": "Lanzada desde Uruguay",
+  "clima": "despejado",
+  "momento": "dia",
+  "respuesta": {"texto": "Yo me doy cuenta por los detalles: en los sueños nunca puedo leer un reloj ni sentir el olor del café.", "pais": "Argentina", "bandera_codigo": "ar"},
+  "animo": "media",
+  "semilla": "2026-11-24:cdjqxdmbx82q"
+}

@@ -1,0 +1,13 @@
+{
+  "texto": "¿Cuál es la peor película que has visto?",
+  "mar_clave": "recuerdos",
+  "pais": "España",
+  "bandera": "🇪🇸",
+  "deco": {"mata":true,"tapa":"corcho","paper":"crema","sello":"none","tinta":"grafito","cordel":"none","etiqueta":"none"},
+  "origen": "Lanzada desde España",
+  "clima": "despejado",
+  "momento": "noche",
+  "respuesta": {"texto": "Una de tiburones que vi en el cine con mis primos. Era tan mala que nos reímos toda la función y salimos felices.", "pais": "Guatemala", "bandera_codigo": "gt"},
+  "animo": "media",
+  "semilla": "2026-11-25:5tdskkjhp7xh"
+}

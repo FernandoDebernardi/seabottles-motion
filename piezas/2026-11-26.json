@@ -1,0 +1,23 @@
+{
+  "titulo": "A message in a bottle",
+  "etiqueta_desde": "sent from",
+  "texto": "I moved to a new city three months ago. I know the bus routes now, but not a single name. Does it get easier?",
+  "mar_clave": "recuerdos",
+  "mar": "Sea of Memories",
+  "pais": "Argentina",
+  "bandera": "🇦🇷",
+  "deco": {"mata": true, "tapa": "corcho", "paper": "crema", "sello": "estrella", "tinta": "sepia", "cordel": "oro", "etiqueta": "sol"},
+  "origen": "Cast from Argentina",
+  "frase_cierre": "What if you didn't know who you were writing to?",
+  "clima": "despejado",
+  "momento": "dia",
+  "respuesta": {
+    "texto": "I moved for work two years ago. The first name I learned was the baker's, and after that they came one by one.",
+    "pais": "Philippines",
+    "bandera_codigo": "ph",
+    "encabezado": "This is how someone from the Philippines might reply",
+    "pie": "The bottle set sail from Argentina."
+  },
+  "animo": "calma",
+  "semilla": "2026-11-26:dggh5gqv8dmj"
+}

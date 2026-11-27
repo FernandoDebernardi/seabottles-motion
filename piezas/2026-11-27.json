@@ -1,0 +1,13 @@
+{
+  "texto": "¿Es posible el amor dentro de una botella?",
+  "mar_clave": "amor",
+  "pais": "Estados Unidos",
+  "bandera": "🇺🇸",
+  "deco": {"mata":true,"tapa":"corcho","paper":"crema","sello":"pais","tinta":"lima","cordel":"none","etiqueta":"beagle"},
+  "origen": "Lanzada desde Estados Unidos",
+  "clima": "despejado",
+  "momento": "dia",
+  "respuesta": {"texto": "Yo creo que sí: alguien escribe sin saber quién lo leerá, y del otro lado alguien lo guarda con cariño.", "pais": "Colombia", "bandera_codigo": "co"},
+  "animo": "media",
+  "semilla": "2026-11-27:n8z3rfbpmnzh"
+}

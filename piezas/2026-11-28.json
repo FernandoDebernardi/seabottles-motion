@@ -1,0 +1,13 @@
+{
+  "texto": "¿Que es algo que recuerdas tan intensamente de tu pasado?",
+  "mar_clave": "recuerdos",
+  "pais": "Nicaragua",
+  "bandera": "🇳🇮",
+  "deco": {"mata":true,"tapa":"corcho","paper":"cuadros","sello":"granola","tinta":"lima","cordel":"lazoazul","etiqueta":"mundo"},
+  "origen": "Lanzada desde Nicaragua",
+  "clima": "viento",
+  "momento": "dia",
+  "respuesta": {"texto": "El olor de la casa de mi abuela los domingos: pan dulce, café de olla y la radio prendida en la cocina.", "pais": "México", "bandera_codigo": "mx"},
+  "animo": "calma",
+  "semilla": "2026-11-28:mpmzqprhvqd4"
+}
